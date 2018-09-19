@@ -1,0 +1,3 @@
+[submodule "epub-stream"]
+	path = epub-stream
+	url = git@github.com:JSpiner/epub-stream.git
