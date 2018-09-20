@@ -6,6 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'jacoco-android'
+
+apply plugin: 'com.github.kt3k.coveralls'
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -39,4 +43,17 @@ dependencies {
     kapt "com.android.databinding:compiler:3.1.4"
     implementation "io.reactivex.rxjava2:rxjava:2.2.0"
     implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+}
+
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
+
+jacocoAndroidUnitTestReport {
+    html.enabled true
+    xml.enabled true
+}
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml"
 }
