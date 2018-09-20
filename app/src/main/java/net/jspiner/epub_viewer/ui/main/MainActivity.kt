@@ -21,7 +21,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         init()
     }
 
+    override fun loadState(bundle: Bundle) {
+        //no-op
+    }
+
+    override fun saveState(bundle: Bundle) {
+        //no-op
+    }
+
     private fun init() {
         
     }
+
+
 }
