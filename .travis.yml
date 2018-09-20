@@ -1,6 +1,7 @@
 language: android
 jdk:
   - oraclejdk8
+install: gradle wrapper --gradle-version 4.8
 android:
   components:
     - tools
