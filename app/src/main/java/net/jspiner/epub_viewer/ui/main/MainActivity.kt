@@ -1,10 +1,14 @@
 package net.jspiner.epub_viewer.ui.main
 
 import android.os.Bundle
+import io.reactivex.Completable
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityMainBinding
 import net.jspiner.epub_viewer.ui.base.BaseActivity
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
+import net.jspiner.epub_viewer.ui.reader.startReaderActivity
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
@@ -30,7 +34,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun init() {
-        
+        Completable.timer(1000, TimeUnit.MILLISECONDS)
+            .subscribe { startReaderActivity(this, File("")) }
     }
 
 
