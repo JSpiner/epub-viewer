@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import net.jspiner.epub_viewer.util.initLazy
 
-abstract class BaseView<Binding : ViewDataBinding> @JvmOverloads constructor(
+abstract class BaseView<Binding : ViewDataBinding, ViewModel : BaseViewModel> @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
@@ -24,10 +24,10 @@ abstract class BaseView<Binding : ViewDataBinding> @JvmOverloads constructor(
             true
         ) as Binding
     }
-    protected val viewModel: BaseViewModel by lazy { getActivity().viewModel }
+    protected val viewModel: ViewModel by lazy { getActivity().viewModel }
 
-    private fun getActivity(): BaseActivity<*> {
-        return context as BaseActivity<*>
+    private fun getActivity(): BaseActivity<*, ViewModel> {
+        return context as BaseActivity<*, ViewModel>
     }
 
     init {

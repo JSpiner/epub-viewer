@@ -10,17 +10,17 @@ import io.reactivex.subjects.CompletableSubject
 import net.jspiner.epub_viewer.util.LifecycleTransformer
 import net.jspiner.epub_viewer.util.initLazy
 
-abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity() {
+abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel> : AppCompatActivity() {
 
     @LayoutRes
     abstract fun getLayoutId(): Int
 
-    abstract fun createViewModel(): BaseViewModel
+    abstract fun createViewModel(): ViewModel
     abstract fun loadState(bundle: Bundle)
     abstract fun saveState(bundle: Bundle)
 
     val binding: Binding by lazy { DataBindingUtil.setContentView(this, getLayoutId()) as Binding }
-    val viewModel: BaseViewModel by lazy { createViewModel() }
+    val viewModel: ViewModel by lazy { createViewModel() }
 
     private val lifecycleSubject: CompletableSubject by lazy { CompletableSubject.create() }
 
