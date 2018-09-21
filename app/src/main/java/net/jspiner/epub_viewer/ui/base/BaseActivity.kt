@@ -19,8 +19,8 @@ abstract class BaseActivity<Binding : ViewDataBinding> : AppCompatActivity() {
     abstract fun loadState(bundle: Bundle)
     abstract fun saveState(bundle: Bundle)
 
-    protected val binding: Binding by lazy { DataBindingUtil.setContentView(this, getLayoutId()) as Binding }
-    protected val viewModel: BaseViewModel by lazy { createViewModel() }
+    val binding: Binding by lazy { DataBindingUtil.setContentView(this, getLayoutId()) as Binding }
+    val viewModel: BaseViewModel by lazy { createViewModel() }
 
     private val lifecycleSubject: CompletableSubject by lazy { CompletableSubject.create() }
 
