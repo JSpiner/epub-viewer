@@ -52,6 +52,7 @@ jacoco {
 jacocoAndroidUnitTestReport {
     html.enabled true
     xml.enabled true
+    excludes = ["epub-stream/**"]
 }
 
 coveralls {
