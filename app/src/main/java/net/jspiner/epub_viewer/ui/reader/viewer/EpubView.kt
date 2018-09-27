@@ -20,7 +20,7 @@ class EpubView @JvmOverloads constructor(
 
     private fun subscribe() {
         viewModel.getCurrentSpineItem()
-            .flatMapSingle { viewModel.toManifestItem(it) }
+            .map { viewModel.toManifestItem(it) }
             .subscribe { setSpineFile(it) }
     }
 
