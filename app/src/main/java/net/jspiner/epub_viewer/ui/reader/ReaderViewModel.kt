@@ -7,13 +7,15 @@ import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
+import net.jspiner.epubstream.dto.NavPoint
 import java.io.File
 
 class ReaderViewModel : BaseViewModel() {
 
+    val extractedEpub: Epub = Epub()
+
     private lateinit var file: File
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
-    private val extractedEpub: Epub = Epub()
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     fun setEpubFile(file: File) {
@@ -53,6 +55,17 @@ class ReaderViewModel : BaseViewModel() {
 
     fun getCurrentSpineItem(): Observable<ItemRef> {
         return spineSubject
+    }
+
+    fun navigateToPoint(navPoint: NavPoint) {
+        val itemRef = navPointLocationMap[navPoint.id]
+
+        if (itemRef != null) {
+            spineSubject.onNext(itemRef)
+        }
+        else {
+            throw RuntimeException("해당 navPoint 를 찾을 수 없음 id : $navPoint")
+        }
     }
 
     fun toManifestItem(itemRef: ItemRef): File {

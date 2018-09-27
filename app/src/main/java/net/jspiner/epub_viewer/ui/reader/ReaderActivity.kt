@@ -45,7 +45,12 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
-                    viewModel.extractEpub(cacheDir).subscribe()
+                    viewModel.extractEpub(cacheDir)
+                        .subscribe {
+                            viewModel.navigateToPoint(
+                                viewModel.extractedEpub.toc.navMap.navPoints[0]
+                            )
+                        }
                 }
 
                 override fun onPermissionDenied(list: MutableList<String>?) {
