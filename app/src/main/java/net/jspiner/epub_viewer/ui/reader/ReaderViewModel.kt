@@ -2,9 +2,6 @@ package net.jspiner.epub_viewer.ui.reader
 
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.SingleSource
-import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
@@ -17,6 +14,7 @@ class ReaderViewModel : BaseViewModel() {
     private lateinit var file: File
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
     private val extractedEpub: Epub = Epub()
+    private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -31,7 +29,26 @@ class ReaderViewModel : BaseViewModel() {
             .flatMap { epubStream.getContainer() }.doOnSuccess { extractedEpub.container = it }
             .flatMap { epubStream.getOpf() }.doOnSuccess { extractedEpub.opf = it }
             .flatMap { epubStream.getToc() }.doOnSuccess { extractedEpub.toc = it }
+            .doOnSuccess { calcNavPointInSpine() }
             .ignoreElement()
+    }
+
+    private fun calcNavPointInSpine() {
+        fun findMatchItemInSpines(content: String): ItemRef {
+            for (spineItem in extractedEpub.opf.spine.itemrefs) {
+                val itemFile = toManifestItem(spineItem)
+                val relativePath = itemFile.relativeTo(extractedEpub.extractedDirectory).path
+
+                if (content == relativePath) return spineItem
+            }
+            throw RuntimeException("해당 navPoint 를 spine 에서 찾을 수 없음 content : $content")
+        }
+
+        for (navPoint in extractedEpub.toc.navMap.navPoints) {
+            val navPointContent = navPoint.content.src.split("#")[0]
+
+            navPointLocationMap[navPoint.id] = findMatchItemInSpines(navPointContent)
+        }
     }
 
     fun getCurrentSpineItem(): Observable<ItemRef> {
