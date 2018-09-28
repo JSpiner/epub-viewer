@@ -6,6 +6,7 @@ import net.jspiner.epub_viewer.databinding.FragmentWebContainerBinding
 import net.jspiner.epub_viewer.ui.base.BaseFragment
 import net.jspiner.epub_viewer.ui.base.EpubWebClient
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
+import java.io.File
 
 class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderViewModel>() {
 
@@ -25,7 +26,9 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         super.onStart()
 
         binding.webView.webViewClient = EpubWebClient()
-        binding.webView.loadUrl("https://google.com")
     }
 
+    fun loadFile(file: File) {
+        binding.webView.loadUrl(file.toURI().toURL().toString())
+    }
 }

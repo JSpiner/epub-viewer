@@ -1,20 +1,31 @@
 package net.jspiner.epub_viewer.ui.reader.viewer
 
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import net.jspiner.epub_viewer.R
 
 class EpubPagerAdapter(fm: FragmentManager?) : FragmentStatePagerAdapter(fm) {
 
+    private val itemMap: HashMap<Int, WebContainerFragment> = HashMap()
+
+    fun getFragmentAt(position: Int): WebContainerFragment {
+        return itemMap[position] ?: throw RuntimeException("position에 item이 존재하지 않습니다. position : $position")
+    }
+
     override fun getItem(position: Int): Fragment {
-        return WebContainerFragment.newInstance()
+        val fragment = WebContainerFragment.newInstance()
+        if (itemMap[position] != null) throw RuntimeException("position에 item이 이미 존재합니다. position : $position")
+
+        itemMap[position] = fragment
+        return fragment
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        super.destroyItem(container, position, `object`)
+        if (itemMap[position] == null) throw RuntimeException("position에 item이 존재하지 않습니다. position : $position")
+
+        itemMap.remove(position)
     }
 
     override fun getCount(): Int {

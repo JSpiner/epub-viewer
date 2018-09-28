@@ -14,11 +14,12 @@ class EpubView @JvmOverloads constructor(
 ) : BaseView<ViewEpubViewerBinding, ReaderViewModel>(context, attrs, defStyleAttr) {
 
     override fun getLayoutId() = R.layout.view_epub_viewer
+    private val adapter: EpubPagerAdapter
 
     init {
         subscribe()
 
-        val adapter = EpubPagerAdapter( (getContext() as AppCompatActivity).supportFragmentManager )
+        adapter = EpubPagerAdapter((getContext() as AppCompatActivity).supportFragmentManager)
         binding.verticalViewPager.adapter = adapter
     }
 
@@ -29,7 +30,7 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun setSpineFile(file: File) {
-
+        val currentPosition = binding.verticalViewPager.currentItem
+        adapter.getFragmentAt(currentPosition).loadFile(file)
     }
-
 }
