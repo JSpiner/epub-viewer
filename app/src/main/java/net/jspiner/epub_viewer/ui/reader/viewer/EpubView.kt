@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader.viewer
 
 import android.content.Context
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import net.jspiner.epub_viewer.R
@@ -21,6 +22,19 @@ class EpubView @JvmOverloads constructor(
 
         adapter = EpubPagerAdapter((getContext() as AppCompatActivity).supportFragmentManager)
         binding.verticalViewPager.adapter = adapter
+        binding.verticalViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(p0: Int) {
+                // no-op
+            }
+
+            override fun onPageSelected(position: Int) {
+                viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[position])
+            }
+
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+                // no-op
+            }
+        })
     }
 
     private fun subscribe() {
