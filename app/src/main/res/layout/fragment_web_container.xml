@@ -5,10 +5,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
-            android:id="@+id/vertical_view_pager"
+        <WebView
+            android:id="@+id/web_view"
+            android:background="#ff00ff"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

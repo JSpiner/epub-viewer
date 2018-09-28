@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader.viewer
 
 import android.content.Context
+import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
@@ -16,6 +17,9 @@ class EpubView @JvmOverloads constructor(
 
     init {
         subscribe()
+
+        val adapter = EpubPagerAdapter( (getContext() as AppCompatActivity).supportFragmentManager )
+        binding.verticalViewPager.adapter = adapter
     }
 
     private fun subscribe() {
@@ -25,7 +29,7 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun setSpineFile(file: File) {
-        binding.webView.loadUrl(file.toURI().toURL().toString())
+
     }
 
 }
