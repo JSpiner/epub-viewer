@@ -8,6 +8,8 @@ import android.view.View
 
 class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(context, attrs) {
 
+    private var isSwipeEnabled = true;
+
     init {
         setPageTransformer(true, VerticalPageTransformer())
         overScrollMode = View.OVER_SCROLL_NEVER
@@ -29,12 +31,16 @@ class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(cont
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        if (!isSwipeEnabled) return false
+
         val intercepted = super.onInterceptTouchEvent(swapXY(ev))
         swapXY(ev)
         return intercepted
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
+        if (!isSwipeEnabled) return false
+
         return super.onTouchEvent(swapXY(ev))
     }
 
@@ -48,5 +54,13 @@ class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(cont
         ev.setLocation(newX, newY)
 
         return ev
+    }
+
+    fun enableScroll() {
+        isSwipeEnabled = true
+    }
+
+    fun disableScroll() {
+        isSwipeEnabled = false
     }
 }
