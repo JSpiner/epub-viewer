@@ -26,7 +26,7 @@ abstract class BaseView<Binding : ViewDataBinding, ViewModel : BaseViewModel> @J
     }
     protected val viewModel: ViewModel by lazy { getActivity().viewModel }
 
-    private fun getActivity(): BaseActivity<*, ViewModel> {
+    protected fun getActivity(): BaseActivity<*, ViewModel> {
         return context as BaseActivity<*, ViewModel>
     }
 

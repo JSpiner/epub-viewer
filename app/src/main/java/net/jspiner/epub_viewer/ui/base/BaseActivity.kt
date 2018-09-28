@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.annotation.CallSuper
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.view.WindowManager
 import io.reactivex.subjects.CompletableSubject
 import net.jspiner.epub_viewer.util.LifecycleTransformer
 import net.jspiner.epub_viewer.util.initLazy
@@ -51,5 +53,32 @@ abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel
     final override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         saveState(outState)
+    }
+
+    fun showStatusBar() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    }
+
+    fun hideStatusBar() {
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+    }
+
+    fun showNavigationBar() {
+        window.decorView.apply {
+            systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
+    }
+
+    fun hideNavigationBar() {
+        window.decorView.apply {
+            systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        }
     }
 }

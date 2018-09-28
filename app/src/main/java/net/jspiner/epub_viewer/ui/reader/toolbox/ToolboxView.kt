@@ -12,4 +12,32 @@ class ToolboxView @JvmOverloads constructor(
 ) : BaseView<ViewToolboxBinding, ReaderViewModel>(context, attrs, defStyleAttr) {
 
     override fun getLayoutId() = R.layout.view_toolbox
+
+    init {
+        binding.root.setOnClickListener {
+            val last = viewModel.getToolboxVisible().value!!
+            println(last)
+            viewModel.setToolboxVisible(
+                !last
+            )
+        }
+        subscribe()
+    }
+
+    private fun subscribe() {
+        viewModel.getToolboxVisible()
+            .subscribe { isVisible ->
+                with(getActivity()) {
+                    if (isVisible) {
+                        showStatusBar()
+                        showNavigationBar()
+                    }
+                    else {
+                        hideStatusBar()
+                        hideNavigationBar()
+                    }
+                }
+            }
+    }
+
 }

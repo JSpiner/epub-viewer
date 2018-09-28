@@ -16,6 +16,7 @@ class ReaderViewModel : BaseViewModel() {
 
     private lateinit var file: File
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
+    private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     fun setEpubFile(file: File) {
@@ -78,4 +79,11 @@ class ReaderViewModel : BaseViewModel() {
         }
         throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $itemRef")
     }
+
+    fun setToolboxVisible(isVisible: Boolean) {
+        toolboxShowSubject.onNext(isVisible)
+    }
+
+    fun getToolboxVisible() = toolboxShowSubject
+
 }
