@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/status_bar_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/colorPrimary" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -12,16 +19,25 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <LinearLayout
             android:id="@+id/bottom_toolbox"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:layout_gravity="bottom"
             android:background="@color/colorPrimary"
             android:orientation="horizontal">
 
         </LinearLayout>
 
-    </FrameLayout>
+        <View
+            android:id="@+id/navigation_bar_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+    </LinearLayout>
 
 </layout>

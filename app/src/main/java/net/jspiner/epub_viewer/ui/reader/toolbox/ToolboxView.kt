@@ -28,13 +28,15 @@ class ToolboxView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
+        fun setHeight(view: View, height: Int) {
+            val params = view.layoutParams
+            params.height = height
+            view.layoutParams = params
+        }
+
         subscribe()
-        binding.root.setPadding(
-            0,
-            getActivity().getStatusBarHeight(),
-            0,
-            getActivity().getNavigationBarHeight()
-        )
+        setHeight(binding.statusBarBackground, getActivity().getStatusBarHeight())
+        setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {
