@@ -60,5 +60,6 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         binding.toolboxView.touchSender = {
             binding.epubView.sendTouchEvent(it)
         }
+        setNavigationBarColor(R.color.colorPrimaryDark)
     }
 }

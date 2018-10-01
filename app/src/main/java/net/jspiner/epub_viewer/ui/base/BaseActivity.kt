@@ -4,7 +4,9 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.annotation.CallSuper
+import android.support.annotation.ColorRes
 import android.support.annotation.LayoutRes
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
@@ -90,5 +92,9 @@ abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel
     fun getNavigationBarHeight(): Int {
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return resources.getDimensionPixelSize(resourceId)
+    }
+
+    fun setNavigationBarColor(@ColorRes colorRes: Int) {
+        window.navigationBarColor = ContextCompat.getColor(this, colorRes)
     }
 }
