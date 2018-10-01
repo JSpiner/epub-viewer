@@ -57,5 +57,8 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
                     init()
                 }
             }).check()
+        binding.toolboxView.touchSender = {
+            binding.epubView.sendTouchEvent(it)
+        }
     }
 }

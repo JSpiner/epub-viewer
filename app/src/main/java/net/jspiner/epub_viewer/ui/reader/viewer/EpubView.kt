@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
+import android.view.MotionEvent
 import io.reactivex.disposables.Disposable
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
@@ -25,6 +26,12 @@ class EpubView @JvmOverloads constructor(
         subscribe()
         initPager()
     }
+
+    fun sendTouchEvent(ev: MotionEvent) {
+        super.dispatchTouchEvent(ev)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent?) =  true
 
     private fun subscribe() {
         viewModel.getCurrentSpineItem()
