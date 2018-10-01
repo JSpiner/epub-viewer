@@ -59,6 +59,8 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
                     }
                 }
             )
+            webView.isHapticFeedbackEnabled = false
+            webView.setOnLongClickListener { true }
         }
     }
 
