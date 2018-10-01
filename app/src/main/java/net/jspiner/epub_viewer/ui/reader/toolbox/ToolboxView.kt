@@ -4,6 +4,10 @@ import android.content.Context
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewToolboxBinding
 import net.jspiner.epub_viewer.ui.base.BaseView
@@ -17,11 +21,20 @@ class ToolboxView @JvmOverloads constructor(
     private lateinit var startTouchPoint: PointF
     private lateinit var startTouchEvent: MotionEvent
     private val CLICK_DISTANCE_LIMIT = 10
+    private val ANIMATION_DURATION = 250L
     private var toolboxClickable = true
     var touchSender: (MotionEvent) -> Unit = { }
 
-    init {
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
         subscribe()
+        binding.root.setPadding(
+            0,
+            getActivity().getStatusBarHeight(),
+            0,
+            getActivity().getNavigationBarHeight()
+        )
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {
@@ -70,15 +83,51 @@ class ToolboxView @JvmOverloads constructor(
     private fun subscribe() {
         viewModel.getToolboxVisible()
             .subscribe { isVisible ->
-                with(getActivity()) {
-                    if (isVisible) {
-                        showStatusBar()
-                        showNavigationBar()
-                    } else {
-                        hideStatusBar()
-                        hideNavigationBar()
-                    }
-                }
+                if (isVisible) showWindow() else hideWindow()
             }
+    }
+
+    private fun showWindow() {
+        with(getActivity()) {
+            showStatusBar()
+            showNavigationBar()
+        }
+
+        AnimationBuilder.builder()
+            .alphaAnimation(0f, 1f)
+            .duration(ANIMATION_DURATION)
+            .interpolator(DecelerateInterpolator())
+            .targetView(binding.root)
+            .onStart { binding.root.visibility = View.VISIBLE }
+            .start()
+
+        AnimationBuilder.builder()
+            .translateAnimation(0f, 0f, 50f, 0f)
+            .duration(ANIMATION_DURATION)
+            .interpolator(DecelerateInterpolator())
+            .targetView(binding.bottomToolbox)
+            .start()
+    }
+
+    private fun hideWindow() {
+        with(getActivity()) {
+            hideStatusBar()
+            hideNavigationBar()
+        }
+
+        AnimationBuilder.builder()
+            .alphaAnimation(1f, 0f)
+            .duration(ANIMATION_DURATION)
+            .interpolator(AccelerateInterpolator())
+            .targetView(binding.root)
+            .onEnd { binding.root.visibility = View.INVISIBLE }
+            .start()
+
+        AnimationBuilder.builder()
+            .translateAnimation(0f, 0f, 0f, 100f)
+            .duration(ANIMATION_DURATION)
+            .interpolator(AccelerateInterpolator())
+            .targetView(binding.bottomToolbox)
+            .start()
     }
 }

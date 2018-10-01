@@ -29,6 +29,10 @@ android {
     dataBinding {
         enabled = true
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -44,6 +48,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:2.2.0"
     implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
     implementation 'gun0912.ted:tedpermission-rx2:2.2.2'
+    implementation 'net.jspiner.animationbuilder:animationbuilder:0.0.1'
 }
 
 jacoco {

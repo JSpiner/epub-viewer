@@ -81,4 +81,14 @@ abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
     }
+
+    fun getStatusBarHeight(): Int {
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
+    }
+
+    fun getNavigationBarHeight(): Int {
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return resources.getDimensionPixelSize(resourceId)
+    }
 }
