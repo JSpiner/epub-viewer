@@ -17,10 +17,11 @@ class ReaderViewModel : BaseViewModel() {
 
     private lateinit var file: File
     private lateinit var pageInfo: PageInfo
+    private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
+
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val pageSubject: BehaviorSubject<Int> = BehaviorSubject.createDefault(1)
-    private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -57,17 +58,14 @@ class ReaderViewModel : BaseViewModel() {
         }
     }
 
-    fun getCurrentSpineItem(): Observable<ItemRef> {
-        return spineSubject
-    }
+    fun getCurrentSpineItem(): Observable<ItemRef> = spineSubject
 
     fun navigateToPoint(navPoint: NavPoint) {
         val itemRef = navPointLocationMap[navPoint.id]
 
         if (itemRef != null) {
             spineSubject.onNext(itemRef)
-        }
-        else {
+        } else {
             throw RuntimeException("해당 navPoint 를 찾을 수 없음 id : $navPoint")
         }
     }
@@ -83,9 +81,7 @@ class ReaderViewModel : BaseViewModel() {
         throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $itemRef")
     }
 
-    fun setToolboxVisible(isVisible: Boolean) {
-        toolboxShowSubject.onNext(isVisible)
-    }
+    fun setToolboxVisible(isVisible: Boolean) = toolboxShowSubject.onNext(isVisible)
 
     fun getToolboxVisible() = toolboxShowSubject
 
@@ -94,7 +90,6 @@ class ReaderViewModel : BaseViewModel() {
     }
 
     fun getPageInfo() = pageInfo
-    
-    fun getCurrentPage(): Observable<Int> = pageSubject
 
+    fun getCurrentPage(): Observable<Int> = pageSubject
 }
