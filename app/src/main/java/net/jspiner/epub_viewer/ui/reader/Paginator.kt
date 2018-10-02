@@ -13,6 +13,8 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.SingleSubject
 import net.jspiner.epub_viewer.dto.Epub
+import net.jspiner.epub_viewer.dto.Page
+import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.util.onLayoutLoaded
 import net.jspiner.epubstream.dto.ItemRef
 import java.io.File
@@ -24,7 +26,7 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
     private val deviceWidth: Int by lazy { context.resources.displayMetrics.widthPixels }
     private val deviceHeight: Int by lazy { context.resources.displayMetrics.heightPixels }
 
-    fun calculatePage(): Single<Int> {
+    fun calculatePage(): Single<PageInfo> {
         return Observable.fromIterable(extractedEpub.opf.spine.itemrefs.toList())
             .toFlowable(BackpressureStrategy.BUFFER)
             .parallel(WORKER_NUM)
@@ -32,8 +34,8 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
             .map { toManifestItemPair(it) }
             .map { measurePageInWebView(it) }
             .sequential()
-            .reduce { height1: Int, height2: Int -> height1 + height2 }
-            .toSingle()
+            .toMap({ it.first.idRef }, { it.second })
+            .map { pageMap -> PageInfo.create(pageMap) }
     }
 
     private fun toManifestItemPair(itemRef: ItemRef): Pair<ItemRef, File> {
@@ -41,22 +43,26 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
 
         for (item in manifestItemList) {
             if (item.id == itemRef.idRef) {
-                return Pair(itemRef, extractedEpub.extractedDirectory.resolve(item.href))
+                return itemRef to extractedEpub.extractedDirectory.resolve(item.href)
             }
         }
         throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $itemRef")
     }
 
-    private fun measurePageInWebView(pair: Pair<ItemRef, File>): Int {
-        val contentHeightSubject = SingleSubject.create<Int>()
+    private fun measurePageInWebView(pair: Pair<ItemRef, File>): Pair<ItemRef, Page> {
+        fun heightToPageNum(height: Long) = Math.ceil(height.toDouble() / deviceHeight.toDouble()).toInt()
+
+        val itemRef = pair.first
+        val fileUrl = pair.second.toURI().toURL().toString()
+        val contentHeightSubject = SingleSubject.create<Long>()
 
         return Single.create<WebView> { emitter -> emitter.onSuccess(WebView(context)) }
-            .doOnSuccess { webView ->
-                setUpWebView(webView)
-                addJavascriptCallback(webView, contentHeightSubject)
-            }
-            .doOnSuccess { it.loadUrl(pair.second.toURI().toURL().toString()) }
-            .zipWith(contentHeightSubject, BiFunction { _: WebView, t2: Int -> t2 })
+            .doOnSuccess { setUpWebView(it) }
+            .doOnSuccess { addJavascriptCallback(it, contentHeightSubject) }
+            .doOnSuccess { it.loadUrl(fileUrl) }
+            .zipWith(contentHeightSubject, BiFunction { _: WebView, height: Long -> height })
+            .map { height -> Page(height, heightToPageNum(height)) }
+            .map { page -> itemRef to page }
             .subscribeOn(AndroidSchedulers.mainThread())
             .blockingGet()
     }
@@ -82,12 +88,12 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
         }
     }
 
-    private fun addJavascriptCallback(webView: WebView, subject: SingleSubject<Int>) {
+    private fun addJavascriptCallback(webView: WebView, subject: SingleSubject<Long>) {
         class AndroidBridge {
             @JavascriptInterface
-            fun resize(height: Int) {
+            fun resize(height: Long) {
                 val webViewHeight = height * context.resources.displayMetrics.density
-                subject.onSuccess(webViewHeight.toInt())
+                subject.onSuccess(webViewHeight.toLong())
             }
         }
         webView.addJavascriptInterface(AndroidBridge(), "AndroidFunction")
