@@ -1,7 +1,6 @@
 package net.jspiner.epub_viewer.ui.reader
 
 import android.content.Context
-import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -15,7 +14,6 @@ import io.reactivex.subjects.SingleSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.Page
 import net.jspiner.epub_viewer.dto.PageInfo
-import net.jspiner.epub_viewer.util.onLayoutLoaded
 import net.jspiner.epubstream.dto.ItemRef
 import java.io.File
 
@@ -80,12 +78,7 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
                 webView.loadUrl("javascript:AndroidFunction.resize(document.body.scrollHeight)")
             }
         }
-        webView.onLayoutLoaded {
-            val widthSpec = View.MeasureSpec.makeMeasureSpec(deviceWidth, View.MeasureSpec.EXACTLY)
-            val heightSpec = View.MeasureSpec.makeMeasureSpec(deviceHeight, View.MeasureSpec.EXACTLY)
-            webView.measure(widthSpec, heightSpec)
-            webView.layout(0, 0, deviceWidth, deviceHeight)
-        }
+        webView.layout(0, 0, deviceWidth, deviceHeight)
     }
 
     private fun addJavascriptCallback(webView: WebView, subject: SingleSubject<Long>) {
