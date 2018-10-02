@@ -19,6 +19,7 @@ class ReaderViewModel : BaseViewModel() {
     private lateinit var pageInfo: PageInfo
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
+    private val pageSubject: BehaviorSubject<Int> = BehaviorSubject.createDefault(1)
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     fun setEpubFile(file: File) {
@@ -91,4 +92,9 @@ class ReaderViewModel : BaseViewModel() {
     fun setPageInfo(pageInfo: PageInfo) {
         this.pageInfo = pageInfo
     }
+
+    fun getPageInfo() = pageInfo
+    
+    fun getCurrentPage(): Observable<Int> = pageSubject
+
 }
