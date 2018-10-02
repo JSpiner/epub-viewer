@@ -41,27 +41,37 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     }
 
     private fun init() {
+        initViews()
+
         viewModel.setEpubFile(epubFile)
+        requestPermission()
+    }
+
+    private fun initViews() {
+        binding.toolboxView.touchSender = { binding.epubView.sendTouchEvent(it) }
+        setNavigationBarColor(R.color.colorPrimaryDark)
+    }
+
+    private fun requestPermission() {
         TedPermission.with(this)
             .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
-                    viewModel.extractEpub(cacheDir)
-                        .toSingleDefault(0)
-                        .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
-                        .doOnSuccess { viewModel.setPageInfo(it) }
-                        .doOnSuccess { viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[0]) }
-                        .subscribeOn(Schedulers.computation())
-                        .subscribe()
+                    loadEpub()
                 }
 
                 override fun onPermissionDenied(list: MutableList<String>?) {
-                    init()
-                }
-            }).check()
-        binding.toolboxView.touchSender = {
-            binding.epubView.sendTouchEvent(it)
-        }
-        setNavigationBarColor(R.color.colorPrimaryDark)
+                    requestPermission()
+            }
+        }).check()
+    }
+
+    private fun loadEpub() {viewModel.extractEpub(cacheDir)
+        .toSingleDefault(0)
+        .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
+        .doOnSuccess { viewModel.setPageInfo(it) }
+        .doOnSuccess { viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[0]) }
+        .subscribeOn(Schedulers.computation())
+        .subscribe()
     }
 }
