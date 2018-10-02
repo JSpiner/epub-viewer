@@ -28,7 +28,7 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
         return Observable.fromIterable(extractedEpub.opf.spine.itemrefs.toList())
             .toFlowable(BackpressureStrategy.BUFFER)
             .parallel(WORKER_NUM)
-            .runOn(Schedulers.io())
+            .runOn(Schedulers.computation())
             .map { toManifestItemPair(it) }
             .map { measurePageInWebView(it) }
             .sequential()
