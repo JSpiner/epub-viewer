@@ -19,7 +19,7 @@ import java.io.File
 
 class Paginator(val context: Context, val extractedEpub: Epub) {
 
-    private val WORKER_NUM = 10
+    private val WORKER_NUM = 8
 
     private val deviceWidth: Int by lazy { context.resources.displayMetrics.widthPixels }
     private val deviceHeight: Int by lazy { context.resources.displayMetrics.heightPixels }
