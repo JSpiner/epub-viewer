@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewToolboxBinding
@@ -86,6 +87,12 @@ class ToolboxView @JvmOverloads constructor(
         viewModel.getToolboxVisible()
             .subscribe { isVisible ->
                 if (isVisible) showWindow() else hideWindow()
+            }
+        viewModel.getCurrentPage()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { currentPage ->
+                val pageInfo = viewModel.getPageInfo()
+                binding.pageDisplay.text = "$currentPage / ${pageInfo.allPage}"
             }
     }
 
