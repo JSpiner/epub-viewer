@@ -4,6 +4,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import net.jspiner.epub_viewer.dto.Epub
+import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
@@ -15,6 +16,7 @@ class ReaderViewModel : BaseViewModel() {
     val extractedEpub: Epub = Epub()
 
     private lateinit var file: File
+    private lateinit var pageInfo: PageInfo
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
@@ -86,4 +88,7 @@ class ReaderViewModel : BaseViewModel() {
 
     fun getToolboxVisible() = toolboxShowSubject
 
+    fun setPageInfo(pageInfo: PageInfo) {
+        this.pageInfo = pageInfo
+    }
 }

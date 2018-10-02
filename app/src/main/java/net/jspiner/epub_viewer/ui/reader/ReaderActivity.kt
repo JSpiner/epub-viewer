@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityReaderBinding
 import net.jspiner.epub_viewer.ui.base.BaseActivity
@@ -46,11 +47,12 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .setPermissionListener(object : PermissionListener {
                 override fun onPermissionGranted() {
                     viewModel.extractEpub(cacheDir)
-                        .subscribe {
-                            viewModel.navigateToPoint(
-                                viewModel.extractedEpub.toc.navMap.navPoints[0]
-                            )
-                        }
+                        .toSingleDefault(0)
+                        .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
+                        .doOnSuccess { viewModel.setPageInfo(it) }
+                        .doOnSuccess { viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[0]) }
+                        .subscribeOn(Schedulers.computation())
+                        .subscribe()
                 }
 
                 override fun onPermissionDenied(list: MutableList<String>?) {

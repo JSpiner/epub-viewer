@@ -5,6 +5,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.view.MotionEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
@@ -36,6 +37,7 @@ class EpubView @JvmOverloads constructor(
     private fun subscribe() {
         viewModel.getCurrentSpineItem()
             .map { viewModel.toManifestItem(it) }
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe { setSpineFile(it) }
     }
 
