@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
 import io.reactivex.subjects.CompletableSubject
+import net.jspiner.epub_viewer.ui.common.LoadingDialog
 import net.jspiner.epub_viewer.util.LifecycleTransformer
 import net.jspiner.epub_viewer.util.initLazy
 
@@ -27,6 +28,8 @@ abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel
     val viewModel: ViewModel by lazy { createViewModel() }
 
     private val lifecycleSubject: CompletableSubject by lazy { CompletableSubject.create() }
+
+    private val loadingDialog by lazy { LoadingDialog(this) }
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,4 +100,9 @@ abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel
     fun setNavigationBarColor(@ColorRes colorRes: Int) {
         window.navigationBarColor = ContextCompat.getColor(this, colorRes)
     }
+
+    fun showLoading() = loadingDialog.show()
+
+    fun hideLoading() = loadingDialog.hide()
+
 }

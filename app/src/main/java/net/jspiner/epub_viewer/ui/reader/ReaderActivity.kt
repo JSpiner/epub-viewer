@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityReaderBinding
@@ -62,16 +63,20 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
 
                 override fun onPermissionDenied(list: MutableList<String>?) {
                     requestPermission()
-            }
-        }).check()
+                }
+            }).check()
     }
 
-    private fun loadEpub() {viewModel.extractEpub(cacheDir)
-        .toSingleDefault(0)
-        .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
-        .doOnSuccess { viewModel.setPageInfo(it) }
-        .doOnSuccess { viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[0]) }
-        .subscribeOn(Schedulers.computation())
-        .subscribe()
+    private fun loadEpub() {
+        viewModel.extractEpub(cacheDir)
+            .toSingleDefault(0)
+            .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
+            .doOnSuccess { viewModel.setPageInfo(it) }
+            .doOnSuccess { viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[0]) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { showLoading() }
+            .doOnSuccess { hideLoading() }
+            .subscribe()
     }
 }
