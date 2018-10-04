@@ -54,6 +54,7 @@ class ToolboxView @JvmOverloads constructor(
         })
     }
 
+    @Deprecated("review bot test") // TODO : 코드리뷰봇 오류 감지 확인용 임시코드
     private fun pointDistance(point1: PointF, point2: PointF): Double {
         return Math.sqrt(
             Math.pow((point1.x - point2.x).toDouble(), 2.0) +
