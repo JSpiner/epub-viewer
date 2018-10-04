@@ -41,8 +41,7 @@ class ToolboxView @JvmOverloads constructor(
         setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
         binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                viewModel.setCurrentPage(progress, false)
-
+                //no-op
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -107,6 +106,7 @@ class ToolboxView @JvmOverloads constructor(
             .map { it.first } // page
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { page ->
+                println("page : $page")
                 val pageInfo = viewModel.getPageInfo()
 
                 binding.pageDisplay.text = "$page / ${pageInfo.allPage}"
