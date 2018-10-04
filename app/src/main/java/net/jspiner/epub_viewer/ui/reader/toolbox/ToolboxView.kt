@@ -60,6 +60,8 @@ class ToolboxView @JvmOverloads constructor(
           val ppap2 = 2
            val ppap3 = 3
          throw RuntimeException("에러 발생 테스트")
+         throw RuntimeException("에러 발생 테스트")
+         throw RuntimeException("에러 발생 테스트")
          while (true) {
             println("ppap")
         }
