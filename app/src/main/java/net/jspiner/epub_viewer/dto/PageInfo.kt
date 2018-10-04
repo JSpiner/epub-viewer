@@ -3,22 +3,22 @@ package net.jspiner.epub_viewer.dto
 data class PageInfo(
     val deviceHeight: Long,
     val allPage: Int,
-    val spinePageMap: MutableMap<String, Page> = HashMap()
+    val spinePageList: List<Page> = ArrayList()
 ) {
 
     companion object {
-        fun create(spinePageMap: MutableMap<String, Page>): PageInfo {
+        fun create(spinePageList: List<Page>): PageInfo {
             var allPage = 0
             var allHeight = 0L
 
-            for (page in spinePageMap) {
-                allPage += page.value.page
-                allHeight += page.value.height
+            for (page in spinePageList) {
+                allPage += page.page
+                allHeight += page.height
             }
             return PageInfo(
                 allHeight,
                 allPage,
-                spinePageMap
+                spinePageList
             )
         }
     }

@@ -25,7 +25,9 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
     private val deviceHeight: Int by lazy { context.resources.displayMetrics.heightPixels }
 
     fun calculatePage(): Single<PageInfo> {
-        return Observable.fromIterable(extractedEpub.opf.spine.itemrefs.toList())
+        val itemRefList = extractedEpub.opf.spine.itemrefs.toList()
+
+        return Observable.fromIterable(itemRefList)
             .toFlowable(BackpressureStrategy.BUFFER)
             .parallel(WORKER_NUM)
             .runOn(Schedulers.computation())
@@ -33,7 +35,8 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
             .map { measurePageInWebView(it) }
             .sequential()
             .toMap({ it.first.idRef }, { it.second })
-            .map { pageMap -> PageInfo.create(pageMap) }
+            .map { toIndexedList(itemRefList, it) }
+            .map { PageInfo.create(it) }
     }
 
     private fun toManifestItemPair(itemRef: ItemRef): Pair<ItemRef, File> {
@@ -90,5 +93,13 @@ class Paginator(val context: Context, val extractedEpub: Epub) {
             }
         }
         webView.addJavascriptInterface(AndroidBridge(), "AndroidFunction")
+    }
+
+    private fun toIndexedList(itemRefList: List<ItemRef>, it: Map<String, Page>): ArrayList<Page> {
+        val pageList = ArrayList<Page>()
+        for (itemRef in itemRefList) {
+            pageList.add(it[itemRef.idRef]!!)
+        }
+        return pageList
     }
 }
