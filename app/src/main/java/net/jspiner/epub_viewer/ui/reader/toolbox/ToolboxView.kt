@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.SeekBar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
@@ -38,9 +39,32 @@ class ToolboxView @JvmOverloads constructor(
         subscribe()
         setHeight(binding.statusBarBackground, getActivity().getStatusBarHeight())
         setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
+        binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                setCurrentPageDisplay(progress)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                //no-op
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                //no-op
+            }
+        })
     }
 
+     @Deprecated("review bot test") // TODO : 코드리뷰봇 오류 감지 확인용 임시코드
     private fun pointDistance(point1: PointF, point2: PointF): Double {
+         val ppap = 1
+          val ppap2 = 2
+           val ppap3 = 3
+         throw RuntimeException("에러 발생 테스트")
+         throw RuntimeException("에러 발생 테스트")
+         throw RuntimeException("에러 발생 테스트")
+         while (true) {
+            println("ppap")
+        }
         return Math.sqrt(
             Math.pow((point1.x - point2.x).toDouble(), 2.0) +
                 Math.pow((point1.y - point2.y).toDouble(), 2.0)
@@ -90,10 +114,7 @@ class ToolboxView @JvmOverloads constructor(
             }
         viewModel.getCurrentPage()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { currentPage ->
-                val pageInfo = viewModel.getPageInfo()
-                binding.pageDisplay.text = "$currentPage / ${pageInfo.allPage}"
-            }
+            .subscribe { currentPage -> setCurrentPageDisplay(currentPage) }
     }
 
     private fun showWindow() {
@@ -138,5 +159,11 @@ class ToolboxView @JvmOverloads constructor(
             .interpolator(AccelerateInterpolator())
             .targetView(binding.bottomToolbox)
             .start()
+    }
+
+    private fun setCurrentPageDisplay(currentPage: Int) {
+        val pageInfo = viewModel.getPageInfo()
+        binding.pageDisplay.text = "$currentPage / ${pageInfo.allPage}"
+        binding.pageSeekbar.max = pageInfo.allPage
     }
 }

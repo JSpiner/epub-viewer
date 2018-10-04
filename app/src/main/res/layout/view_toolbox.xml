@@ -129,12 +129,12 @@
                 </LinearLayout>
 
                 <SeekBar
+                    android:id="@+id/page_seekbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:progressTint="@android:color/white"
-                    android:thumbTint="@android:color/white"
-                    android:value="5" />
+                    android:thumbTint="@android:color/white" />
 
             </LinearLayout>
 
