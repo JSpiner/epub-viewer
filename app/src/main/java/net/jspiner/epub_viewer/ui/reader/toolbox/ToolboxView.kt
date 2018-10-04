@@ -59,7 +59,8 @@ class ToolboxView @JvmOverloads constructor(
          val ppap = 1
           val ppap2 = 2
            val ppap3 = 3
-        while (true) {
+         throw RuntimeException("에러 발생 테스트")
+         while (true) {
             println("ppap")
         }
         return Math.sqrt(
