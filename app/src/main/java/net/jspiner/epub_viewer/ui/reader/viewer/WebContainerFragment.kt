@@ -14,6 +14,8 @@ import java.io.File
 class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderViewModel>() {
 
     private var scrollStatusSubject = BehaviorSubject.createDefault(ScrollStatus.REACHED_TOP)
+    private var scrollPositionSubject = BehaviorSubject.createDefault(0)
+    private val epubWebClient by lazy { EpubWebClient() }
 
     companion object {
         fun newInstance(): WebContainerFragment {
@@ -47,8 +49,9 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
                         else -> ScrollStatus.SCROLLING
                     }
                 )
+                scrollPositionSubject.onNext(webView.scrollY)
             }
-            webView.webViewClient = EpubWebClient()
+            webView.webViewClient = epubWebClient
 
             webView.setOnScrollChangeListener { _, _, _, _, _ -> updateScrollState() }
             webView.viewTreeObserver.addOnGlobalLayoutListener(
@@ -66,6 +69,8 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
 
     fun getScrollState():Observable<ScrollStatus> = scrollStatusSubject
 
+    fun getScrollPosition() = scrollPositionSubject
+
     fun loadFile(file: File) {
         binding.webView.loadUrl(file.toURI().toURL().toString())
     }
@@ -73,5 +78,13 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
     override fun onDestroyView() {
         super.onDestroyView()
         scrollStatusSubject.onComplete()
+    }
+
+    fun scrollAfterLoading(scrollPosition: Int) {
+        if (epubWebClient.isPageFinished) {
+            binding.webView.scrollY = scrollPosition
+        } else {
+            epubWebClient.scrollPositionAfterLoading = scrollPosition
+        }
     }
 }

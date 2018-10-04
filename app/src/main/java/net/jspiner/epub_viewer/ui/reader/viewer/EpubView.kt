@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.view.MotionEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
 import net.jspiner.epub_viewer.ui.base.BaseView
@@ -21,7 +21,7 @@ class EpubView @JvmOverloads constructor(
     private val adapter: EpubPagerAdapter by lazy {
         EpubPagerAdapter((getContext() as AppCompatActivity).supportFragmentManager)
     }
-    private var lastScrollDisposable: Disposable? = null
+    private val lastScrollDisposables by lazy { CompositeDisposable() }
 
     init {
         subscribe()
@@ -39,11 +39,42 @@ class EpubView @JvmOverloads constructor(
             .map { viewModel.toManifestItem(it) }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { setSpineFile(it) }
+
+        viewModel.getCurrentPage()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { setCurrentPage(it) }
     }
 
     private fun setSpineFile(file: File) {
         val currentPosition = binding.verticalViewPager.currentItem
         adapter.getFragmentAt(currentPosition).loadFile(file)
+    }
+
+    private fun setCurrentPage(currentPage: Int) {
+        if (measureCurrentPage() == currentPage) return
+
+        fun getScrollPosition(index: Int): Int {
+            val deviceHeight = context.resources.displayMetrics.heightPixels
+
+            return if (index == 0) {
+                0
+            } else {
+                (currentPage - viewModel.getPageInfo().pageCountSumList[index - 1]) * deviceHeight
+            }
+        }
+
+        var spineIndex = -1
+        var scrollPosition = 0
+        for ((i, pageSum) in viewModel.getPageInfo().pageCountSumList.withIndex()) {
+            if (currentPage + 1 <= pageSum) {
+                spineIndex = i
+                scrollPosition = getScrollPosition(i)
+                break
+            }
+        }
+
+        binding.verticalViewPager.currentItem = spineIndex
+        adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
     }
 
     private fun initPager() {
@@ -56,8 +87,11 @@ class EpubView @JvmOverloads constructor(
             override fun onPageSelected(position: Int) {
                 viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[position])
 
-                lastScrollDisposable?.dispose()
-                adapter.getFragmentAt(position)
+                lastScrollDisposables.clear()
+
+                val currentFragment = adapter.getFragmentAt(position)
+
+                currentFragment
                     .getScrollState()
                     .distinctUntilChanged()
                     .subscribe { scrollStatus ->
@@ -67,12 +101,35 @@ class EpubView @JvmOverloads constructor(
                             ScrollStatus.NO_SCROLL -> binding.verticalViewPager.enableScroll()
                             ScrollStatus.SCROLLING -> binding.verticalViewPager.disableScroll()
                         }
-                    }.let { lastScrollDisposable = it }
+                    }.let { lastScrollDisposables.add(it) }
+
+                currentFragment
+                    .getScrollPosition()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { scrollPosition ->
+                        val measuredPage = measureCurrentPage(scrollPosition)
+                        viewModel.setPageWithoutNavigate(measuredPage)
+                    }.let { lastScrollDisposables.add(it) }
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
                 // no-op
             }
         })
+    }
+
+    private fun measureCurrentPage(): Int {
+        val currentFragment = adapter.getFragmentAt(binding.verticalViewPager.currentItem)
+        return measureCurrentPage(currentFragment.getScrollPosition().value!!)
+    }
+
+    private fun measureCurrentPage(scrollPosition:Int): Int {
+        val spinePosition = binding.verticalViewPager.currentItem
+        val pageInfo = viewModel.getPageInfo()
+        val deviceHeight = context.resources.displayMetrics.heightPixels
+
+        val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]
+
+        return sumUntilPreview + (scrollPosition / deviceHeight)
     }
 }
