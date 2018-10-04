@@ -41,7 +41,7 @@ class ToolboxView @JvmOverloads constructor(
         setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
         binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                setCurrentPageDisplay(progress)
+                viewModel.setPageWithoutNavigate(progress)
 
             }
 
@@ -103,9 +103,12 @@ class ToolboxView @JvmOverloads constructor(
             .subscribe { isVisible ->
                 if (isVisible) showWindow() else hideWindow()
             }
-        viewModel.getCurrentPage()
+        viewModel.getCurrentPageDisplay()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { currentPage -> setCurrentPageDisplay(currentPage) }
+            .subscribe {
+                binding.pageDisplay.text = it
+                binding.pageSeekbar.max = viewModel.getPageInfo().allPage
+            }
     }
 
     private fun showWindow() {
@@ -150,11 +153,5 @@ class ToolboxView @JvmOverloads constructor(
             .interpolator(AccelerateInterpolator())
             .targetView(binding.bottomToolbox)
             .start()
-    }
-
-    private fun setCurrentPageDisplay(currentPage: Int) {
-        val pageInfo = viewModel.getPageInfo()
-        binding.pageDisplay.text = "$currentPage / ${pageInfo.allPage}"
-        binding.pageSeekbar.max = pageInfo.allPage
     }
 }

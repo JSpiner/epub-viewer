@@ -14,6 +14,7 @@ import java.io.File
 class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderViewModel>() {
 
     private var scrollStatusSubject = BehaviorSubject.createDefault(ScrollStatus.REACHED_TOP)
+    private var scrollPositionSubject = BehaviorSubject.createDefault(0)
     private val epubWebClient by lazy { EpubWebClient() }
 
     companion object {
@@ -48,6 +49,7 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
                         else -> ScrollStatus.SCROLLING
                     }
                 )
+                scrollPositionSubject.onNext(webView.scrollY)
             }
             webView.webViewClient = epubWebClient
 
@@ -66,6 +68,8 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
     }
 
     fun getScrollState():Observable<ScrollStatus> = scrollStatusSubject
+
+    fun getScrollPosition() = scrollPositionSubject
 
     fun loadFile(file: File) {
         binding.webView.loadUrl(file.toURI().toURL().toString())
