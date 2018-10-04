@@ -14,4 +14,8 @@ epub file viewer android application
 
 ### Performance
 `BEYOND GOOD AND EVIL.epub` 파일로 worker 갯수별 퍼포먼스 체크를 하였습니다.
+- 테스트 기기 : Galaxy S8
+- 테스트 파일 : `BEYOND GOOD AND EVIL.epub`
+
 ![paginator-performance](./imgs/paginator-performance.png)
+(worker 갯수 별 수행 시간, 단위 : ms)
