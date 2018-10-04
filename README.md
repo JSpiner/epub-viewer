@@ -1,4 +1,5 @@
 # epub-viewer
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c97db62f14704fba823d371f0dc23271)](https://app.codacy.com/app/jspiner/epub-viewer?utm_source=github.com&utm_medium=referral&utm_content=JSpiner/epub-viewer&utm_campaign=Badge_Grade_Settings)
 [![Build Status](https://travis-ci.org/JSpiner/epub-viewer.svg?branch=master)](https://travis-ci.org/JSpiner/epub-viewer)
 
 epub file viewer android application
