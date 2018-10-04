@@ -87,10 +87,14 @@ class ReaderViewModel : BaseViewModel() {
 
     fun setPageInfo(pageInfo: PageInfo) {
         this.pageInfo = pageInfo
-        pageSubject.onNext(1)
+        pageSubject.onNext(0)
     }
 
     fun getPageInfo() = pageInfo
 
     fun getCurrentPage(): Observable<Int> = pageSubject
+
+    fun navigatePage(page: Int) {
+        pageSubject.onNext(page)
+    }
 }

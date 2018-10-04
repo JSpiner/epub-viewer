@@ -42,14 +42,15 @@ class ToolboxView @JvmOverloads constructor(
         binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 setCurrentPageDisplay(progress)
+
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
                 //no-op
             }
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                //no-op
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                viewModel.navigatePage(seekBar.progress)
             }
         })
     }
