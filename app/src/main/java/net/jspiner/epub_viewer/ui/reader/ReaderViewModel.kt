@@ -21,8 +21,7 @@ class ReaderViewModel : BaseViewModel() {
 
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
-    private val pageSubject: BehaviorSubject<Int> = BehaviorSubject.create()
-    private val pageDisplaySubject: BehaviorSubject<String> = BehaviorSubject.create()
+    private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -88,23 +87,15 @@ class ReaderViewModel : BaseViewModel() {
 
     fun setPageInfo(pageInfo: PageInfo) {
         this.pageInfo = pageInfo
-        pageSubject.onNext(0)
+        pageSubject.onNext(0 to false)
     }
 
     fun getPageInfo() = pageInfo
 
-    fun getCurrentPage(): Observable<Int> = pageSubject
+    fun getCurrentPage(): Observable<Pair<Int, Boolean>> = pageSubject
 
-    fun getCurrentPageDisplay(): Observable<String> {
-        return pageDisplaySubject
+    fun setCurrentPage(page: Int, needUpdate: Boolean) {
+        pageSubject.onNext(page to needUpdate)
     }
 
-    fun navigatePage(page: Int) {
-        pageSubject.onNext(page)
-        pageDisplaySubject.onNext("$page / ${getPageInfo().allPage}")
-    }
-
-    fun setPageWithoutNavigate(page: Int) {
-        pageDisplaySubject.onNext("$page / ${getPageInfo().allPage}")
-    }
 }

@@ -41,6 +41,8 @@ class EpubView @JvmOverloads constructor(
             .subscribe { setSpineFile(it) }
 
         viewModel.getCurrentPage()
+            .filter { it.second } // needUpdate
+            .map { it.first } // page
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { setCurrentPage(it) }
     }
@@ -108,7 +110,7 @@ class EpubView @JvmOverloads constructor(
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { scrollPosition ->
                         val measuredPage = measureCurrentPage(scrollPosition)
-                        viewModel.setPageWithoutNavigate(measuredPage)
+                        viewModel.setCurrentPage(measuredPage, false)
                     }.let { lastScrollDisposables.add(it) }
             }
 
