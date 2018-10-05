@@ -56,6 +56,9 @@ class ToolboxView @JvmOverloads constructor(
             onTouchViewTouchEvent(event)
             return@setOnTouchListener true
         }
+        binding.tocBtn.setOnClickListener {
+
+        }
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {

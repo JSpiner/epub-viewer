@@ -91,9 +91,12 @@
                     android:id="@+id/toc_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginStart="8dp"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:paddingEnd="12dp"
+                    android:paddingStart="12dp">
 
                     <ImageView
                         android:layout_width="24dp"
