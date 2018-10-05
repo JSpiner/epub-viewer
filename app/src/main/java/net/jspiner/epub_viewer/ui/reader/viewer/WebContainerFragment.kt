@@ -1,7 +1,8 @@
 package net.jspiner.epub_viewer.ui.reader.viewer
 
-import android.databinding.ViewDataBinding
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewTreeObserver
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -14,9 +15,11 @@ import java.io.File
 
 class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderViewModel>() {
 
+    private val CONTENT_CLEAR_URL = "about:blank"
+
     private var scrollStatusSubject = BehaviorSubject.createDefault(ScrollStatus.REACHED_TOP)
     private var scrollPositionSubject = BehaviorSubject.createDefault(0)
-    private val epubWebClient by lazy { EpubWebClient() }
+    private val epubWebClient by lazy { EpubWebClient(pageFinishCallback) }
 
     companion object {
         fun newInstance(): WebContainerFragment {
@@ -74,6 +77,7 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
 
     fun loadFile(file: File) {
         binding.webView.loadUrl(file.toURI().toURL().toString())
+        binding.loadingView.visibility = VISIBLE
     }
 
     override fun onDestroyView() {
@@ -94,8 +98,15 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
 
         if (!isVisibleToUser) {
             if (isBindingInitialized()) {
-                binding.webView.loadUrl("about:blank")
+                binding.webView.loadUrl(CONTENT_CLEAR_URL)
+                binding.loadingView.visibility = VISIBLE
             }
+        }
+    }
+
+    private val pageFinishCallback: (url: String) -> Unit = { url ->
+        if (url != CONTENT_CLEAR_URL) {
+            binding.loadingView.visibility = GONE
         }
     }
 }
