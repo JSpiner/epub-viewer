@@ -90,9 +90,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="목차"
                     android:textColor="@android:color/white"
-                    android:textSize="12dp"
-                    tools:text="목차" />
+                    android:textSize="12dp" />
 
             </LinearLayout>
 
