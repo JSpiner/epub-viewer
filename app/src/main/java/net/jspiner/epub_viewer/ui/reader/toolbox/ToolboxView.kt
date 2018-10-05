@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.SeekBar
 import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
@@ -38,6 +39,19 @@ class ToolboxView @JvmOverloads constructor(
         subscribe()
         setHeight(binding.statusBarBackground, getActivity().getStatusBarHeight())
         setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
+        binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                //no-op
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                //no-op
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                viewModel.setCurrentPage(seekBar.progress, true)
+            }
+        })
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {
@@ -89,10 +103,15 @@ class ToolboxView @JvmOverloads constructor(
                 if (isVisible) showWindow() else hideWindow()
             }
         viewModel.getCurrentPage()
+            .map { it.first } // page
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { currentPage ->
+            .subscribe { page ->
+                println("page : $page")
                 val pageInfo = viewModel.getPageInfo()
-                binding.pageDisplay.text = "$currentPage / ${pageInfo.allPage}"
+
+                binding.pageDisplay.text = "$page / ${pageInfo.allPage}"
+                binding.pageSeekbar.max = pageInfo.allPage
+                binding.pageSeekbar.progress = page
             }
     }
 
