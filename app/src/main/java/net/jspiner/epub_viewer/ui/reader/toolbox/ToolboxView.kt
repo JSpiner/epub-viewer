@@ -52,6 +52,10 @@ class ToolboxView @JvmOverloads constructor(
                 viewModel.setCurrentPage(seekBar.progress, true)
             }
         })
+        binding.touchView.setOnTouchListener { _, event ->
+            onTouchViewTouchEvent(event)
+            return@setOnTouchListener true
+        }
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {
@@ -67,7 +71,7 @@ class ToolboxView @JvmOverloads constructor(
         return super.performClick()
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    private val onTouchViewTouchEvent: (event: MotionEvent) -> Unit = { event ->
         val currentPoint = PointF(event.x, event.y)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -79,8 +83,7 @@ class ToolboxView @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> {
                 if (!toolboxClickable) {
                     touchSender(event)
-                }
-                else if (pointDistance(currentPoint, startTouchPoint) > CLICK_DISTANCE_LIMIT) {
+                } else if (pointDistance(currentPoint, startTouchPoint) > CLICK_DISTANCE_LIMIT) {
                     toolboxClickable = false
                     touchSender(event)
                 }
@@ -88,13 +91,11 @@ class ToolboxView @JvmOverloads constructor(
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (!toolboxClickable) {
                     touchSender(event)
-                }
-                else {
+                } else {
                     performClick()
                 }
             }
         }
-        return true
     }
 
     private fun subscribe() {
@@ -125,8 +126,8 @@ class ToolboxView @JvmOverloads constructor(
             .alphaAnimation(0f, 1f)
             .duration(ANIMATION_DURATION)
             .interpolator(DecelerateInterpolator())
-            .targetView(binding.root)
-            .onStart { binding.root.visibility = View.VISIBLE }
+            .targetView(binding.toolboxView)
+            .onStart { binding.toolboxView.visibility = View.VISIBLE }
             .start()
 
         AnimationBuilder.builder()
@@ -147,8 +148,8 @@ class ToolboxView @JvmOverloads constructor(
             .alphaAnimation(1f, 0f)
             .duration(ANIMATION_DURATION)
             .interpolator(AccelerateInterpolator())
-            .targetView(binding.root)
-            .onEnd { binding.root.visibility = View.INVISIBLE }
+            .targetView(binding.toolboxView)
+            .onEnd { binding.toolboxView.visibility = View.INVISIBLE }
             .start()
 
         AnimationBuilder.builder()
