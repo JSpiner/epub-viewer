@@ -22,6 +22,7 @@ class EpubView @JvmOverloads constructor(
         EpubPagerAdapter((getContext() as AppCompatActivity).supportFragmentManager)
     }
     private val lastScrollDisposables by lazy { CompositeDisposable() }
+    private var lastSpineIndex = -1
 
     init {
         subscribe()
@@ -112,6 +113,13 @@ class EpubView @JvmOverloads constructor(
                         val measuredPage = measureCurrentPage(scrollPosition)
                         viewModel.setCurrentPage(measuredPage, false)
                     }.let { lastScrollDisposables.add(it) }
+
+                if (lastSpineIndex == position + 1) {
+                    currentFragment.scrollAfterLoading(
+                        viewModel.getPageInfo().spinePageList[position].height.toInt()
+                    )
+                }
+                lastSpineIndex = position
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
