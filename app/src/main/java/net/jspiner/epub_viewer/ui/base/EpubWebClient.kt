@@ -5,7 +5,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 
-class EpubWebClient: WebViewClient() {
+class EpubWebClient(private val pageFinishCallback: (url: String) -> Unit) : WebViewClient() {
 
     var isPageFinished = false
     var scrollPositionAfterLoading = 0
@@ -22,7 +22,7 @@ class EpubWebClient: WebViewClient() {
         isPageFinished = false
     }
 
-    override fun onPageFinished(view: WebView, url: String?) {
+    override fun onPageFinished(view: WebView, url: String) {
         super.onPageFinished(view, url)
         isPageFinished = true
 
@@ -30,5 +30,6 @@ class EpubWebClient: WebViewClient() {
             view.scrollY = scrollPositionAfterLoading
             scrollPositionAfterLoading = 0
         }
+        pageFinishCallback(url)
     }
 }
