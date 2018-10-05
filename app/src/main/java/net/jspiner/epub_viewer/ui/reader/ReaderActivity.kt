@@ -72,7 +72,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .toSingleDefault(0)
             .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
             .doOnSuccess { viewModel.setPageInfo(it) }
-            .doOnSuccess { viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[0]) }
+            .doOnSuccess { viewModel.navigateToSpine(0) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }

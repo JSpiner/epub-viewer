@@ -2,6 +2,7 @@ package net.jspiner.epub_viewer.ui.reader.toolbox
 
 import android.content.Context
 import android.graphics.PointF
+import android.support.v7.widget.PopupMenu
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -52,6 +53,31 @@ class ToolboxView @JvmOverloads constructor(
                 viewModel.setCurrentPage(seekBar.progress, true)
             }
         })
+        binding.touchView.setOnTouchListener { _, event ->
+            onTouchViewTouchEvent(event)
+            return@setOnTouchListener true
+        }
+        binding.tocBtn.setOnClickListener { showTocPopupMenu() }
+    }
+
+    private fun showTocPopupMenu() {
+        val popupMenu = PopupMenu(context, binding.tocBtn)
+        val navPoints = viewModel.extractedEpub.toc.navMap.navPoints
+
+        for (navPoint in navPoints) {
+            popupMenu.menu.add(navPoint.navLabel.text)
+        }
+        popupMenu.setOnMenuItemClickListener {menu ->
+            for (navPoint in navPoints) {
+                if (menu.title == navPoint.navLabel.text) {
+                    viewModel.navigateToPoint(navPoint)
+                    return@setOnMenuItemClickListener true
+                }
+            }
+            throw RuntimeException("navPoint 를 찾을 수 없음 ${menu.title}")
+        }
+
+        popupMenu.show()
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {
@@ -67,7 +93,7 @@ class ToolboxView @JvmOverloads constructor(
         return super.performClick()
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+    private val onTouchViewTouchEvent: (event: MotionEvent) -> Unit = { event ->
         val currentPoint = PointF(event.x, event.y)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -79,8 +105,7 @@ class ToolboxView @JvmOverloads constructor(
             MotionEvent.ACTION_MOVE -> {
                 if (!toolboxClickable) {
                     touchSender(event)
-                }
-                else if (pointDistance(currentPoint, startTouchPoint) > CLICK_DISTANCE_LIMIT) {
+                } else if (pointDistance(currentPoint, startTouchPoint) > CLICK_DISTANCE_LIMIT) {
                     toolboxClickable = false
                     touchSender(event)
                 }
@@ -88,13 +113,11 @@ class ToolboxView @JvmOverloads constructor(
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (!toolboxClickable) {
                     touchSender(event)
-                }
-                else {
+                } else {
                     performClick()
                 }
             }
         }
-        return true
     }
 
     private fun subscribe() {
@@ -125,8 +148,8 @@ class ToolboxView @JvmOverloads constructor(
             .alphaAnimation(0f, 1f)
             .duration(ANIMATION_DURATION)
             .interpolator(DecelerateInterpolator())
-            .targetView(binding.root)
-            .onStart { binding.root.visibility = View.VISIBLE }
+            .targetView(binding.toolboxView)
+            .onStart { binding.toolboxView.visibility = View.VISIBLE }
             .start()
 
         AnimationBuilder.builder()
@@ -147,8 +170,8 @@ class ToolboxView @JvmOverloads constructor(
             .alphaAnimation(1f, 0f)
             .duration(ANIMATION_DURATION)
             .interpolator(AccelerateInterpolator())
-            .targetView(binding.root)
-            .onEnd { binding.root.visibility = View.INVISIBLE }
+            .targetView(binding.toolboxView)
+            .onEnd { binding.toolboxView.visibility = View.INVISIBLE }
             .start()
 
         AnimationBuilder.builder()

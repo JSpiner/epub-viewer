@@ -98,7 +98,7 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun onSpineSelected(position: Int) {
-        viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[position])
+        viewModel.navigateToSpine(position)
 
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment)
