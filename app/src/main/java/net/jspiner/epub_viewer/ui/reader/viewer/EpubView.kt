@@ -22,6 +22,7 @@ class EpubView @JvmOverloads constructor(
         EpubPagerAdapter((getContext() as AppCompatActivity).supportFragmentManager)
     }
     private val lastScrollDisposables by lazy { CompositeDisposable() }
+    private var lastSpineIndex = -1
 
     init {
         subscribe()
@@ -87,37 +88,53 @@ class EpubView @JvmOverloads constructor(
             }
 
             override fun onPageSelected(position: Int) {
-                viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[position])
-
-                lastScrollDisposables.clear()
-
-                val currentFragment = adapter.getFragmentAt(position)
-
-                currentFragment
-                    .getScrollState()
-                    .distinctUntilChanged()
-                    .subscribe { scrollStatus ->
-                        when (scrollStatus) {
-                            ScrollStatus.REACHED_TOP -> binding.verticalViewPager.enableScroll()
-                            ScrollStatus.REACHED_BOTTOM -> binding.verticalViewPager.enableScroll()
-                            ScrollStatus.NO_SCROLL -> binding.verticalViewPager.enableScroll()
-                            ScrollStatus.SCROLLING -> binding.verticalViewPager.disableScroll()
-                        }
-                    }.let { lastScrollDisposables.add(it) }
-
-                currentFragment
-                    .getScrollPosition()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { scrollPosition ->
-                        val measuredPage = measureCurrentPage(scrollPosition)
-                        viewModel.setCurrentPage(measuredPage, false)
-                    }.let { lastScrollDisposables.add(it) }
+              onSpineSelected(position)
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
                 // no-op
             }
         })
+    }
+
+    private fun onSpineSelected(position: Int) {
+        viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[position])
+
+        val currentFragment = adapter.getFragmentAt(position)
+        subscribeScroll(currentFragment)
+
+        if (lastSpineIndex == position + 1) onScrollToPrevSpine(currentFragment, position)
+        lastSpineIndex = position
+    }
+
+    private fun subscribeScroll(fragment: WebContainerFragment) {
+        lastScrollDisposables.clear()
+
+        fragment
+            .getScrollState()
+            .distinctUntilChanged()
+            .subscribe { scrollStatus ->
+                when (scrollStatus) {
+                    ScrollStatus.REACHED_TOP -> binding.verticalViewPager.enableScroll()
+                    ScrollStatus.REACHED_BOTTOM -> binding.verticalViewPager.enableScroll()
+                    ScrollStatus.NO_SCROLL -> binding.verticalViewPager.enableScroll()
+                    ScrollStatus.SCROLLING -> binding.verticalViewPager.disableScroll()
+                }
+            }.let { lastScrollDisposables.add(it) }
+
+        fragment
+            .getScrollPosition()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { scrollPosition ->
+                val measuredPage = measureCurrentPage(scrollPosition)
+                viewModel.setCurrentPage(measuredPage, false)
+            }.let { lastScrollDisposables.add(it) }
+    }
+
+    private fun onScrollToPrevSpine(fragment: WebContainerFragment, position: Int) {
+        fragment.scrollAfterLoading(
+            viewModel.getPageInfo().spinePageList[position].height.toInt()
+        )
     }
 
     private fun measureCurrentPage(): Int {

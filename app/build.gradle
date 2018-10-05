@@ -50,6 +50,7 @@ dependencies {
     implementation 'gun0912.ted:tedpermission-rx2:2.2.2'
     implementation 'net.jspiner.animationbuilder:animationbuilder:0.0.1'
     implementation 'com.airbnb.android:lottie:2.7.0'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
 
 jacoco {

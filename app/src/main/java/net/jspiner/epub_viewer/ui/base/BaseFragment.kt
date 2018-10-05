@@ -27,4 +27,5 @@ abstract class BaseFragment<Binding: ViewDataBinding, ViewModel: BaseViewModel>:
         return binding.root
     }
 
+    protected fun isBindingInitialized() = ::binding.isInitialized
 }
