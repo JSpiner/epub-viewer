@@ -70,7 +70,12 @@ class ReaderViewModel : BaseViewModel() {
 
         for ((index, item) in extractedEpub.opf.spine.itemrefs.withIndex()) {
             if (item.idRef == itemRef.idRef) {
-                setCurrentPage(pageInfo.pageCountSumList[index], true)
+                if (index != 0) {
+                    setCurrentPage(pageInfo.pageCountSumList[index - 1], true)
+                }
+                else {
+                    setCurrentPage(0, true)
+                }
                 return
             }
         }
