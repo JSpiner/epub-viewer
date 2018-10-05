@@ -1,5 +1,6 @@
 package net.jspiner.epub_viewer.ui.reader.viewer
 
+import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import io.reactivex.Observable
@@ -85,6 +86,16 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
             binding.webView.scrollY = scrollPosition
         } else {
             epubWebClient.scrollPositionAfterLoading = scrollPosition
+        }
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+
+        if (!isVisibleToUser) {
+            if (isBindingInitialized()) {
+                binding.webView.loadUrl("about:blank")
+            }
         }
     }
 }
