@@ -2,6 +2,7 @@ package net.jspiner.epub_viewer.ui.reader.toolbox
 
 import android.content.Context
 import android.graphics.PointF
+import android.support.v7.widget.PopupMenu
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -56,9 +57,27 @@ class ToolboxView @JvmOverloads constructor(
             onTouchViewTouchEvent(event)
             return@setOnTouchListener true
         }
-        binding.tocBtn.setOnClickListener {
+        binding.tocBtn.setOnClickListener { showTocPopupMenu() }
+    }
 
+    private fun showTocPopupMenu() {
+        val popupMenu = PopupMenu(context, binding.tocBtn)
+        val navPoints = viewModel.extractedEpub.toc.navMap.navPoints
+
+        for (navPoint in navPoints) {
+            popupMenu.menu.add(navPoint.navLabel.text)
         }
+        popupMenu.setOnMenuItemClickListener {menu ->
+            for (navPoint in navPoints) {
+                if (menu.title == navPoint.navLabel.text) {
+                    viewModel.navigateToPoint(navPoint)
+                    return@setOnMenuItemClickListener true
+                }
+            }
+            throw RuntimeException("navPoint 를 찾을 수 없음 ${menu.title}")
+        }
+
+        popupMenu.show()
     }
 
     private fun pointDistance(point1: PointF, point2: PointF): Double {
