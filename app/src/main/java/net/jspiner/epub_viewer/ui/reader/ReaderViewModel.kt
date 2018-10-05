@@ -66,12 +66,15 @@ class ReaderViewModel : BaseViewModel() {
 
     fun navigateToPoint(navPoint: NavPoint) {
         val itemRef = navPointLocationMap[navPoint.id]
+            ?: throw RuntimeException("해당 navPoint 를 찾을 수 없음 id : $navPoint")
 
-        if (itemRef != null) {
-            spineSubject.onNext(itemRef)
-        } else {
-            throw RuntimeException("해당 navPoint 를 찾을 수 없음 id : $navPoint")
+        for ((index, item) in extractedEpub.opf.spine.itemrefs.withIndex()) {
+            if (item.idRef == itemRef.idRef) {
+                setCurrentPage(pageInfo.pageCountSumList[index], true)
+                return
+            }
         }
+        throw RuntimeException("해당 itemRef 를 찾을 수 없음 id : $itemRef")
     }
 
     fun toManifestItem(itemRef: ItemRef): File {
