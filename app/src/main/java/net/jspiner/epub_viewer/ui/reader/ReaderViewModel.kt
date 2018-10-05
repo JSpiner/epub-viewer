@@ -60,6 +60,10 @@ class ReaderViewModel : BaseViewModel() {
 
     fun getCurrentSpineItem(): Observable<ItemRef> = spineSubject
 
+    fun navigateToSpine(index: Int) {
+        spineSubject.onNext(extractedEpub.opf.spine.itemrefs[index])
+    }
+
     fun navigateToPoint(navPoint: NavPoint) {
         val itemRef = navPointLocationMap[navPoint.id]
 

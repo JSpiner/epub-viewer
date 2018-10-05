@@ -87,7 +87,7 @@ class EpubView @JvmOverloads constructor(
             }
 
             override fun onPageSelected(position: Int) {
-                viewModel.navigateToPoint(viewModel.extractedEpub.toc.navMap.navPoints[position])
+                viewModel.navigateToSpine(position)
 
                 lastScrollDisposables.clear()
 
