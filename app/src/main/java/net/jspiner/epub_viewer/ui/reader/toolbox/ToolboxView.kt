@@ -127,6 +127,7 @@ class ToolboxView @JvmOverloads constructor(
             }
         viewModel.getCurrentPage()
             .map { it.first } // page
+            .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { page ->
                 println("page : $page")
@@ -135,6 +136,20 @@ class ToolboxView @JvmOverloads constructor(
                 binding.pageDisplay.text = "$page / ${pageInfo.allPage}"
                 binding.pageSeekbar.max = pageInfo.allPage
                 binding.pageSeekbar.progress = page
+
+                var currentSpineIndex = -1
+                for ((index, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
+                    currentSpineIndex = index
+                    if (page < sumUntil) break
+                }
+
+                val currentId = viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex].idRef
+                for (navPoint in viewModel.extractedEpub.toc.navMap.navPoints) {
+                    if (navPoint.id == currentId) {
+                        binding.chapterName.text = navPoint.navLabel.text
+                        break
+                    }
+                }
             }
     }
 
