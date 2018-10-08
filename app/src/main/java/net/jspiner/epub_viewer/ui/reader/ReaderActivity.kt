@@ -70,7 +70,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     private fun loadEpub() {
         viewModel.extractEpub(cacheDir)
             .toSingleDefault(0)
-            .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
+            .flatMap { ScrollPaginator(baseContext, viewModel.extractedEpub).calculatePage() }
             .doOnSuccess { viewModel.setPageInfo(it) }
             .doOnSuccess { viewModel.navigateToSpine(0) }
             .subscribeOn(Schedulers.computation())
