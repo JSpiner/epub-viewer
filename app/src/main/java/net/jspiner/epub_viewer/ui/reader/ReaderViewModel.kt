@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
@@ -22,6 +23,7 @@ class ReaderViewModel : BaseViewModel() {
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
+    private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -108,6 +110,14 @@ class ReaderViewModel : BaseViewModel() {
 
     fun setCurrentPage(page: Int, needUpdate: Boolean) {
         pageSubject.onNext(page to needUpdate)
+    }
+
+    fun getViewerType(): Observable<ViewerType> = viewerTypeSubject
+
+    fun getCurrentViewerType() = viewerTypeSubject.value
+
+    fun setViewerType(viewerType: ViewerType) {
+        viewerTypeSubject.onNext(viewerType)
     }
 
 }
