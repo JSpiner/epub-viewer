@@ -17,14 +17,9 @@ import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epubstream.dto.ItemRef
 import java.io.File
 
-class ScrollPaginator(private val context: Context, private val extractedEpub: Epub) {
+class ScrollPaginator(private val context: Context, private val extractedEpub: Epub): Paginator(context, extractedEpub) {
 
-    private val WORKER_NUM = 8
-
-    private val deviceWidth: Int by lazy { context.resources.displayMetrics.widthPixels }
-    private val deviceHeight: Int by lazy { context.resources.displayMetrics.heightPixels }
-
-    fun calculatePage(): Single<PageInfo> {
+    override fun calculatePage(): Single<PageInfo> {
         val itemRefList = extractedEpub.opf.spine.itemrefs.toList()
 
         return Observable.fromIterable(itemRefList)
@@ -37,17 +32,6 @@ class ScrollPaginator(private val context: Context, private val extractedEpub: E
             .toMap({ it.first.idRef }, { it.second })
             .map { toIndexedList(itemRefList, it) }
             .map { PageInfo.create(it) }
-    }
-
-    private fun toManifestItemPair(itemRef: ItemRef): Pair<ItemRef, File> {
-        val manifestItemList = extractedEpub.opf.manifest.items
-
-        for (item in manifestItemList) {
-            if (item.id == itemRef.idRef) {
-                return itemRef to extractedEpub.extractedDirectory.resolve(item.href)
-            }
-        }
-        throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $itemRef")
     }
 
     private fun measurePageInWebView(pair: Pair<ItemRef, File>): Pair<ItemRef, Page> {
@@ -93,13 +77,5 @@ class ScrollPaginator(private val context: Context, private val extractedEpub: E
             }
         }
         webView.addJavascriptInterface(AndroidBridge(), "AndroidFunction")
-    }
-
-    private fun toIndexedList(itemRefList: List<ItemRef>, it: Map<String, Page>): ArrayList<Page> {
-        val pageList = ArrayList<Page>()
-        for (itemRef in itemRefList) {
-            pageList.add(it[itemRef.idRef]!!)
-        }
-        return pageList
     }
 }
