@@ -10,6 +10,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityReaderBinding
+import net.jspiner.epub_viewer.dto.Epub
+import net.jspiner.epub_viewer.dto.ViewerType
+import net.jspiner.epub_viewer.paginator.PagePaginator
+import net.jspiner.epub_viewer.paginator.Paginator
 import net.jspiner.epub_viewer.ui.base.BaseActivity
 import net.jspiner.epub_viewer.paginator.ScrollPaginator
 import java.io.File
@@ -71,7 +75,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     private fun loadEpub() {
         viewModel.extractEpub(cacheDir)
             .toSingleDefault(0)
-            .flatMap { ScrollPaginator(baseContext, viewModel.extractedEpub).calculatePage() }
+            .flatMap { getPaginator(baseContext, viewModel.extractedEpub).calculatePage() }
             .doOnSuccess { viewModel.setPageInfo(it) }
             .doOnSuccess { viewModel.navigateToSpine(0) }
             .subscribeOn(Schedulers.computation())
@@ -79,5 +83,12 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .doOnSubscribe { showLoading() }
             .doOnSuccess { hideLoading() }
             .subscribe()
+    }
+
+    private fun getPaginator(context: Context, epub: Epub): Paginator {
+        return when (viewModel.getCurrentViewerType()!!) {
+            ViewerType.SCROLL -> ScrollPaginator(context, epub)
+            ViewerType.PAGE -> PagePaginator(context, epub)
+        }
     }
 }
