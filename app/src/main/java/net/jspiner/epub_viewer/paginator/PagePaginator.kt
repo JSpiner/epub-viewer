@@ -95,7 +95,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
             .doOnSuccess { addJavascriptCallback(it, contentHeightSubject) }
             .doOnSuccess { it.loadUrl(fileUrl) }
             .zipWith(contentHeightSubject, BiFunction { _: WebView, indexList: List<Long> -> indexList })
-            .map { indexList -> Page(0, indexList.size) }
+            .map { indexList -> Page(0, indexList.size, indexList) }
             .map { page -> itemRef to page }
             .subscribeOn(AndroidSchedulers.mainThread())
             .blockingGet()
