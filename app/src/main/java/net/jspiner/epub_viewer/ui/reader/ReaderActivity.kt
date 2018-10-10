@@ -11,6 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityReaderBinding
 import net.jspiner.epub_viewer.ui.base.BaseActivity
+import net.jspiner.epub_viewer.paginator.ScrollPaginator
 import java.io.File
 
 const val INTENT_KEY_FILE = "intentKeyFile"
