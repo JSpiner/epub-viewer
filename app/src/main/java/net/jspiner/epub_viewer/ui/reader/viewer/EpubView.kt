@@ -84,6 +84,13 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun setCurrentPage(currentPage: Int) {
+        when(viewModel.getCurrentViewerType()!!) {
+            ViewerType.SCROLL -> setCurrentPageInScrollMode(currentPage)
+            ViewerType.PAGE -> setCurrentPageInPageMode(currentPage)
+        }
+    }
+
+    private fun setCurrentPageInScrollMode(currentPage: Int) {
         if (measureCurrentPage() == currentPage) return
 
         fun getScrollPosition(index: Int): Int {
@@ -108,6 +115,10 @@ class EpubView @JvmOverloads constructor(
 
         binding.verticalViewPager.currentItem = spineIndex
         adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
+    }
+
+    private fun setCurrentPageInPageMode(currentPage: Int) {
+        binding.verticalViewPager.currentItem = currentPage
     }
 
     private fun initPager() {
