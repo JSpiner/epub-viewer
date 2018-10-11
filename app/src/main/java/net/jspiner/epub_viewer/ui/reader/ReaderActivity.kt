@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -16,6 +17,7 @@ import net.jspiner.epub_viewer.paginator.PagePaginator
 import net.jspiner.epub_viewer.paginator.Paginator
 import net.jspiner.epub_viewer.ui.base.BaseActivity
 import net.jspiner.epub_viewer.paginator.ScrollPaginator
+import net.jspiner.epub_viewer.ui.etc.EtcActivity
 import java.io.File
 
 const val INTENT_KEY_FILE = "intentKeyFile"
@@ -89,6 +91,25 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         return when (viewModel.getCurrentViewerType()!!) {
             ViewerType.SCROLL -> ScrollPaginator(context, epub)
             ViewerType.PAGE -> PagePaginator(context, epub)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            EtcActivity.REQUEST_CODE -> onEtcActivityResult(resultCode, data!!)
+            else -> RuntimeException("대응하지 못한 requestCode : $requestCode")
+        }
+    }
+
+    private fun onEtcActivityResult(resultCode: Int, data: Intent) {
+        if (resultCode != Activity.RESULT_OK) return
+        val isScrollMode = data.getBooleanExtra(EtcActivity.IS_SCROLL_MODE, true)
+
+        if (isScrollMode) {
+            viewModel.setViewerType(ViewerType.SCROLL)
+        } else {
+            viewModel.setViewerType(ViewerType.PAGE)
         }
     }
 }
