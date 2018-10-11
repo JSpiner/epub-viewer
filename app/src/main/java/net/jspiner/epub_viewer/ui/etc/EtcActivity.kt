@@ -44,8 +44,8 @@ class EtcActivity : BaseActivity<ActivityEtcBinding, EtcViewModel>() {
     }
 
     private fun onTypeChangeClicked() {
-        binding.typeVertical!!.apply { selected = !(selected ?: false) }
-        binding.typeHorizontal!!.apply { selected = !(selected ?: true) }
+        binding.typeVertical!!.apply { selected = !(selected ?: true) }
+        binding.typeHorizontal!!.apply { selected = !(selected ?: false) }
     }
 
     override fun finish() {

@@ -16,7 +16,6 @@
                 android:id="@+id/type_horizontal"
                 layout="@layout/view_viewer_type"
                 app:imageResource="@{@drawable/selector_viewer_horizontal}"
-                app:selected="@{true}"
                 app:text="@{`넘겨보기`}" />
 
             <Space
@@ -27,6 +26,7 @@
                 android:id="@+id/type_vertical"
                 layout="@layout/view_viewer_type"
                 app:imageResource="@{@drawable/selector_viewer_vertical}"
+                app:selected="@{true}"
                 app:text="@{`내려보기`}" />
 
         </LinearLayout>
