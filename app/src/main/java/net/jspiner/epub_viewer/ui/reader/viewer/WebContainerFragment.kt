@@ -80,6 +80,17 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         binding.loadingView.visibility = VISIBLE
     }
 
+    fun loadData(baseUrl:String, rawString: String) {
+        binding.webView.loadDataWithBaseURL(
+            baseUrl,
+            rawString,
+            null,
+            "utf-8",
+            null
+        )
+        binding.loadingView.visibility = VISIBLE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         scrollStatusSubject.onComplete()

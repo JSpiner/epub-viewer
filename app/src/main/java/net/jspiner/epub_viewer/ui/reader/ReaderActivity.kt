@@ -73,11 +73,12 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     }
 
     private fun loadEpub() {
+        viewModel.setViewerType(ViewerType.PAGE)
         viewModel.extractEpub(cacheDir)
             .toSingleDefault(0)
             .flatMap { getPaginator(baseContext, viewModel.extractedEpub).calculatePage() }
             .doOnSuccess { viewModel.setPageInfo(it) }
-            .doOnSuccess { viewModel.navigateToSpine(0) }
+            .doOnSuccess { viewModel.navigateToIndex(0) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }

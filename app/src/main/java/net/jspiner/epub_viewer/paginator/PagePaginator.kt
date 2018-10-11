@@ -59,7 +59,6 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
     }
     var lastIndex = 0;
     while (lastIndex != words.length - 1) {
-
         var pagingIndex = search(pagingIndex, lastIndex, words.length, 150);
         AndroidFunction.result(pagingIndex);
         lastIndex = pagingIndex;
