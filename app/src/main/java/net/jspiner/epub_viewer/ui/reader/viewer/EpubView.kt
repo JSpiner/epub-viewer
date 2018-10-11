@@ -62,6 +62,15 @@ class EpubView @JvmOverloads constructor(
                     ViewerType.PAGE -> adapter.setAllPageCount(pageInfo.allPage)
                 }
             }
+
+        viewModel.getViewerType()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                when(it!!) {
+                    ViewerType.SCROLL -> binding.verticalViewPager.verticalMode()
+                    ViewerType.PAGE -> binding.verticalViewPager.horizontalMode()
+                }
+            }
     }
 
     private fun setSpineFile(file: File) {
