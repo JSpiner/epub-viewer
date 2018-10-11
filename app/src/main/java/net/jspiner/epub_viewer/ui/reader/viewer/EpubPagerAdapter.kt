@@ -8,6 +8,7 @@ import android.view.ViewGroup
 class EpubPagerAdapter(fm: FragmentManager?) : FragmentStatePagerAdapter(fm) {
 
     private val itemMap: HashMap<Int, WebContainerFragment> = HashMap()
+    private var pageCount = 0
 
     fun getFragmentAt(position: Int): WebContainerFragment {
         return itemMap[position] ?: throw RuntimeException("position에 item이 존재하지 않습니다. position : $position")
@@ -29,6 +30,11 @@ class EpubPagerAdapter(fm: FragmentManager?) : FragmentStatePagerAdapter(fm) {
     }
 
     override fun getCount(): Int {
-        return 50
+        return pageCount
+    }
+
+    fun setAllPageCount(allPage: Int) {
+        pageCount = allPage
+        notifyDataSetChanged()
     }
 }

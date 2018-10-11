@@ -46,6 +46,14 @@ class EpubView @JvmOverloads constructor(
             .map { it.first } // page
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { setCurrentPage(it) }
+
+        viewModel.getCurrentPage()
+            .firstOrError()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { _ ->
+                val pageInfo = viewModel.getPageInfo()
+                adapter.setAllPageCount(pageInfo.spinePageList.size)
+            }
     }
 
     private fun setSpineFile(file: File) {
