@@ -14,6 +14,7 @@ import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewToolboxBinding
 import net.jspiner.epub_viewer.ui.base.BaseView
+import net.jspiner.epub_viewer.ui.etc.EtcActivity
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 
 class ToolboxView @JvmOverloads constructor(
@@ -58,6 +59,7 @@ class ToolboxView @JvmOverloads constructor(
             return@setOnTouchListener true
         }
         binding.tocBtn.setOnClickListener { showTocPopupMenu() }
+        binding.moreButton.setOnClickListener { EtcActivity.startActivityForResult(getActivity()) }
     }
 
     private fun showTocPopupMenu() {
