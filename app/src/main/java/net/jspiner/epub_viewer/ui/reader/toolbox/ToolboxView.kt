@@ -133,7 +133,7 @@ class ToolboxView @JvmOverloads constructor(
                 println("page : $page")
                 val pageInfo = viewModel.getPageInfo()
 
-                binding.pageDisplay.text = "$page / ${pageInfo.allPage}"
+                binding.pageDisplay.text = "${page + 1} / ${pageInfo.allPage}"
                 binding.pageSeekbar.max = pageInfo.allPage
                 binding.pageSeekbar.progress = page
 
