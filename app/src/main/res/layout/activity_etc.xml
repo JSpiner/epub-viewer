@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/type_horizontal"
+                layout="@layout/view_viewer_type"
+                app:imageResource="@{@drawable/selector_viewer_horizontal}"
+                app:selected="@{true}"
+                app:text="@{`넘겨보기`}" />
+
+            <Space
+                android:layout_width="15dp"
+                android:layout_height="wrap_content" />
+
+            <include
+                android:id="@+id/type_vertical"
+                layout="@layout/view_viewer_type"
+                app:imageResource="@{@drawable/selector_viewer_vertical}"
+                app:text="@{`내려보기`}" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
