@@ -41,6 +41,7 @@ class EtcActivity : BaseActivity<ActivityEtcBinding, EtcViewModel>() {
     private fun init() {
         binding.typeVertical!!.root.setOnClickListener { onTypeChangeClicked() }
         binding.typeHorizontal!!.root.setOnClickListener { onTypeChangeClicked() }
+        binding.backButton.setOnClickListener { finish() }
     }
 
     private fun onTypeChangeClicked() {
