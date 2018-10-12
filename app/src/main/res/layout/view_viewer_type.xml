@@ -26,8 +26,8 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:selected="@{selected}"
             app:src="@{imageResource}" />
 
