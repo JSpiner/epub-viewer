@@ -160,6 +160,9 @@ class ToolboxView @JvmOverloads constructor(
                         break
                     }
                 }
+
+                // TODO : 압축 풀기 완료 이벤트 감지시점이 없어서 임시로 여기에 추가. 추후 이동 필요
+                binding.title.text = viewModel.extractedEpub.opf.metaData.title
             }
     }
 
