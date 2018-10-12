@@ -74,7 +74,6 @@ class ReaderViewModel : BaseViewModel() {
     }
 
     private fun sendRawFile(index: Int) {
-        println(pageInfo)
         var currentSpineIndex = -1
         for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
             currentSpineIndex = i
@@ -95,7 +94,6 @@ class ReaderViewModel : BaseViewModel() {
         val splitEnd = splitIndexList[innerPageIndex].toInt()
         val splitedText =  body.split(" ").subList(splitStart, splitEnd + 1).joinToString(" ")
         val res = String.format(emptyHtml, splitedText)
-        println(splitedText )
         rawDataSubject.onNext(originFile to res)
     }
 

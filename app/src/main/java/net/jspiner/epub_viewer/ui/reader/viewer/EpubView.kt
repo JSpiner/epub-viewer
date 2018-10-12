@@ -5,8 +5,10 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.AttributeSet
 import android.view.MotionEvent
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
 import net.jspiner.epub_viewer.dto.ViewerType
@@ -52,12 +54,14 @@ class EpubView @JvmOverloads constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { setCurrentPage(it) }
 
-        viewModel.getCurrentPage()
-            .firstOrError()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { _ ->
+        Observable.combineLatest(
+            viewModel.getCurrentPage().take(1),
+            viewModel.getViewerType(),
+            BiFunction { _: Pair<Int, Boolean>, t2 : ViewerType -> t2 }
+        ).observeOn(AndroidSchedulers.mainThread())
+            .subscribe { viewerType ->
                 val pageInfo = viewModel.getPageInfo()
-                when(viewModel.getCurrentViewerType()!!) {
+                when(viewerType) {
                     ViewerType.SCROLL -> adapter.setAllPageCount(pageInfo.spinePageList.size)
                     ViewerType.PAGE -> adapter.setAllPageCount(pageInfo.allPage)
                 }
@@ -129,7 +133,12 @@ class EpubView @JvmOverloads constructor(
             }
 
             override fun onPageSelected(position: Int) {
-              onSpineSelected(position)
+                viewModel.navigateToIndex(position)
+
+                when (viewModel.getCurrentViewerType()) {
+                    ViewerType.SCROLL -> onSpineSelected(position)
+                    ViewerType.PAGE -> this@EpubView.onPageSelected(position)
+                }
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
@@ -139,13 +148,15 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun onSpineSelected(position: Int) {
-        viewModel.navigateToIndex(position)
-
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment)
 
         if (lastSpineIndex == position + 1) onScrollToPrevSpine(currentFragment, position)
         lastSpineIndex = position
+    }
+
+    private fun onPageSelected(position: Int) {
+        viewModel.setCurrentPage(position, false)
     }
 
     private fun subscribeScroll(fragment: WebContainerFragment) {
@@ -167,8 +178,10 @@ class EpubView @JvmOverloads constructor(
             .getScrollPosition()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { scrollPosition ->
-                val measuredPage = measureCurrentPage(scrollPosition)
-                viewModel.setCurrentPage(measuredPage, false)
+                if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
+                    val measuredPage = measureCurrentPage(scrollPosition)
+                    viewModel.setCurrentPage(measuredPage, false)
+                }
             }.let { lastScrollDisposables.add(it) }
     }
 
