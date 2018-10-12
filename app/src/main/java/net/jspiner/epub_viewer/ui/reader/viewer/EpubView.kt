@@ -136,8 +136,8 @@ class EpubView @JvmOverloads constructor(
                 viewModel.navigateToIndex(position)
 
                 when (viewModel.getCurrentViewerType()) {
-                    ViewerType.SCROLL -> onSpineSelected(position)
-                    ViewerType.PAGE -> this@EpubView.onPageSelected(position)
+                    ViewerType.SCROLL -> onPageSelectedInScrollMode(position)
+                    ViewerType.PAGE -> onPageSelectedInPageMode(position)
                 }
             }
 
@@ -147,7 +147,7 @@ class EpubView @JvmOverloads constructor(
         })
     }
 
-    private fun onSpineSelected(position: Int) {
+    private fun onPageSelectedInScrollMode(position: Int) {
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment)
 
@@ -155,7 +155,7 @@ class EpubView @JvmOverloads constructor(
         lastSpineIndex = position
     }
 
-    private fun onPageSelected(position: Int) {
+    private fun onPageSelectedInPageMode(position: Int) {
         viewModel.setCurrentPage(position, false)
     }
 
