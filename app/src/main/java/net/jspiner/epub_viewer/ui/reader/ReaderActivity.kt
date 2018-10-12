@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +11,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityReaderBinding
+import net.jspiner.epub_viewer.dto.Epub
+import net.jspiner.epub_viewer.dto.ViewerType
+import net.jspiner.epub_viewer.paginator.PagePaginator
+import net.jspiner.epub_viewer.paginator.Paginator
 import net.jspiner.epub_viewer.ui.base.BaseActivity
+import net.jspiner.epub_viewer.paginator.ScrollPaginator
+import net.jspiner.epub_viewer.ui.etc.EtcActivity
 import java.io.File
 
 const val INTENT_KEY_FILE = "intentKeyFile"
@@ -46,6 +53,9 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
 
         viewModel.setEpubFile(epubFile)
         requestPermission()
+        viewModel.getViewerType()
+            .skip(1)
+            .subscribe { calculatePage() }
     }
 
     private fun initViews() {
@@ -69,14 +79,48 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
 
     private fun loadEpub() {
         viewModel.extractEpub(cacheDir)
-            .toSingleDefault(0)
-            .flatMap { Paginator(baseContext, viewModel.extractedEpub).calculatePage() }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { showLoading() }
+            .doOnComplete { hideLoading() }
+            .doOnComplete { calculatePage() }
+            .subscribe()
+    }
+
+    private fun calculatePage() {
+        getPaginator(baseContext, viewModel.extractedEpub).calculatePage()
             .doOnSuccess { viewModel.setPageInfo(it) }
-            .doOnSuccess { viewModel.navigateToSpine(0) }
+            .doOnSuccess { viewModel.navigateToIndex(0) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }
             .doOnSuccess { hideLoading() }
             .subscribe()
+    }
+
+    private fun getPaginator(context: Context, epub: Epub): Paginator {
+        return when (viewModel.getCurrentViewerType()!!) {
+            ViewerType.SCROLL -> ScrollPaginator(context, epub)
+            ViewerType.PAGE -> PagePaginator(context, epub)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            EtcActivity.REQUEST_CODE -> onEtcActivityResult(resultCode, data!!)
+            else -> RuntimeException("대응하지 못한 requestCode : $requestCode")
+        }
+    }
+
+    private fun onEtcActivityResult(resultCode: Int, data: Intent) {
+        if (resultCode != Activity.RESULT_OK) return
+        val isScrollMode = data.getBooleanExtra(EtcActivity.IS_SCROLL_MODE, true)
+
+        if (isScrollMode) {
+            viewModel.setViewerType(ViewerType.SCROLL)
+        } else {
+            viewModel.setViewerType(ViewerType.PAGE)
+        }
     }
 }

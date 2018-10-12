@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.reader.ReaderActivity" android:theme="@style/AppTheme.FullScreen"/>
+        <activity android:name=".ui.etc.EtcActivity" />
     </application>
 
 </manifest>

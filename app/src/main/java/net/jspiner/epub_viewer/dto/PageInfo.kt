@@ -30,5 +30,6 @@ data class PageInfo(
 
 data class Page(
     val height: Long,
-    val page: Int
+    val page: Int,
+    val splitIndexList: List<Long> = ArrayList()
 )

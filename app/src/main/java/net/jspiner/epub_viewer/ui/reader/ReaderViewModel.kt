@@ -3,13 +3,17 @@ package net.jspiner.epub_viewer.ui.reader
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
 import net.jspiner.epubstream.dto.NavPoint
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 
 class ReaderViewModel : BaseViewModel() {
 
@@ -20,8 +24,10 @@ class ReaderViewModel : BaseViewModel() {
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
+    private val rawDataSubject = PublishSubject.create<Pair<File, String>>()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
+    private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -60,8 +66,49 @@ class ReaderViewModel : BaseViewModel() {
 
     fun getCurrentSpineItem(): Observable<ItemRef> = spineSubject
 
-    fun navigateToSpine(index: Int) {
-        spineSubject.onNext(extractedEpub.opf.spine.itemrefs[index])
+    fun navigateToIndex(index: Int) {
+        when (getCurrentViewerType()!!) {
+            ViewerType.SCROLL -> spineSubject.onNext(extractedEpub.opf.spine.itemrefs[index])
+            ViewerType.PAGE -> sendRawFile(index)
+        }
+    }
+
+    private fun sendRawFile(index: Int) {
+        var currentSpineIndex = -1
+        for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
+            currentSpineIndex = i
+            if (index < sumUntil) break
+        }
+
+        val originFile = toManifestItem(extractedEpub.opf.spine.itemrefs[currentSpineIndex])
+        val rawString = readFile(originFile)
+        val bodyStart = rawString.indexOf("<body>") + "<body>".length
+        val bodyEnd = rawString.indexOf("</body")
+
+        val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
+        val body = rawString.substring(bodyStart, bodyEnd)
+
+        val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
+        val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
+        val splitStart = if (innerPageIndex ==0) 0 else splitIndexList[innerPageIndex -1].toInt() - 1
+        val splitEnd = splitIndexList[innerPageIndex].toInt()
+        val splitedText =  body.split(" ").subList(splitStart, splitEnd + 1).joinToString(" ")
+        val res = String.format(emptyHtml, splitedText)
+        rawDataSubject.onNext(originFile to res)
+    }
+
+    private fun readFile(file: File): String {
+        return BufferedReader(FileReader(file)).use { br ->
+            val sb = StringBuilder()
+            var line = br.readLine()
+
+            while (line != null) {
+                sb.append(line)
+                sb.append(System.lineSeparator())
+                line = br.readLine()
+            }
+            sb.toString()
+        }
     }
 
     fun navigateToPoint(navPoint: NavPoint) {
@@ -109,5 +156,15 @@ class ReaderViewModel : BaseViewModel() {
     fun setCurrentPage(page: Int, needUpdate: Boolean) {
         pageSubject.onNext(page to needUpdate)
     }
+
+    fun getViewerType(): Observable<ViewerType> = viewerTypeSubject
+
+    fun getCurrentViewerType() = viewerTypeSubject.value
+
+    fun setViewerType(viewerType: ViewerType) {
+        viewerTypeSubject.onNext(viewerType)
+    }
+
+    fun getRawData(): Observable<Pair<File,String>> = rawDataSubject
 
 }
