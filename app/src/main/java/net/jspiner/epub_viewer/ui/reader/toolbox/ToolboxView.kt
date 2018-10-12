@@ -16,7 +16,6 @@ import net.jspiner.epub_viewer.databinding.ViewToolboxBinding
 import net.jspiner.epub_viewer.ui.base.BaseView
 import net.jspiner.epub_viewer.ui.etc.EtcActivity
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
-import java.io.File
 
 class ToolboxView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -66,7 +65,7 @@ class ToolboxView @JvmOverloads constructor(
                 getActivity(),
                 metaData.title,
                 metaData.creator?.creator ?: "",
-                File(metaData.meta?.get("cover"))
+                viewModel.toManifestItem(metaData.meta?.get("cover")!!)
             )
         }
     }

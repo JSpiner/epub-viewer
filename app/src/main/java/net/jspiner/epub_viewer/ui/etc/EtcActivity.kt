@@ -3,6 +3,7 @@ package net.jspiner.epub_viewer.ui.etc
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import com.squareup.picasso.Picasso
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityEtcBinding
 import net.jspiner.epub_viewer.ui.base.BaseActivity
@@ -56,6 +57,9 @@ class EtcActivity : BaseActivity<ActivityEtcBinding, EtcViewModel>() {
     private fun init() {
         binding.title.text = title
         binding.author.text = author
+        Picasso.get()
+            .load(imageFile)
+            .into(binding.bookCover)
 
         binding.typeVertical!!.root.setOnClickListener { onTypeChangeClicked() }
         binding.typeHorizontal!!.root.setOnClickListener { onTypeChangeClicked() }
