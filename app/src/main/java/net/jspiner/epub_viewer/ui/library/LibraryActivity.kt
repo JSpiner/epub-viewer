@@ -1,16 +1,14 @@
 package net.jspiner.epub_viewer.ui.library
 
 import android.os.Bundle
-import android.os.Environment
-import io.reactivex.Completable
+import android.support.v7.widget.GridLayoutManager
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityMainBinding
 import net.jspiner.epub_viewer.ui.base.BaseActivity
-import net.jspiner.epub_viewer.ui.reader.startReaderActivity
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 class LibraryActivity : BaseActivity<ActivityMainBinding, LibraryViewModel>() {
+
+    private val adapter = LibraryAdapter()
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
@@ -34,11 +32,10 @@ class LibraryActivity : BaseActivity<ActivityMainBinding, LibraryViewModel>() {
     }
 
     private fun init() {
-        Completable.timer(1000, TimeUnit.MILLISECONDS)
-            .subscribe {
-                val dummyPath = Environment.getExternalStorageDirectory().path + "/Download/test.epub"
-                startReaderActivity(this, File(dummyPath))
-            }
+        binding.recyclerView.apply {
+            layoutManager = GridLayoutManager(context, 2)
+            adapter = this@LibraryActivity.adapter
+        }
     }
 
 
