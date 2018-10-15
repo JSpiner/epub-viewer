@@ -59,7 +59,15 @@ class ToolboxView @JvmOverloads constructor(
             return@setOnTouchListener true
         }
         binding.tocBtn.setOnClickListener { showTocPopupMenu() }
-        binding.moreButton.setOnClickListener { EtcActivity.startActivityForResult(getActivity()) }
+        binding.moreButton.setOnClickListener {
+            val metaData = viewModel.extractedEpub.opf.metaData
+            EtcActivity.startActivityForResult(
+                getActivity(),
+                metaData.title,
+                metaData.creator?.creator ?: "",
+                viewModel.toManifestItem(metaData.meta?.get("cover")!!)
+            )
+        }
     }
 
     private fun showTocPopupMenu() {
@@ -152,6 +160,9 @@ class ToolboxView @JvmOverloads constructor(
                         break
                     }
                 }
+
+                // TODO : 압축 풀기 완료 이벤트 감지시점이 없어서 임시로 여기에 추가. 추후 이동 필요
+                binding.title.text = viewModel.extractedEpub.opf.metaData.title
             }
     }
 

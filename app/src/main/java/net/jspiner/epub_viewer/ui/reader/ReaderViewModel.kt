@@ -130,14 +130,18 @@ class ReaderViewModel : BaseViewModel() {
     }
 
     fun toManifestItem(itemRef: ItemRef): File {
+        return toManifestItem(itemRef.idRef)
+    }
+
+    fun toManifestItem(id: String): File {
         val manifestItemList = extractedEpub.opf.manifest.items
 
         for (item in manifestItemList) {
-            if (item.id == itemRef.idRef) {
+            if (item.id == id) {
                 return extractedEpub.extractedDirectory.resolve(item.href)
             }
         }
-        throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $itemRef")
+        throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $id")
     }
 
     fun setToolboxVisible(isVisible: Boolean) = toolboxShowSubject.onNext(isVisible)
