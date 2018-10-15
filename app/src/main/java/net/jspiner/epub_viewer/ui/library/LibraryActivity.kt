@@ -1,4 +1,4 @@
-package net.jspiner.epub_viewer.ui.main
+package net.jspiner.epub_viewer.ui.library
 
 import android.os.Bundle
 import android.os.Environment
@@ -10,14 +10,14 @@ import net.jspiner.epub_viewer.ui.reader.startReaderActivity
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
+class LibraryActivity : BaseActivity<ActivityMainBinding, LibraryViewModel>() {
 
     override fun getLayoutId(): Int {
         return R.layout.activity_main
     }
 
-    override fun createViewModel(): MainViewModel {
-        return MainViewModel()
+    override fun createViewModel(): LibraryViewModel {
+        return LibraryViewModel()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
