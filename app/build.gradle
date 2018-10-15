@@ -51,7 +51,6 @@ dependencies {
     implementation 'net.jspiner.animationbuilder:animationbuilder:0.0.1'
     implementation 'com.airbnb.android:lottie:2.7.0'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'com.squareup.picasso:picasso:2.71828'
 }
 
 jacoco {
