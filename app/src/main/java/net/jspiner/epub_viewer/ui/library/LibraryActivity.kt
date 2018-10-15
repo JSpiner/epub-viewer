@@ -7,16 +7,16 @@ import android.support.v7.widget.GridLayoutManager
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
-import net.jspiner.epub_viewer.databinding.ActivityMainBinding
+import net.jspiner.epub_viewer.databinding.ActivityLibraryBinding
 import net.jspiner.epub_viewer.ui.base.BaseActivity
 import java.io.File
 
-class LibraryActivity : BaseActivity<ActivityMainBinding, LibraryViewModel>() {
+class LibraryActivity : BaseActivity<ActivityLibraryBinding, LibraryViewModel>() {
 
     private val adapter = LibraryAdapter()
 
     override fun getLayoutId(): Int {
-        return R.layout.activity_main
+        return R.layout.activity_library
     }
 
     override fun createViewModel(): LibraryViewModel {
