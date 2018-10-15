@@ -5,14 +5,24 @@ import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.databinding.ItemLibraryBinding
+import net.jspiner.epub_viewer.ui.reader.startReaderActivity
 import net.jspiner.epubstream.EpubStream
 import java.io.File
 
 class LibraryViewHolder(val binding: ItemLibraryBinding) : RecyclerView.ViewHolder(binding.root) {
 
     private fun getContext() = binding.root.context!!
+    private lateinit var epubPath: String
+
+    init {
+        binding.root.setOnClickListener {
+            startReaderActivity(getContext(), File(epubPath))
+        }
+    }
 
     fun setData(epubPath: String) {
+        this.epubPath = epubPath
+
         val epubFile = File(epubPath)
         val epubStream = EpubStream(epubFile)
         epubStream.unzip(getContext().cacheDir.resolve(epubFile.name).absolutePath)
