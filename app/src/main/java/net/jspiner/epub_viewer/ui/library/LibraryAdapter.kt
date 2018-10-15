@@ -28,4 +28,8 @@ class LibraryAdapter : RecyclerView.Adapter<LibraryViewHolder>() {
         viewHolder.setData(dataList[position])
     }
 
+    fun setDataList(dataList: ArrayList<String>) {
+        this.dataList.addAll(dataList)
+        notifyDataSetChanged()
+    }
 }
