@@ -19,7 +19,59 @@ epub file viewer android application
     - 중간에 보기 방식을 전환할 때 보던 위치가 반드시 유지될 필요는 없음
 
 ## Structure
-- TODO : 기본 구조 추가
+```
+└── net
+    └── jspiner
+        └── epub_viewer
+            ├── dto
+            │   ├── Epub.kt
+            │   ├── PageInfo.kt
+            │   └── ViewerType.kt
+            ├── paginator
+            │   ├── PagePaginator.kt
+            │   ├── Paginator.kt
+            │   └── ScrollPaginator.kt
+            ├── ui
+            │   ├── base
+            │   │   ├── BaseActivity.kt
+            │   │   ├── BaseFragment.kt
+            │   │   ├── BaseView.kt
+            │   │   ├── BaseViewModel.kt
+            │   │   └── EpubWebClient.kt
+            │   ├── common
+            │   │   └── LoadingDialog.kt
+            │   ├── etc
+            │   │   ├── EtcActivity.kt
+            │   │   └── EtcViewModel.kt
+            │   ├── library
+            │   │   ├── LibraryActivity.kt
+            │   │   ├── LibraryAdapter.kt
+            │   │   ├── LibraryViewHolder.kt
+            │   │   └── LibraryViewModel.kt
+            │   └── reader
+            │       ├── ReaderActivity.kt
+            │       ├── ReaderViewModel.kt
+            │       ├── toolbox
+            │       │   └── ToolboxView.kt
+            │       └── viewer
+            │           ├── EpubLoadingView.kt
+            │           ├── EpubPagerAdapter.kt
+            │           ├── EpubView.kt
+            │           ├── ScrollStatus.kt
+            │           ├── VerticalViewPager.kt
+            │           └── WebContainerFragment.kt
+            └── util
+                ├── BindingAdapter.kt
+                ├── LazyUtil.kt
+                ├── LifecycleTransformer.kt
+                └── ViewUtil.kt
+
+
+```
+- `ui/library` : 서재 페이지
+- `ui/reader` : 뷰어 페이지
+- `ui/etc` : 기타 페이지
+
 
 ## Paginator
 가상의 WebView를 통해 렌더링 될 내용의 길이를 구하고 그를 통해 페이지수를 계산합니다.
