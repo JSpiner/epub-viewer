@@ -5,12 +5,9 @@
 epub file viewer android application
 
 ## Preview
-<img src="./imgs/screenshot-1.jpg" width="200"/>
-<img src="./imgs/screenshot-2.jpg" width="200"/>
-<img src="./imgs/screenshot-3.jpg" width="200"/>
-<br/>
-<img src="./imgs/screenshot-4.jpg" width="200"/>
-<img src="./imgs/screenshot-5.jpg" width="200"/>
+| ![screenshot-1](./imgs/screenshot-1.jpg) | ![screenshot-2](./imgs/screenshot-2.jpg)| ![screenshot-3](./imgs/screenshot-3.jpg) |
+|:---:|:---:|:---:|
+| ![screenshot-4](./imgs/screenshot-4.jpg) | ![screenshot-5](./imgs/screenshot-5.jpg) |  |
 
 ## Spec
 - DRM 없는 EPUB 파일 열람
