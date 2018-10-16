@@ -10,6 +10,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.SeekBar
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
@@ -62,11 +63,12 @@ class ToolboxView @JvmOverloads constructor(
         binding.tocBtn.setOnClickListener { showTocPopupMenu() }
         binding.moreButton.setOnClickListener {
             val metaData = viewModel.extractedEpub.opf.metaData
+            val coverImage = metaData.meta?.get("cover")
             EtcActivity.startActivityForResult(
                 getActivity(),
                 metaData.title,
                 metaData.creator?.creator ?: "",
-                viewModel.toManifestItem(metaData.meta?.get("cover")!!)
+                if (coverImage == null) null else viewModel.toManifestItem(coverImage)
             )
         }
         binding.backButton.setOnClickListener { getActivity().finish() }
