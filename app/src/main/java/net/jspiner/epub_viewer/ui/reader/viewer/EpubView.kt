@@ -43,16 +43,19 @@ class EpubView @JvmOverloads constructor(
         viewModel.getCurrentSpineItem()
             .map { viewModel.toManifestItem(it) }
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { setSpineFile(it) }
 
         viewModel.getRawData()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { setRawData(it.first.toURI().toURL().toString(), it.second) }
 
         viewModel.getCurrentPage()
             .filter { it.second } // needUpdate
             .map { it.first } // page
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { setCurrentPage(it) }
 
         Observable.zip(
@@ -60,6 +63,7 @@ class EpubView @JvmOverloads constructor(
             viewModel.getViewerType(),
             BiFunction { _: PageInfo, t2 : ViewerType -> t2 }
         ).observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { viewerType ->
                 val pageInfo = viewModel.getCurrentPageInfo()
                 when(viewerType) {
@@ -71,6 +75,7 @@ class EpubView @JvmOverloads constructor(
 
         viewModel.getViewerType()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe {
                 when(it!!) {
                     ViewerType.SCROLL -> binding.verticalViewPager.verticalMode()

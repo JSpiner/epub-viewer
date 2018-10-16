@@ -132,6 +132,7 @@ class ToolboxView @JvmOverloads constructor(
 
     private fun subscribe() {
         viewModel.getToolboxVisible()
+            .compose(bindLifecycle())
             .subscribe { isVisible ->
                 if (isVisible) showWindow() else hideWindow()
             }
@@ -139,6 +140,7 @@ class ToolboxView @JvmOverloads constructor(
             .map { it.first } // page
             .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { page ->
                 println("page : $page")
                 val pageInfo = viewModel.getCurrentPageInfo()
