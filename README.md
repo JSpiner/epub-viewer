@@ -5,7 +5,21 @@
 epub file viewer android application
 
 ## Preview
-- TODO : 앱의 기능 설명, 스크린샷 추가
+<img src="./imgs/screenshot-1.jpg" width="200"/>
+<img src="./imgs/screenshot-2.jpg" width="200"/>
+<img src="./imgs/screenshot-3.jpg" width="200"/>
+<br/>
+<img src="./imgs/screenshot-4.jpg" width="200"/>
+<img src="./imgs/screenshot-5.jpg" width="200"/>
+
+## Spec
+- DRM 없는 EPUB 파일 열람
+- EPUB 콘텐츠의 처음부터 끝까지 볼 수 있어야함
+- 뷰어 내에서 EPUB 파일에 포함되어 있는 책 제목, 저자명, 목차 목록 등이 표시되어야함
+- 목차 목록에서 목차 선택 시 해당 위치로 이동이 가능해야함
+- Slider 혹은 Seek bar 형태의 UI를 통한 네비게이션이 가능해야함
+- 스크롤 보기, 페이지 넘겨 보기 방식이 모두 가능해야함
+    - 중간에 보기 방식을 전환할 때 보던 위치가 반드시 유지될 필요는 없음
 
 ## Structure
 - TODO : 기본 구조 추가
