@@ -9,6 +9,7 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.SeekBar
+import android.widget.Toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
@@ -67,6 +68,10 @@ class ToolboxView @JvmOverloads constructor(
                 metaData.creator?.creator ?: "",
                 viewModel.toManifestItem(metaData.meta?.get("cover")!!)
             )
+        }
+        binding.backButton.setOnClickListener { getActivity().finish() }
+        binding.searchButton.setOnClickListener {
+            Toast.makeText(context, "아직 구현되지 않았습니다 :)", Toast.LENGTH_LONG).show()
         }
     }
 
