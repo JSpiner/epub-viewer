@@ -195,7 +195,7 @@ class EpubView @JvmOverloads constructor(
 
     private fun measureCurrentPage(): Int {
         val currentFragment = adapter.getFragmentAt(binding.verticalViewPager.currentItem)
-        return measureCurrentPage(currentFragment.getScrollPosition().value!!)
+        return measureCurrentPage(currentFragment.getScrollPosition().value ?: 0)
     }
 
     private fun measureCurrentPage(scrollPosition:Int): Int {

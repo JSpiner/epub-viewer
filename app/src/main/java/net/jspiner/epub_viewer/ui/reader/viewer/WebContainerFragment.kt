@@ -18,7 +18,7 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
     private val CONTENT_CLEAR_URL = "about:blank"
 
     private var scrollStatusSubject = BehaviorSubject.createDefault(ScrollStatus.REACHED_TOP)
-    private var scrollPositionSubject = BehaviorSubject.createDefault(0)
+    private var scrollPositionSubject = BehaviorSubject.create<Int>()
     private val epubWebClient by lazy { EpubWebClient(pageFinishCallback) }
 
     companion object {
@@ -42,6 +42,8 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         binding.webView.let { webView ->
             fun getContentHeight() = (webView.contentHeight * resources.displayMetrics.density.toDouble()).toInt()
             fun updateScrollState() {
+                if (!epubWebClient.isPageFinished || epubWebClient.scrollPositionAfterLoading != 0) return
+
                 val height = getContentHeight()
                 val webViewHeight = webView.measuredHeight
 
@@ -119,5 +121,6 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         if (url != CONTENT_CLEAR_URL) {
             binding.loadingView.visibility = GONE
         }
+        if (epubWebClient.scrollPositionAfterLoading == 0 && binding.webView.scrollY == 0) scrollPositionSubject.onNext(0)
     }
 }
