@@ -58,13 +58,13 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
         }
     }
     var lastIndex = 0;
-    while (lastIndex != words.length - 1) {
+    while (lastIndex != words.length) {
         var pagingIndex = search(pagingIndex, lastIndex, words.length, 150);
+        if (pagingIndex == words.length - 1) pagingIndex = words.length;
         AndroidFunction.result(pagingIndex);
         lastIndex = pagingIndex;
     }
     AndroidFunction.result(-1);
-
     """.trimIndent()
 
     override fun calculatePage(): Single<PageInfo> {
