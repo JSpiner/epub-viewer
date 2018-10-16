@@ -141,7 +141,7 @@ class ToolboxView @JvmOverloads constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { page ->
                 println("page : $page")
-                val pageInfo = viewModel.getPageInfo()
+                val pageInfo = viewModel.getCurrentPageInfo()
 
                 binding.pageDisplay.text = "${page + 1} / ${pageInfo.allPage}"
                 binding.pageSeekbar.max = pageInfo.allPage

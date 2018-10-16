@@ -20,7 +20,6 @@ class ReaderViewModel : BaseViewModel() {
     val extractedEpub: Epub = Epub()
 
     private lateinit var file: File
-    private lateinit var pageInfo: PageInfo
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
@@ -28,6 +27,7 @@ class ReaderViewModel : BaseViewModel() {
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
     private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
+    private val pageInfoSubject = BehaviorSubject.create<PageInfo>()
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -72,6 +72,7 @@ class ReaderViewModel : BaseViewModel() {
     }
 
     private fun sendRawFile(index: Int) {
+        val pageInfo = getCurrentPageInfo()
         var currentSpineIndex = -1
         for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
             currentSpineIndex = i
@@ -116,7 +117,7 @@ class ReaderViewModel : BaseViewModel() {
         for ((index, item) in extractedEpub.opf.spine.itemrefs.withIndex()) {
             if (item.idRef == itemRef.idRef) {
                 if (index != 0) {
-                    setCurrentPage(pageInfo.pageCountSumList[index - 1], true)
+                    setCurrentPage(getCurrentPageInfo().pageCountSumList[index - 1], true)
                 }
                 else {
                     setCurrentPage(0, true)
@@ -147,11 +148,13 @@ class ReaderViewModel : BaseViewModel() {
     fun getToolboxVisible() = toolboxShowSubject
 
     fun setPageInfo(pageInfo: PageInfo) {
-        this.pageInfo = pageInfo
+        pageInfoSubject.onNext(pageInfo)
         pageSubject.onNext(0 to false)
     }
 
-    fun getPageInfo() = pageInfo
+    fun getCurrentPageInfo() = pageInfoSubject.value!!
+
+    fun getPageInfo(): Observable<PageInfo> = pageInfoSubject
 
     fun getCurrentPage(): Observable<Pair<Int, Boolean>> = pageSubject
 
