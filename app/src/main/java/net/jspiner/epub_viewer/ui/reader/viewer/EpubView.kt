@@ -11,6 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
+import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseView
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
@@ -42,33 +43,39 @@ class EpubView @JvmOverloads constructor(
         viewModel.getCurrentSpineItem()
             .map { viewModel.toManifestItem(it) }
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { setSpineFile(it) }
 
         viewModel.getRawData()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { setRawData(it.first.toURI().toURL().toString(), it.second) }
 
         viewModel.getCurrentPage()
             .filter { it.second } // needUpdate
             .map { it.first } // page
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { setCurrentPage(it) }
 
-        Observable.combineLatest(
-            viewModel.getCurrentPage().take(1),
+        Observable.zip(
+            viewModel.getPageInfo(),
             viewModel.getViewerType(),
-            BiFunction { _: Pair<Int, Boolean>, t2 : ViewerType -> t2 }
+            BiFunction { _: PageInfo, t2 : ViewerType -> t2 }
         ).observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { viewerType ->
-                val pageInfo = viewModel.getPageInfo()
+                val pageInfo = viewModel.getCurrentPageInfo()
                 when(viewerType) {
                     ViewerType.SCROLL -> adapter.setAllPageCount(pageInfo.spinePageList.size)
                     ViewerType.PAGE -> adapter.setAllPageCount(pageInfo.allPage)
                 }
+                binding.verticalViewPager.currentItem = 0
             }
 
         viewModel.getViewerType()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe {
                 when(it!!) {
                     ViewerType.SCROLL -> binding.verticalViewPager.verticalMode()
@@ -103,13 +110,13 @@ class EpubView @JvmOverloads constructor(
             return if (index == 0) {
                 0
             } else {
-                (currentPage - viewModel.getPageInfo().pageCountSumList[index - 1]) * deviceHeight
+                (currentPage - viewModel.getCurrentPageInfo().pageCountSumList[index - 1]) * deviceHeight
             }
         }
 
         var spineIndex = -1
         var scrollPosition = 0
-        for ((i, pageSum) in viewModel.getPageInfo().pageCountSumList.withIndex()) {
+        for ((i, pageSum) in viewModel.getCurrentPageInfo().pageCountSumList.withIndex()) {
             if (currentPage + 1 <= pageSum) {
                 spineIndex = i
                 scrollPosition = getScrollPosition(i)
@@ -188,20 +195,20 @@ class EpubView @JvmOverloads constructor(
     private fun onScrollToPrevSpine(fragment: WebContainerFragment, position: Int) {
         if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
             fragment.scrollAfterLoading(
-                viewModel.getPageInfo().spinePageList[position].height.toInt()
+                viewModel.getCurrentPageInfo().spinePageList[position].height.toInt()
             )
         }
     }
 
     private fun measureCurrentPage(): Int {
         val currentFragment = adapter.getFragmentAt(binding.verticalViewPager.currentItem)
-        return measureCurrentPage(currentFragment.getScrollPosition().value!!)
+        return measureCurrentPage(currentFragment.getScrollPosition().value ?: 0)
     }
 
     private fun measureCurrentPage(scrollPosition:Int): Int {
         return if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
             val spinePosition = binding.verticalViewPager.currentItem
-            val pageInfo = viewModel.getPageInfo()
+            val pageInfo = viewModel.getCurrentPageInfo()
             val deviceHeight = context.resources.displayMetrics.heightPixels
 
             val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]

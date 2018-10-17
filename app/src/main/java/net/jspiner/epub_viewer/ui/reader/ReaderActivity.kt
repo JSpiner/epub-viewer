@@ -55,6 +55,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         requestPermission()
         viewModel.getViewerType()
             .skip(1)
+            .compose(bindLifecycle())
             .subscribe { calculatePage() }
     }
 
@@ -84,6 +85,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .doOnSubscribe { showLoading() }
             .doOnComplete { hideLoading() }
             .doOnComplete { calculatePage() }
+            .compose(bindLifecycle<Any>())
             .subscribe()
     }
 
@@ -95,6 +97,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }
             .doOnSuccess { hideLoading() }
+            .compose(bindLifecycle())
             .subscribe()
     }
 

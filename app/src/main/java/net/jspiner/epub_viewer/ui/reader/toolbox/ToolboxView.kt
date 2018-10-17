@@ -9,6 +9,8 @@ import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.SeekBar
+import android.widget.Toast
+import com.bumptech.glide.Glide
 import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.animation.AnimationBuilder
 import net.jspiner.epub_viewer.R
@@ -61,12 +63,17 @@ class ToolboxView @JvmOverloads constructor(
         binding.tocBtn.setOnClickListener { showTocPopupMenu() }
         binding.moreButton.setOnClickListener {
             val metaData = viewModel.extractedEpub.opf.metaData
+            val coverImage = metaData.meta?.get("cover")
             EtcActivity.startActivityForResult(
                 getActivity(),
                 metaData.title,
                 metaData.creator?.creator ?: "",
-                viewModel.toManifestItem(metaData.meta?.get("cover")!!)
+                if (coverImage == null) null else viewModel.toManifestItem(coverImage)
             )
+        }
+        binding.backButton.setOnClickListener { getActivity().finish() }
+        binding.searchButton.setOnClickListener {
+            Toast.makeText(context, "아직 구현되지 않았습니다 :)", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -132,6 +139,7 @@ class ToolboxView @JvmOverloads constructor(
 
     private fun subscribe() {
         viewModel.getToolboxVisible()
+            .compose(bindLifecycle())
             .subscribe { isVisible ->
                 if (isVisible) showWindow() else hideWindow()
             }
@@ -139,9 +147,10 @@ class ToolboxView @JvmOverloads constructor(
             .map { it.first } // page
             .distinctUntilChanged()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindLifecycle())
             .subscribe { page ->
                 println("page : $page")
-                val pageInfo = viewModel.getPageInfo()
+                val pageInfo = viewModel.getCurrentPageInfo()
 
                 binding.pageDisplay.text = "${page + 1} / ${pageInfo.allPage}"
                 binding.pageSeekbar.max = pageInfo.allPage

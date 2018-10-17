@@ -7,11 +7,15 @@ import android.support.annotation.LayoutRes
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import io.reactivex.subjects.CompletableSubject
+import net.jspiner.epub_viewer.util.LifecycleTransformer
 import net.jspiner.epub_viewer.util.initLazy
 
 abstract class BaseView<Binding : ViewDataBinding, ViewModel : BaseViewModel> @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+
+    private val lifecycleSubject: CompletableSubject by lazy { CompletableSubject.create() }
 
     @LayoutRes
     abstract fun getLayoutId(): Int
@@ -33,5 +37,14 @@ abstract class BaseView<Binding : ViewDataBinding, ViewModel : BaseViewModel> @J
     init {
         binding.initLazy()
         viewModel.initLazy()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        lifecycleSubject.onComplete()
+    }
+
+    protected fun <T> bindLifecycle(): LifecycleTransformer<T> {
+        return LifecycleTransformer(lifecycleSubject)
     }
 }

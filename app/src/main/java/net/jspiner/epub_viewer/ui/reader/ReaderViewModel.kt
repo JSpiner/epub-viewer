@@ -20,7 +20,6 @@ class ReaderViewModel : BaseViewModel() {
     val extractedEpub: Epub = Epub()
 
     private lateinit var file: File
-    private lateinit var pageInfo: PageInfo
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
     private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
@@ -28,6 +27,7 @@ class ReaderViewModel : BaseViewModel() {
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
     private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
+    private val pageInfoSubject = BehaviorSubject.create<PageInfo>()
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -50,9 +50,7 @@ class ReaderViewModel : BaseViewModel() {
         fun findMatchItemInSpines(content: String): ItemRef {
             for (spineItem in extractedEpub.opf.spine.itemrefs) {
                 val itemFile = toManifestItem(spineItem)
-                val relativePath = itemFile.relativeTo(extractedEpub.extractedDirectory).path
-
-                if (content == relativePath) return spineItem
+                if (content == itemFile.path) return spineItem
             }
             throw RuntimeException("해당 navPoint 를 spine 에서 찾을 수 없음 content : $content")
         }
@@ -74,6 +72,7 @@ class ReaderViewModel : BaseViewModel() {
     }
 
     private fun sendRawFile(index: Int) {
+        val pageInfo = getCurrentPageInfo()
         var currentSpineIndex = -1
         for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
             currentSpineIndex = i
@@ -90,9 +89,9 @@ class ReaderViewModel : BaseViewModel() {
 
         val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
         val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
-        val splitStart = if (innerPageIndex ==0) 0 else splitIndexList[innerPageIndex -1].toInt() - 1
+        val splitStart = if (innerPageIndex ==0) 0 else splitIndexList[innerPageIndex -1].toInt()
         val splitEnd = splitIndexList[innerPageIndex].toInt()
-        val splitedText =  body.split(" ").subList(splitStart, splitEnd + 1).joinToString(" ")
+        val splitedText =  body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
         val res = String.format(emptyHtml, splitedText)
         rawDataSubject.onNext(originFile to res)
     }
@@ -118,7 +117,7 @@ class ReaderViewModel : BaseViewModel() {
         for ((index, item) in extractedEpub.opf.spine.itemrefs.withIndex()) {
             if (item.idRef == itemRef.idRef) {
                 if (index != 0) {
-                    setCurrentPage(pageInfo.pageCountSumList[index - 1], true)
+                    setCurrentPage(getCurrentPageInfo().pageCountSumList[index - 1], true)
                 }
                 else {
                     setCurrentPage(0, true)
@@ -149,11 +148,13 @@ class ReaderViewModel : BaseViewModel() {
     fun getToolboxVisible() = toolboxShowSubject
 
     fun setPageInfo(pageInfo: PageInfo) {
-        this.pageInfo = pageInfo
+        pageInfoSubject.onNext(pageInfo)
         pageSubject.onNext(0 to false)
     }
 
-    fun getPageInfo() = pageInfo
+    fun getCurrentPageInfo() = pageInfoSubject.value!!
+
+    fun getPageInfo(): Observable<PageInfo> = pageInfoSubject
 
     fun getCurrentPage(): Observable<Pair<Int, Boolean>> = pageSubject
 

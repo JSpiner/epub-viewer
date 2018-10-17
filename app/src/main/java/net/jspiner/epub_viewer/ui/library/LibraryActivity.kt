@@ -44,6 +44,7 @@ class LibraryActivity : BaseActivity<ActivityLibraryBinding, LibraryViewModel>()
 
         getEpubFilePathList()
             .observeOn(Schedulers.io())
+            .compose(bindLifecycle())
             .subscribe { it -> adapter.setDataList(it) }
     }
 

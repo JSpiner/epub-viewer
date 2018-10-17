@@ -19,7 +19,7 @@ class EtcActivity : BaseActivity<ActivityEtcBinding, EtcViewModel>() {
 
         val IS_SCROLL_MODE = "keyIsScrollMode"
 
-        fun startActivityForResult(activity: Activity, title: String, author: String, imageFile: File) {
+        fun startActivityForResult(activity: Activity, title: String, author: String, imageFile: File?) {
             val intent = Intent(activity, EtcActivity::class.java)
             intent.putExtra(INTENT_KEY_TITLE, title)
             intent.putExtra(INTENT_KEY_AUTHOR, author)
@@ -30,7 +30,7 @@ class EtcActivity : BaseActivity<ActivityEtcBinding, EtcViewModel>() {
 
     private lateinit var title: String
     private lateinit var author: String
-    private lateinit var imageFile: File
+    private var imageFile: File? = null
 
     override fun getLayoutId() = R.layout.activity_etc
 
@@ -39,7 +39,7 @@ class EtcActivity : BaseActivity<ActivityEtcBinding, EtcViewModel>() {
     override fun loadState(bundle: Bundle) {
         title = bundle.getString(INTENT_KEY_TITLE)!!
         author = bundle.getString(INTENT_KEY_AUTHOR)!!
-        imageFile = bundle.getSerializable(INTENT_KEY_IMAGE_FILE)!! as File
+        imageFile = bundle.getSerializable(INTENT_KEY_IMAGE_FILE) as File?
     }
 
     override fun saveState(bundle: Bundle) {
