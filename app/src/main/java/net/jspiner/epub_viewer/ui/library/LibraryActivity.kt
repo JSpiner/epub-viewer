@@ -57,7 +57,7 @@ class LibraryActivity : BaseActivity<ActivityLibraryBinding, LibraryViewModel>()
             null
         ) ?: return Single.just(ArrayList())
 
-        return Single.create {emitter ->
+        return Single.create { emitter ->
             val epubFileList = ArrayList<String>()
             if (cursor.moveToFirst()) {
                 do {

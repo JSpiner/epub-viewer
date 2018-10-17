@@ -17,7 +17,8 @@ import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epubstream.dto.ItemRef
 import java.io.File
 
-class ScrollPaginator(private val context: Context, private val extractedEpub: Epub): Paginator(context, extractedEpub) {
+class ScrollPaginator(private val context: Context, private val extractedEpub: Epub) :
+    Paginator(context, extractedEpub) {
 
     override fun calculatePage(): Single<PageInfo> {
         val itemRefList = extractedEpub.opf.spine.itemrefs.toList()

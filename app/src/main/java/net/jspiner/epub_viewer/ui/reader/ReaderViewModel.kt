@@ -89,9 +89,9 @@ class ReaderViewModel : BaseViewModel() {
 
         val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
         val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
-        val splitStart = if (innerPageIndex ==0) 0 else splitIndexList[innerPageIndex -1].toInt()
+        val splitStart = if (innerPageIndex == 0) 0 else splitIndexList[innerPageIndex - 1].toInt()
         val splitEnd = splitIndexList[innerPageIndex].toInt()
-        val splitedText =  body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
+        val splitedText = body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
         val res = String.format(emptyHtml, splitedText)
         rawDataSubject.onNext(originFile to res)
     }
@@ -118,8 +118,7 @@ class ReaderViewModel : BaseViewModel() {
             if (item.idRef == itemRef.idRef) {
                 if (index != 0) {
                     setCurrentPage(getCurrentPageInfo().pageCountSumList[index - 1], true)
-                }
-                else {
+                } else {
                     setCurrentPage(0, true)
                 }
                 return
@@ -170,6 +169,5 @@ class ReaderViewModel : BaseViewModel() {
         viewerTypeSubject.onNext(viewerType)
     }
 
-    fun getRawData(): Observable<Pair<File,String>> = rawDataSubject
-
+    fun getRawData(): Observable<Pair<File, String>> = rawDataSubject
 }

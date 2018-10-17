@@ -11,5 +11,4 @@ object BindingAdapter {
     fun setImageSrc(view: ImageView, image: Drawable) {
         view.setImageDrawable(image)
     }
-
 }

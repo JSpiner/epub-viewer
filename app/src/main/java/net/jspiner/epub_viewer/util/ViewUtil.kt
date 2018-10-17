@@ -5,7 +5,7 @@ import android.view.ViewTreeObserver
 
 fun View.onLayoutLoaded(callback: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(
-        object :ViewTreeObserver.OnGlobalLayoutListener {
+        object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 viewTreeObserver.removeOnGlobalLayoutListener(this)
                 callback()

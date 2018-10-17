@@ -45,12 +45,11 @@ class LibraryViewHolder(val binding: ItemLibraryBinding) : RecyclerView.ViewHold
                 binding.title.text = opf.metaData.title
 
                 val coverImage = opf.metaData.meta?.get("cover")
-                if (coverImage!= null) {
+                if (coverImage != null) {
                     Glide.with(getContext())
                         .load(toManifestItem(coverImage))
                         .into(binding.bookCover)
                 }
             }
     }
-
 }
