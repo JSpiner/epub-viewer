@@ -37,7 +37,7 @@ class EpubView @JvmOverloads constructor(
         super.dispatchTouchEvent(ev)
     }
 
-    override fun dispatchTouchEvent(ev: MotionEvent?) =  true
+    override fun dispatchTouchEvent(ev: MotionEvent?) = true
 
     private fun subscribe() {
         viewModel.getCurrentSpineItem()
@@ -61,12 +61,12 @@ class EpubView @JvmOverloads constructor(
         Observable.zip(
             viewModel.getPageInfo(),
             viewModel.getViewerType(),
-            BiFunction { _: PageInfo, t2 : ViewerType -> t2 }
+            BiFunction { _: PageInfo, t2: ViewerType -> t2 }
         ).observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
             .subscribe { viewerType ->
                 val pageInfo = viewModel.getCurrentPageInfo()
-                when(viewerType) {
+                when (viewerType) {
                     ViewerType.SCROLL -> adapter.setAllPageCount(pageInfo.spinePageList.size)
                     ViewerType.PAGE -> adapter.setAllPageCount(pageInfo.allPage)
                 }
@@ -77,7 +77,7 @@ class EpubView @JvmOverloads constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
             .subscribe {
-                when(it!!) {
+                when (it!!) {
                     ViewerType.SCROLL -> binding.verticalViewPager.verticalMode()
                     ViewerType.PAGE -> binding.verticalViewPager.horizontalMode()
                 }
@@ -95,7 +95,7 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun setCurrentPage(currentPage: Int) {
-        when(viewModel.getCurrentViewerType()!!) {
+        when (viewModel.getCurrentViewerType()!!) {
             ViewerType.SCROLL -> setCurrentPageInScrollMode(currentPage)
             ViewerType.PAGE -> setCurrentPageInPageMode(currentPage)
         }
@@ -205,7 +205,7 @@ class EpubView @JvmOverloads constructor(
         return measureCurrentPage(currentFragment.getScrollPosition().value ?: 0)
     }
 
-    private fun measureCurrentPage(scrollPosition:Int): Int {
+    private fun measureCurrentPage(scrollPosition: Int): Int {
         return if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
             val spinePosition = binding.verticalViewPager.currentItem
             val pageInfo = viewModel.getCurrentPageInfo()

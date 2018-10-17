@@ -43,7 +43,7 @@ class ToolboxView @JvmOverloads constructor(
         subscribe()
         setHeight(binding.statusBarBackground, getActivity().getStatusBarHeight())
         setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
-        binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+        binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 //no-op
             }
@@ -84,7 +84,7 @@ class ToolboxView @JvmOverloads constructor(
         for (navPoint in navPoints) {
             popupMenu.menu.add(navPoint.navLabel.text)
         }
-        popupMenu.setOnMenuItemClickListener {menu ->
+        popupMenu.setOnMenuItemClickListener { menu ->
             for (navPoint in navPoints) {
                 if (menu.title == navPoint.navLabel.text) {
                     viewModel.navigateToPoint(navPoint)

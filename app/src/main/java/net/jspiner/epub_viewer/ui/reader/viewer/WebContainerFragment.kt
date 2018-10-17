@@ -13,7 +13,7 @@ import net.jspiner.epub_viewer.ui.base.EpubWebClient
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import java.io.File
 
-class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderViewModel>() {
+class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderViewModel>() {
 
     private val CONTENT_CLEAR_URL = "about:blank"
 
@@ -73,7 +73,7 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         }
     }
 
-    fun getScrollState():Observable<ScrollStatus> = scrollStatusSubject
+    fun getScrollState(): Observable<ScrollStatus> = scrollStatusSubject
 
     fun getScrollPosition() = scrollPositionSubject
 
@@ -82,7 +82,7 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         binding.loadingView.visibility = VISIBLE
     }
 
-    fun loadData(baseUrl:String, rawString: String) {
+    fun loadData(baseUrl: String, rawString: String) {
         binding.webView.loadDataWithBaseURL(
             baseUrl,
             rawString,
@@ -121,6 +121,8 @@ class WebContainerFragment: BaseFragment<FragmentWebContainerBinding, ReaderView
         if (url != CONTENT_CLEAR_URL) {
             binding.loadingView.visibility = GONE
         }
-        if (epubWebClient.scrollPositionAfterLoading == 0 && binding.webView.scrollY == 0) scrollPositionSubject.onNext(0)
+        if (epubWebClient.scrollPositionAfterLoading == 0 && binding.webView.scrollY == 0) scrollPositionSubject.onNext(
+            0
+        )
     }
 }

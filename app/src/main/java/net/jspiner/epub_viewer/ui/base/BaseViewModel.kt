@@ -16,5 +16,4 @@ abstract class BaseViewModel {
     open fun onDestroy() {
         lifecycleSubject.onComplete()
     }
-
 }

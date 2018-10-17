@@ -9,7 +9,7 @@
             android:id="@+id/web_view"
             android:background="#ff00ff"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
         <net.jspiner.epub_viewer.ui.reader.viewer.EpubLoadingView
             android:id="@+id/loading_view"

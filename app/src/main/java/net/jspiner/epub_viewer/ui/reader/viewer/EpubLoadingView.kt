@@ -15,13 +15,13 @@ class EpubLoadingView(context: Context?, attrs: AttributeSet?) : View(context, a
     private val paint = Paint()
 
     init {
-        paint.color = Color.rgb(240,240,240)
+        paint.color = Color.rgb(240, 240, 240)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        for (i in 0 .. measuredHeight - 200 step (200)) {
+        for (i in 0..measuredHeight - 200 step (200)) {
             drawRect(canvas, i, 30, 30)
             drawRect(canvas, i + 40, 75, 20)
             drawRect(canvas, i + 70, 85, 20)
