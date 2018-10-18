@@ -67,6 +67,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
 
     override fun calculatePage(): Single<PageInfo> {
         val itemRefList = extractedEpub.opf.spine.itemrefs.toList()
+        val startTime = System.currentTimeMillis()
 
         return Observable.fromIterable(itemRefList)
             .toFlowable(BackpressureStrategy.BUFFER)
@@ -78,6 +79,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
             .toMap({ it.first.idRef }, { it.second })
             .map { toIndexedList(itemRefList, it) }
             .map { PageInfo.create(it) }
+            .doOnSuccess { println("job done : $startTime") }
     }
 
     private fun measurePageInWebView(pair: Pair<ItemRef, File>): Pair<ItemRef, Page> {
