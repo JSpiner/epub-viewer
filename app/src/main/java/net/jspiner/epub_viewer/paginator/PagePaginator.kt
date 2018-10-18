@@ -40,7 +40,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
                 startIndex,
                 current,
                 max,
-                Math.min(parseInt(current - (heightDiff / 2)), max - 1)
+                Math.min(parseInt(current - (heightDiff / 3)), max - 1)
             );
         }
         else {
@@ -48,7 +48,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
                 startIndex,
                 min,
                 current,
-                Math.max(parseInt(current - (heightDiff / 2)), min + 1)
+                Math.max(parseInt(current - (heightDiff / 3)), min + 1)
             );
         }
     }
