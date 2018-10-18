@@ -27,48 +27,47 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
     var deviceHeight = window.innerHeight;
     var words = body.split(' ');
 
-    var pageText = "";
-
     function search(startIndex, min, max, current) {
-        if (min >= max) return current;
+        if (current == max) return current - 1;
+        if (current == min) return current;
 
-        pageText = words.slice(startIndex, current).join(' ');
-        document.body.innerHTML = pageText;
+        document.body.innerHTML = words.slice(startIndex, current).join(' ');;
 
         var heightDiff = document.body.scrollHeight - deviceHeight;
 
-        if (heightDiff < 0 && Math.abs(max - min) > 1) {
+        if (heightDiff <= 0) {
             return search(
                 startIndex,
                 current,
                 max,
-                Math.min(parseInt(current - (heightDiff / 2)), max - 1)
+                Math.min(parseInt(current - (heightDiff / 3)), max - 1)
             );
         }
-        else if (heightDiff > 0 && Math.abs(max - min) > 1) {
+        else {
             return search(
                 startIndex,
                 min,
                 current,
-                Math.max(parseInt(current - (heightDiff / 2)), min + 1)
+                Math.max(parseInt(current - (heightDiff / 3)), min + 1)
             );
-        }
-        else {
-            return current;
         }
     }
     var lastIndex = 0;
+    var lastDiff = 150;
+    var result = [];
     while (lastIndex != words.length) {
-        var pagingIndex = search(pagingIndex, lastIndex, words.length, 150);
+        var pagingIndex = search(pagingIndex + 1, lastIndex, words.length, lastIndex + lastDiff);
         if (pagingIndex == words.length - 1) pagingIndex = words.length;
-        AndroidFunction.result(pagingIndex);
+        result.push(pagingIndex);
+        lastDiff = pagingIndex - lastIndex;
         lastIndex = pagingIndex;
     }
-    AndroidFunction.result(-1);
-    """.trimIndent()
+    AndroidFunction.result(result.join(","));
+""".trimIndent()
 
     override fun calculatePage(): Single<PageInfo> {
         val itemRefList = extractedEpub.opf.spine.itemrefs.toList()
+        val startTime = System.currentTimeMillis()
 
         return Observable.fromIterable(itemRefList)
             .toFlowable(BackpressureStrategy.BUFFER)
@@ -80,6 +79,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
             .toMap({ it.first.idRef }, { it.second })
             .map { toIndexedList(itemRefList, it) }
             .map { PageInfo.create(it) }
+            .doOnSuccess { println("job done : ${System.currentTimeMillis() - startTime}") }
     }
 
     private fun measurePageInWebView(pair: Pair<ItemRef, File>): Pair<ItemRef, Page> {
@@ -129,16 +129,11 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
 
     private fun addJavascriptCallback(webView: WebView, subject: SingleSubject<List<Long>>) {
 
-        val indexList = ArrayList<Long>()
-
         class AndroidBridge {
             @JavascriptInterface
-            fun result(spineIndex: Long) {
-                if (spineIndex == -1L) {
-                    subject.onSuccess(indexList)
-                } else {
-                    indexList.add(spineIndex)
-                }
+            fun result(indexString: String) {
+                val indexList = indexString.split(",").map { it.toLong() }
+                subject.onSuccess(indexList)
             }
         }
         webView.addJavascriptInterface(AndroidBridge(), "AndroidFunction")
