@@ -34,7 +34,7 @@ class ScrollPaginator(private val context: Context, private val extractedEpub: E
             .toMap({ it.first.idRef }, { it.second })
             .map { toIndexedList(itemRefList, it) }
             .map { PageInfo.create(it) }
-            .doOnSuccess { println("job done : $startTime") }
+            .doOnSuccess { println("job done : ${System.currentTimeMillis() - startTime}") }
     }
 
     private fun measurePageInWebView(pair: Pair<ItemRef, File>): Pair<ItemRef, Page> {
