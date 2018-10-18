@@ -27,17 +27,15 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
     var deviceHeight = window.innerHeight;
     var words = body.split(' ');
 
-    var pageText = "";
-
     function search(startIndex, min, max, current) {
-        if (min >= max) return current;
+        if (current == max) return current - 1;
+        if (current == min) return current;
 
-        pageText = words.slice(startIndex, current).join(' ');
-        document.body.innerHTML = pageText;
+        document.body.innerHTML = words.slice(startIndex, current).join(' ');;
 
         var heightDiff = document.body.scrollHeight - deviceHeight;
 
-        if (heightDiff < 0 && Math.abs(max - min) > 1) {
+        if (heightDiff <= 0) {
             return search(
                 startIndex,
                 current,
@@ -45,7 +43,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
                 Math.min(parseInt(current - (heightDiff / 2)), max - 1)
             );
         }
-        else if (heightDiff > 0 && Math.abs(max - min) > 1) {
+        else {
             return search(
                 startIndex,
                 min,
@@ -53,15 +51,14 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
                 Math.max(parseInt(current - (heightDiff / 2)), min + 1)
             );
         }
-        else {
-            return current;
-        }
     }
     var lastIndex = 0;
+    var lastDiff = 150;
     while (lastIndex != words.length) {
-        var pagingIndex = search(pagingIndex, lastIndex, words.length, 150);
+        var pagingIndex = search(pagingIndex + 1, lastIndex, words.length, lastIndex + lastDiff);
         if (pagingIndex == words.length - 1) pagingIndex = words.length;
         AndroidFunction.result(pagingIndex);
+        lastDiff = pagingIndex - lastIndex;
         lastIndex = pagingIndex;
     }
     AndroidFunction.result(-1);
