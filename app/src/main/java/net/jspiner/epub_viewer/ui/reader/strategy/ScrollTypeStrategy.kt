@@ -1,12 +1,18 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
+import net.jspiner.epub_viewer.ui.reader.viewer.ScrollStatus
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
 class ScrollTypeStrategy : ViewerTypeStrategy {
+
+    private val lastScrollDisposables by lazy { CompositeDisposable() }
+    private var lastSpineIndex = -1
 
     override fun changeViewPagerOrientation(verticalViewPager: VerticalViewPager) {
         verticalViewPager.verticalMode()
@@ -59,5 +65,40 @@ class ScrollTypeStrategy : ViewerTypeStrategy {
         fragment.scrollAfterLoading(
             currentPageInfo.spinePageList[position].height.toInt()
         )
+    }
+
+    override fun onPagerItemSelected(viewModel: ReaderViewModel, pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+        val currentFragment = adapter.getFragmentAt(position)
+        subscribeScroll(currentFragment, pager, viewModel)
+
+        if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, viewModel.getCurrentPageInfo(), position)
+        lastSpineIndex = position
+    }
+    
+    private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager, viewModel: ReaderViewModel) {
+        lastScrollDisposables.clear()
+
+        fragment
+            .getScrollState()
+            .distinctUntilChanged()
+            .subscribe { scrollStatus ->
+                when (scrollStatus) {
+                    ScrollStatus.REACHED_TOP -> pager.enableScroll()
+                    ScrollStatus.REACHED_BOTTOM -> pager.enableScroll()
+                    ScrollStatus.NO_SCROLL -> pager.enableScroll()
+                    ScrollStatus.SCROLLING -> pager.disableScroll()
+                }
+            }.let { lastScrollDisposables.add(it) }
+
+        fragment
+            .getScrollPosition()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { scrollPosition ->
+                onWebViewScrolled(
+                    pager,
+                    viewModel,
+                    scrollPosition
+                )
+            }.let { lastScrollDisposables.add(it) }
     }
 }

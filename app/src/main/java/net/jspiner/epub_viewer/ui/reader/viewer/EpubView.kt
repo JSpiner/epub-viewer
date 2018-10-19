@@ -25,8 +25,6 @@ class EpubView @JvmOverloads constructor(
     private val adapter: EpubPagerAdapter by lazy {
         EpubPagerAdapter((getContext() as AppCompatActivity).supportFragmentManager)
     }
-    private val lastScrollDisposables by lazy { CompositeDisposable() }
-    private var lastSpineIndex = -1
 
     init {
         subscribe()
@@ -106,11 +104,9 @@ class EpubView @JvmOverloads constructor(
 
             override fun onPageSelected(position: Int) {
                 viewModel.navigateToIndex(position)
-
-                when (viewModel.getCurrentViewerType()) {
-                    ViewerType.SCROLL -> onPageSelectedInScrollMode(position)
-                    ViewerType.PAGE -> onPageSelectedInPageMode(position)
-                }
+                viewModel.viewerTypeStrategy.onPagerItemSelected(
+                    viewModel, binding.verticalViewPager, adapter, position
+                )
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
@@ -119,50 +115,6 @@ class EpubView @JvmOverloads constructor(
         })
     }
 
-    private fun onPageSelectedInScrollMode(position: Int) {
-        val currentFragment = adapter.getFragmentAt(position)
-        subscribeScroll(currentFragment)
-
-        if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, position)
-        lastSpineIndex = position
-    }
-
     private fun onPageSelectedInPageMode(position: Int) {
-        viewModel.setCurrentPage(position, false)
-    }
-
-    private fun subscribeScroll(fragment: WebContainerFragment) {
-        lastScrollDisposables.clear()
-
-        fragment
-            .getScrollState()
-            .distinctUntilChanged()
-            .subscribe { scrollStatus ->
-                when (scrollStatus) {
-                    ScrollStatus.REACHED_TOP -> binding.verticalViewPager.enableScroll()
-                    ScrollStatus.REACHED_BOTTOM -> binding.verticalViewPager.enableScroll()
-                    ScrollStatus.NO_SCROLL -> binding.verticalViewPager.enableScroll()
-                    ScrollStatus.SCROLLING -> binding.verticalViewPager.disableScroll()
-                }
-            }.let { lastScrollDisposables.add(it) }
-
-        fragment
-            .getScrollPosition()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { scrollPosition ->
-                viewModel.viewerTypeStrategy.onWebViewScrolled(
-                    binding.verticalViewPager,
-                    viewModel,
-                    scrollPosition
-                )
-            }.let { lastScrollDisposables.add(it) }
-    }
-
-    private fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int) {
-        viewModel.viewerTypeStrategy.onScrollToPrevPagerItem(
-            fragment,
-            viewModel.getCurrentPageInfo(),
-            position
-        )
     }
 }

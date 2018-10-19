@@ -22,4 +22,6 @@ interface ViewerTypeStrategy {
     fun onWebViewScrolled(pager: VerticalViewPager, viewModel: ReaderViewModel, scrollPosition: Int)
 
     fun onScrollToPrevPagerItem(fragment: WebContainerFragment, currentPageInfo: PageInfo, position: Int)
+
+    fun onPagerItemSelected(viewModel: ReaderViewModel, pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int)
 }

@@ -30,4 +30,13 @@ class PageTypeStrategy : ViewerTypeStrategy {
     override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, currentPageInfo: PageInfo, position: Int) {
         // no-op
     }
+
+    override fun onPagerItemSelected(
+        viewModel: ReaderViewModel,
+        pager: VerticalViewPager,
+        adapter: EpubPagerAdapter,
+        position: Int
+    ) {
+        viewModel.setCurrentPage(position, false)
+    }
 }
