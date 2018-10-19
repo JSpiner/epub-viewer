@@ -150,10 +150,11 @@ class EpubView @JvmOverloads constructor(
             .getScrollPosition()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { scrollPosition ->
-                if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
-                    val measuredPage = measureCurrentPage(scrollPosition)
-                    viewModel.setCurrentPage(measuredPage, false)
-                }
+                viewModel.viewerTypeStrategy.onWebViewScrolled(
+                    binding.verticalViewPager,
+                    viewModel,
+                    scrollPosition
+                )
             }.let { lastScrollDisposables.add(it) }
     }
 
@@ -162,25 +163,6 @@ class EpubView @JvmOverloads constructor(
             fragment.scrollAfterLoading(
                 viewModel.getCurrentPageInfo().spinePageList[position].height.toInt()
             )
-        }
-    }
-
-    private fun measureCurrentPage(): Int {
-        val currentFragment = adapter.getFragmentAt(binding.verticalViewPager.currentItem)
-        return measureCurrentPage(currentFragment.getScrollPosition().value ?: 0)
-    }
-
-    private fun measureCurrentPage(scrollPosition: Int): Int {
-        return if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
-            val spinePosition = binding.verticalViewPager.currentItem
-            val pageInfo = viewModel.getCurrentPageInfo()
-            val deviceHeight = context.resources.displayMetrics.heightPixels
-
-            val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]
-
-            sumUntilPreview + (scrollPosition / deviceHeight)
-        } else {
-            binding.verticalViewPager.currentItem
         }
     }
 }

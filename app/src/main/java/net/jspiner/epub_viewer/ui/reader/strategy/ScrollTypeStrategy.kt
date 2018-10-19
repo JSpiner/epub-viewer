@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 
@@ -40,5 +41,16 @@ class ScrollTypeStrategy : ViewerTypeStrategy {
 
         pager.currentItem = spineIndex
         adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
+    }
+
+    override fun onWebViewScrolled(pager: VerticalViewPager, viewModel: ReaderViewModel, scrollPosition: Int) {
+        val spinePosition = pager.currentItem
+        val pageInfo = viewModel.getCurrentPageInfo()
+        val deviceHeight = pager.context.resources.displayMetrics.heightPixels
+
+        val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]
+
+        val measuredPage =sumUntilPreview + (scrollPosition / deviceHeight)
+        viewModel.setCurrentPage(measuredPage, false)
     }
 }

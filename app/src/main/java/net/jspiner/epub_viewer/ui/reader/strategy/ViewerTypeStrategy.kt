@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 
@@ -17,4 +18,5 @@ interface ViewerTypeStrategy {
         currentPage: Int
     )
 
+    fun onWebViewScrolled(pager: VerticalViewPager, viewModel: ReaderViewModel, scrollPosition: Int)
 }
