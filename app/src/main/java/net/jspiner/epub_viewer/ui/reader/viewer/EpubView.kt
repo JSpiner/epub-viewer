@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
@@ -62,8 +61,8 @@ class EpubView @JvmOverloads constructor(
             BiFunction { pageInfo: PageInfo, _: ViewerType -> pageInfo }
         ).observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
-            .subscribe { pageInfo ->
-                val pageCount = viewModel.viewerTypeStrategy.getAllPageCount(pageInfo)
+            .subscribe {
+                val pageCount = viewModel.viewerTypeStrategy.getAllPageCount()
                 adapter.setAllPageCount(pageCount)
                 binding.verticalViewPager.currentItem = 0
             }
@@ -90,7 +89,6 @@ class EpubView @JvmOverloads constructor(
         viewModel.viewerTypeStrategy.setCurrentPagerItem(
             binding.verticalViewPager,
             adapter,
-            viewModel.getCurrentPageInfo(),
             currentPage
         )
     }
@@ -105,7 +103,7 @@ class EpubView @JvmOverloads constructor(
             override fun onPageSelected(position: Int) {
                 viewModel.navigateToIndex(position)
                 viewModel.viewerTypeStrategy.onPagerItemSelected(
-                    viewModel, binding.verticalViewPager, adapter, position
+                    binding.verticalViewPager, adapter, position
                 )
             }
 
@@ -113,8 +111,5 @@ class EpubView @JvmOverloads constructor(
                 // no-op
             }
         })
-    }
-
-    private fun onPageSelectedInPageMode(position: Int) {
     }
 }

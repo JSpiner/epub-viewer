@@ -2,7 +2,6 @@ package net.jspiner.epub_viewer.ui.reader.strategy
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.ScrollStatus
@@ -18,14 +17,9 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         verticalViewPager.verticalMode()
     }
 
-    override fun getAllPageCount(pageInfo: PageInfo) = pageInfo.spinePageList.size
+    override fun getAllPageCount(): Int = pageInfo.spinePageList.size
 
-    override fun setCurrentPagerItem(
-        pager: VerticalViewPager,
-        adapter: EpubPagerAdapter,
-        pageInfo: PageInfo,
-        currentPage: Int
-    ) {
+    override fun setCurrentPagerItem(pager: VerticalViewPager, adapter: EpubPagerAdapter, currentPage: Int) {
         fun getScrollPosition(index: Int): Int {
             val deviceHeight = pager.context.resources.displayMetrics.heightPixels
 
@@ -50,7 +44,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
     }
 
-    override fun onWebViewScrolled(pager: VerticalViewPager, viewModel: ReaderViewModel, scrollPosition: Int) {
+    override fun onWebViewScrolled(pager: VerticalViewPager, scrollPosition: Int) {
         val spinePosition = pager.currentItem
         val pageInfo = viewModel.getCurrentPageInfo()
         val deviceHeight = pager.context.resources.displayMetrics.heightPixels
@@ -61,21 +55,21 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         viewModel.setCurrentPage(measuredPage, false)
     }
 
-    override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, currentPageInfo: PageInfo, position: Int) {
+    override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int) {
         fragment.scrollAfterLoading(
-            currentPageInfo.spinePageList[position].height.toInt()
+            pageInfo.spinePageList[position].height.toInt()
         )
     }
 
-    override fun onPagerItemSelected(viewModel: ReaderViewModel, pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+    override fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         val currentFragment = adapter.getFragmentAt(position)
-        subscribeScroll(currentFragment, pager, viewModel)
+        subscribeScroll(currentFragment, pager)
 
-        if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, viewModel.getCurrentPageInfo(), position)
+        if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, position)
         lastSpineIndex = position
     }
     
-    private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager, viewModel: ReaderViewModel) {
+    private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager) {
         lastScrollDisposables.clear()
 
         fragment
@@ -96,7 +90,6 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
             .subscribe { scrollPosition ->
                 onWebViewScrolled(
                     pager,
-                    viewModel,
                     scrollPosition
                 )
             }.let { lastScrollDisposables.add(it) }

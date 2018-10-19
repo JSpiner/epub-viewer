@@ -1,6 +1,5 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
-import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
@@ -12,31 +11,21 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
         verticalViewPager.horizontalMode()
     }
 
-    override fun getAllPageCount(pageInfo: PageInfo) = pageInfo.allPage
+    override fun getAllPageCount(): Int = pageInfo.allPage
 
-    override fun setCurrentPagerItem(
-        pager: VerticalViewPager,
-        adapter: EpubPagerAdapter,
-        pageInfo: PageInfo,
-        currentPage: Int
-    ) {
+    override fun setCurrentPagerItem(pager: VerticalViewPager, adapter: EpubPagerAdapter, currentPage: Int) {
         pager.currentItem = currentPage
     }
 
-    override fun onWebViewScrolled(pager: VerticalViewPager, viewModel: ReaderViewModel, scrollPosition: Int) {
+    override fun onWebViewScrolled(pager: VerticalViewPager, scrollPosition: Int) {
         // no-op
     }
 
-    override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, currentPageInfo: PageInfo, position: Int) {
+    override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int) {
         // no-op
     }
 
-    override fun onPagerItemSelected(
-        viewModel: ReaderViewModel,
-        pager: VerticalViewPager,
-        adapter: EpubPagerAdapter,
-        position: Int
-    ) {
+    override fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewModel.setCurrentPage(position, false)
     }
 }
