@@ -50,6 +50,8 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
 
         if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, position)
         lastSpineIndex = position
+
+        viewModel.setSpineItem(viewModel.extractedEpub.opf.spine.itemrefs[position])
     }
     
     private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager) {

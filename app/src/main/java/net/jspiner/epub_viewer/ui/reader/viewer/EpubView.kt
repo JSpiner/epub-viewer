@@ -65,6 +65,12 @@ class EpubView @JvmOverloads constructor(
                 val pageCount = viewModel.viewerTypeStrategy.getAllPageCount()
                 adapter.setAllPageCount(pageCount)
                 binding.verticalViewPager.currentItem = 0
+
+                viewModel.onPagerItemSelected(
+                    binding.verticalViewPager,
+                    adapter,
+                    0
+                )
             }
 
         viewModel.getViewerType()

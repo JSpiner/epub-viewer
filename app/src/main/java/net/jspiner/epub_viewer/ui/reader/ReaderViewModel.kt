@@ -70,55 +70,16 @@ class ReaderViewModel : BaseViewModel() {
         }
     }
 
+    fun setSpineItem(itemRef: ItemRef) {
+        spineSubject.onNext(itemRef)
+    }
+
     fun getCurrentSpineItem(): Observable<ItemRef> = spineSubject
 
     fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewerTypeStrategy.onPagerItemSelected(
             pager, adapter, position
         )
-        when (getCurrentViewerType()!!) {
-            ViewerType.SCROLL -> spineSubject.onNext(extractedEpub.opf.spine.itemrefs[position])
-            ViewerType.PAGE -> sendRawFile(position)
-        }
-    }
-
-    private fun sendRawFile(index: Int) {
-        val pageInfo = getCurrentPageInfo()
-        var currentSpineIndex = -1
-        for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
-            currentSpineIndex = i
-            if (index < sumUntil) break
-        }
-
-        val originFile = toManifestItem(extractedEpub.opf.spine.itemrefs[currentSpineIndex])
-        val rawString = readFile(originFile)
-        val bodyStart = rawString.indexOf("<body>") + "<body>".length
-        val bodyEnd = rawString.indexOf("</body")
-
-        val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
-        val body = rawString.substring(bodyStart, bodyEnd)
-
-        val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
-        val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
-        val splitStart = if (innerPageIndex == 0) 0 else splitIndexList[innerPageIndex - 1].toInt()
-        val splitEnd = splitIndexList[innerPageIndex].toInt()
-        val splitedText = body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
-        val res = String.format(emptyHtml, splitedText)
-        rawDataSubject.onNext(originFile to res)
-    }
-
-    private fun readFile(file: File): String {
-        return BufferedReader(FileReader(file)).use { br ->
-            val sb = StringBuilder()
-            var line = br.readLine()
-
-            while (line != null) {
-                sb.append(line)
-                sb.append(System.lineSeparator())
-                line = br.readLine()
-            }
-            sb.toString()
-        }
     }
 
     fun navigateToPoint(navPoint: NavPoint) {
@@ -186,4 +147,8 @@ class ReaderViewModel : BaseViewModel() {
     }
 
     fun getRawData(): Observable<Pair<File, String>> = rawDataSubject
+
+    fun setRawData(dataPair: Pair<File, String>) {
+        rawDataSubject.onNext(dataPair)
+    }
 }
