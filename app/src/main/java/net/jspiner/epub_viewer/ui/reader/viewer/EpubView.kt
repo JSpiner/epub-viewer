@@ -74,10 +74,7 @@ class EpubView @JvmOverloads constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
             .subscribe {
-                when (it!!) {
-                    ViewerType.SCROLL -> binding.verticalViewPager.verticalMode()
-                    ViewerType.PAGE -> binding.verticalViewPager.horizontalMode()
-                }
+                viewModel.viewerTypeStrategy.changeViewPagerOrientation(binding.verticalViewPager)
             }
     }
 
