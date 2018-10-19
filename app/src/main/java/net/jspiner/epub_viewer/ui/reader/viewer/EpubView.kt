@@ -101,10 +101,7 @@ class EpubView @JvmOverloads constructor(
             }
 
             override fun onPageSelected(position: Int) {
-                viewModel.navigateToIndex(position)
-                viewModel.viewerTypeStrategy.onPagerItemSelected(
-                    binding.verticalViewPager, adapter, position
-                )
+                viewModel.onPagerItemSelected(binding.verticalViewPager, adapter, position)
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {

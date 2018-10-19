@@ -92,7 +92,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     private fun calculatePage() {
         getPaginator(baseContext, viewModel.extractedEpub).calculatePage()
             .doOnSuccess { viewModel.setPageInfo(it) }
-            .doOnSuccess { viewModel.navigateToIndex(0) }
+            .doOnSuccess { viewModel.onPagerItemSelected(0) }
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showLoading() }

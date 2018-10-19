@@ -11,6 +11,8 @@ import net.jspiner.epub_viewer.ui.base.BaseViewModel
 import net.jspiner.epub_viewer.ui.reader.strategy.PageTypeStrategy
 import net.jspiner.epub_viewer.ui.reader.strategy.ScrollTypeStrategy
 import net.jspiner.epub_viewer.ui.reader.strategy.ViewerTypeStrategy
+import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
+import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
 import net.jspiner.epubstream.dto.NavPoint
@@ -70,10 +72,13 @@ class ReaderViewModel : BaseViewModel() {
 
     fun getCurrentSpineItem(): Observable<ItemRef> = spineSubject
 
-    fun navigateToIndex(index: Int) {
+    fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+        viewerTypeStrategy.onPagerItemSelected(
+            pager, adapter, position
+        )
         when (getCurrentViewerType()!!) {
-            ViewerType.SCROLL -> spineSubject.onNext(extractedEpub.opf.spine.itemrefs[index])
-            ViewerType.PAGE -> sendRawFile(index)
+            ViewerType.SCROLL -> spineSubject.onNext(extractedEpub.opf.spine.itemrefs[position])
+            ViewerType.PAGE -> sendRawFile(position)
         }
     }
 
