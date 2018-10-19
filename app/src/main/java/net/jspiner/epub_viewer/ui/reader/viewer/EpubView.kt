@@ -10,11 +10,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
+import net.jspiner.epub_viewer.dto.LoadData
 import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseView
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
-import java.io.File
 
 class EpubView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -37,16 +37,10 @@ class EpubView @JvmOverloads constructor(
     override fun dispatchTouchEvent(ev: MotionEvent?) = true
 
     private fun subscribe() {
-        viewModel.getCurrentSpineItem()
-            .map { viewModel.toManifestItem(it) }
+        viewModel.getLoadData()
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
-            .subscribe { setSpineFile(it) }
-
-        viewModel.getRawData()
-            .observeOn(AndroidSchedulers.mainThread())
-            .compose(bindLifecycle())
-            .subscribe { setRawData(it.first.toURI().toURL().toString(), it.second) }
+            .subscribe { setLoadData(it) }
 
         viewModel.getCurrentPage()
             .filter { it.second } // needUpdate
@@ -81,14 +75,9 @@ class EpubView @JvmOverloads constructor(
             }
     }
 
-    private fun setSpineFile(file: File) {
+    private fun setLoadData(loadData: LoadData) {
         val currentPosition = binding.verticalViewPager.currentItem
-        adapter.getFragmentAt(currentPosition).loadFile(file)
-    }
-
-    private fun setRawData(baseUrl: String, string: String) {
-        val currentPosition = binding.verticalViewPager.currentItem
-        adapter.getFragmentAt(currentPosition).loadData(baseUrl, string)
+        adapter.getFragmentAt(currentPosition).loadData(loadData)
     }
 
     private fun setCurrentPage(currentPage: Int) {

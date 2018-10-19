@@ -5,6 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import net.jspiner.epub_viewer.dto.Epub
+import net.jspiner.epub_viewer.dto.LoadData
 import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
@@ -16,9 +17,7 @@ import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
 import net.jspiner.epubstream.dto.NavPoint
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 
 class ReaderViewModel : BaseViewModel() {
 
@@ -30,8 +29,7 @@ class ReaderViewModel : BaseViewModel() {
     private lateinit var file: File
     private val navPointLocationMap: HashMap<String, ItemRef> = HashMap()
 
-    private val spineSubject: BehaviorSubject<ItemRef> = BehaviorSubject.create()
-    private val rawDataSubject = PublishSubject.create<Pair<File, String>>()
+    private val loadDataSubject: PublishSubject<LoadData> = PublishSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
     private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
     private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
@@ -70,11 +68,11 @@ class ReaderViewModel : BaseViewModel() {
         }
     }
 
-    fun setSpineItem(itemRef: ItemRef) {
-        spineSubject.onNext(itemRef)
+    fun setLoadData(loadData: LoadData) {
+        loadDataSubject.onNext(loadData)
     }
 
-    fun getCurrentSpineItem(): Observable<ItemRef> = spineSubject
+    fun getLoadData(): Observable<LoadData> = loadDataSubject
 
     fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewerTypeStrategy.onPagerItemSelected(
@@ -146,9 +144,4 @@ class ReaderViewModel : BaseViewModel() {
         }
     }
 
-    fun getRawData(): Observable<Pair<File, String>> = rawDataSubject
-
-    fun setRawData(dataPair: Pair<File, String>) {
-        rawDataSubject.onNext(dataPair)
-    }
 }

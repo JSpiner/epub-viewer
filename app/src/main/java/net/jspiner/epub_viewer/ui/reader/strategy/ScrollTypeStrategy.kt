@@ -2,6 +2,8 @@ package net.jspiner.epub_viewer.ui.reader.strategy
 
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import net.jspiner.epub_viewer.dto.LoadData
+import net.jspiner.epub_viewer.dto.LoadType
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.ScrollStatus
@@ -51,7 +53,13 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, position)
         lastSpineIndex = position
 
-        viewModel.setSpineItem(viewModel.extractedEpub.opf.spine.itemrefs[position])
+        val itemRef = viewModel.extractedEpub.opf.spine.itemrefs[position]
+        viewModel.setLoadData(
+            LoadData(
+                LoadType.FILE,
+                viewModel.toManifestItem(itemRef)
+            )
+        )
     }
     
     private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager) {

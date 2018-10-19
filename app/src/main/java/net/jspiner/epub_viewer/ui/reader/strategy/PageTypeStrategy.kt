@@ -1,5 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
+import net.jspiner.epub_viewer.dto.LoadData
+import net.jspiner.epub_viewer.dto.LoadType
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
@@ -46,7 +48,13 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
         val splitEnd = splitIndexList[innerPageIndex].toInt()
         val splitedText = body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
         val res = String.format(emptyHtml, splitedText)
-        viewModel.setRawData(originFile to res)
+        viewModel.setLoadData(
+            LoadData(
+                LoadType.RAW,
+                originFile,
+                res
+            )
+        )
     }
 
     private fun readFile(file: File): String {
