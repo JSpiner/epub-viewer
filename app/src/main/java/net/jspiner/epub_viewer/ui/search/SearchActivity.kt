@@ -63,6 +63,12 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         bundle.putInt(EXTRA_CIRCULAR_REVEAL_Y, revealY)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setNavigationBarColor(R.color.colorPrimaryDark)
+    }
+
     private fun revealActivity(x: Int, y: Int) {
         val finalRadius = (Math.max(binding.root.width, binding.root.height) * 1.1).toFloat()
         val circularReveal = ViewAnimationUtils.createCircularReveal(binding.root, x, y, 0f, finalRadius)
