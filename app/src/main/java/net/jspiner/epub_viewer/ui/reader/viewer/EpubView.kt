@@ -89,41 +89,12 @@ class EpubView @JvmOverloads constructor(
     }
 
     private fun setCurrentPage(currentPage: Int) {
-        when (viewModel.getCurrentViewerType()!!) {
-            ViewerType.SCROLL -> setCurrentPageInScrollMode(currentPage)
-            ViewerType.PAGE -> setCurrentPageInPageMode(currentPage)
-        }
-    }
-
-    private fun setCurrentPageInScrollMode(currentPage: Int) {
-        if (measureCurrentPage() == currentPage) return
-
-        fun getScrollPosition(index: Int): Int {
-            val deviceHeight = context.resources.displayMetrics.heightPixels
-
-            return if (index == 0) {
-                0
-            } else {
-                (currentPage - viewModel.getCurrentPageInfo().pageCountSumList[index - 1]) * deviceHeight
-            }
-        }
-
-        var spineIndex = -1
-        var scrollPosition = 0
-        for ((i, pageSum) in viewModel.getCurrentPageInfo().pageCountSumList.withIndex()) {
-            if (currentPage + 1 <= pageSum) {
-                spineIndex = i
-                scrollPosition = getScrollPosition(i)
-                break
-            }
-        }
-
-        binding.verticalViewPager.currentItem = spineIndex
-        adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
-    }
-
-    private fun setCurrentPageInPageMode(currentPage: Int) {
-        binding.verticalViewPager.currentItem = currentPage
+        viewModel.viewerTypeStrategy.setCurrentPagerItem(
+            binding.verticalViewPager,
+            adapter,
+            viewModel.getCurrentPageInfo(),
+            currentPage
+        )
     }
 
     private fun initPager() {

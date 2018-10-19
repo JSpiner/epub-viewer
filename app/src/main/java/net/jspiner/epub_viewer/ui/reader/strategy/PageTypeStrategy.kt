@@ -1,6 +1,7 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 
 class PageTypeStrategy : ViewerTypeStrategy {
@@ -11,4 +12,12 @@ class PageTypeStrategy : ViewerTypeStrategy {
 
     override fun getAllPageCount(pageInfo: PageInfo) = pageInfo.allPage
 
+    override fun setCurrentPagerItem(
+        pager: VerticalViewPager,
+        adapter: EpubPagerAdapter,
+        pageInfo: PageInfo,
+        currentPage: Int
+    ) {
+        pager.currentItem = currentPage
+    }
 }
