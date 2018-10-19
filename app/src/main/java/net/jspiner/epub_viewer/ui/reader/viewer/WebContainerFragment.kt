@@ -8,6 +8,8 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.FragmentWebContainerBinding
+import net.jspiner.epub_viewer.dto.LoadData
+import net.jspiner.epub_viewer.dto.LoadType
 import net.jspiner.epub_viewer.ui.base.BaseFragment
 import net.jspiner.epub_viewer.ui.base.EpubWebClient
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
@@ -77,14 +79,21 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
 
     fun getScrollPosition() = scrollPositionSubject
 
-    fun loadFile(file: File) {
+    fun loadData(loadData: LoadData) {
+        when(loadData.loadType) {
+            LoadType.RAW -> loadRawData(loadData.file, loadData.rawData!!)
+            LoadType.FILE -> loadFile(loadData.file)
+        }
+    }
+
+    private fun loadFile(file: File) {
         binding.webView.loadUrl(file.toURI().toURL().toString())
         binding.loadingView.visibility = VISIBLE
     }
 
-    fun loadData(baseUrl: String, rawString: String) {
+    private fun loadRawData(file: File, rawString: String) {
         binding.webView.loadDataWithBaseURL(
-            baseUrl,
+            file.toURI().toURL().toString(),
             rawString,
             null,
             "utf-8",
