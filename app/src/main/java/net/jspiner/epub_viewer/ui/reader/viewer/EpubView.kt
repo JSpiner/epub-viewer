@@ -61,15 +61,12 @@ class EpubView @JvmOverloads constructor(
         Observable.zip(
             viewModel.getPageInfo(),
             viewModel.getViewerType(),
-            BiFunction { _: PageInfo, t2: ViewerType -> t2 }
+            BiFunction { pageInfo: PageInfo, _: ViewerType -> pageInfo }
         ).observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
-            .subscribe { viewerType ->
-                val pageInfo = viewModel.getCurrentPageInfo()
-                when (viewerType) {
-                    ViewerType.SCROLL -> adapter.setAllPageCount(pageInfo.spinePageList.size)
-                    ViewerType.PAGE -> adapter.setAllPageCount(pageInfo.allPage)
-                }
+            .subscribe { pageInfo ->
+                val pageCount = viewModel.viewerTypeStrategy.getAllPageCount(pageInfo)
+                adapter.setAllPageCount(pageCount)
                 binding.verticalViewPager.currentItem = 0
             }
 
