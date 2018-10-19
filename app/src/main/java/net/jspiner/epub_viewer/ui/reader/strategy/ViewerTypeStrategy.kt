@@ -4,6 +4,7 @@ import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
 interface ViewerTypeStrategy {
 
@@ -19,4 +20,6 @@ interface ViewerTypeStrategy {
     )
 
     fun onWebViewScrolled(pager: VerticalViewPager, viewModel: ReaderViewModel, scrollPosition: Int)
+
+    fun onScrollToPrevPagerItem(fragment: WebContainerFragment, currentPageInfo: PageInfo, position: Int)
 }

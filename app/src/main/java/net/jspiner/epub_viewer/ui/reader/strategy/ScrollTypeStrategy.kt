@@ -4,6 +4,7 @@ import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
 class ScrollTypeStrategy : ViewerTypeStrategy {
 
@@ -52,5 +53,11 @@ class ScrollTypeStrategy : ViewerTypeStrategy {
 
         val measuredPage =sumUntilPreview + (scrollPosition / deviceHeight)
         viewModel.setCurrentPage(measuredPage, false)
+    }
+
+    override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, currentPageInfo: PageInfo, position: Int) {
+        fragment.scrollAfterLoading(
+            currentPageInfo.spinePageList[position].height.toInt()
+        )
     }
 }

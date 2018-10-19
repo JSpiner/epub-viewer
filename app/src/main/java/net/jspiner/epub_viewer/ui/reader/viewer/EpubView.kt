@@ -123,7 +123,7 @@ class EpubView @JvmOverloads constructor(
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment)
 
-        if (lastSpineIndex == position + 1) onScrollToPrevSpine(currentFragment, position)
+        if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, position)
         lastSpineIndex = position
     }
 
@@ -158,11 +158,11 @@ class EpubView @JvmOverloads constructor(
             }.let { lastScrollDisposables.add(it) }
     }
 
-    private fun onScrollToPrevSpine(fragment: WebContainerFragment, position: Int) {
-        if (viewModel.getCurrentViewerType() == ViewerType.SCROLL) {
-            fragment.scrollAfterLoading(
-                viewModel.getCurrentPageInfo().spinePageList[position].height.toInt()
-            )
-        }
+    private fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int) {
+        viewModel.viewerTypeStrategy.onScrollToPrevPagerItem(
+            fragment,
+            viewModel.getCurrentPageInfo(),
+            position
+        )
     }
 }
