@@ -6,7 +6,7 @@ import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
-abstract class ViewerTypeStrategy {
+abstract class ViewerTypeStrategy(protected val viewModel: ReaderViewModel) {
 
     abstract fun changeViewPagerOrientation(verticalViewPager: VerticalViewPager)
 

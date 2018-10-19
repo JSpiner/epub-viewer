@@ -20,7 +20,7 @@ import java.io.FileReader
 
 class ReaderViewModel : BaseViewModel() {
 
-    var viewerTypeStrategy: ViewerTypeStrategy = ScrollTypeStrategy()
+    var viewerTypeStrategy: ViewerTypeStrategy = ScrollTypeStrategy(this)
         private set
 
     val extractedEpub: Epub = Epub()
@@ -175,8 +175,8 @@ class ReaderViewModel : BaseViewModel() {
         viewerTypeSubject.onNext(viewerType)
 
         viewerTypeStrategy = when(viewerType) {
-            ViewerType.SCROLL -> ScrollTypeStrategy()
-            ViewerType.PAGE -> PageTypeStrategy()
+            ViewerType.SCROLL -> ScrollTypeStrategy(this)
+            ViewerType.PAGE -> PageTypeStrategy(this)
         }
     }
 
