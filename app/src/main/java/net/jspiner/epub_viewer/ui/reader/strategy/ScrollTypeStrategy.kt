@@ -9,7 +9,7 @@ import net.jspiner.epub_viewer.ui.reader.viewer.ScrollStatus
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
 import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
-class ScrollTypeStrategy : ViewerTypeStrategy {
+class ScrollTypeStrategy : ViewerTypeStrategy() {
 
     private val lastScrollDisposables by lazy { CompositeDisposable() }
     private var lastSpineIndex = -1
