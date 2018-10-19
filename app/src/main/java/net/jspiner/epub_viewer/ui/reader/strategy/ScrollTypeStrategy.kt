@@ -44,23 +44,6 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
     }
 
-    override fun onWebViewScrolled(pager: VerticalViewPager, scrollPosition: Int) {
-        val spinePosition = pager.currentItem
-        val pageInfo = viewModel.getCurrentPageInfo()
-        val deviceHeight = pager.context.resources.displayMetrics.heightPixels
-
-        val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]
-
-        val measuredPage =sumUntilPreview + (scrollPosition / deviceHeight)
-        viewModel.setCurrentPage(measuredPage, false)
-    }
-
-    override fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int) {
-        fragment.scrollAfterLoading(
-            pageInfo.spinePageList[position].height.toInt()
-        )
-    }
-
     override fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment, pager)
@@ -93,5 +76,22 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
                     scrollPosition
                 )
             }.let { lastScrollDisposables.add(it) }
+    }
+
+    private fun onWebViewScrolled(pager: VerticalViewPager, scrollPosition: Int) {
+        val spinePosition = pager.currentItem
+        val pageInfo = viewModel.getCurrentPageInfo()
+        val deviceHeight = pager.context.resources.displayMetrics.heightPixels
+
+        val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]
+
+        val measuredPage =sumUntilPreview + (scrollPosition / deviceHeight)
+        viewModel.setCurrentPage(measuredPage, false)
+    }
+
+    private fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int) {
+        fragment.scrollAfterLoading(
+            pageInfo.spinePageList[position].height.toInt()
+        )
     }
 }

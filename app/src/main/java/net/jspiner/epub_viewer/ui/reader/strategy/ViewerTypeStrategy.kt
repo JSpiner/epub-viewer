@@ -4,7 +4,6 @@ import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
-import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
 abstract class ViewerTypeStrategy(protected val viewModel: ReaderViewModel) {
 
@@ -20,10 +19,6 @@ abstract class ViewerTypeStrategy(protected val viewModel: ReaderViewModel) {
         adapter: EpubPagerAdapter,
         currentPage: Int
     )
-
-    abstract fun onWebViewScrolled(pager: VerticalViewPager, scrollPosition: Int)
-
-    abstract fun onScrollToPrevPagerItem(fragment: WebContainerFragment, position: Int)
 
     abstract fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int)
 }
