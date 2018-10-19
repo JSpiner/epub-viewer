@@ -105,7 +105,7 @@ class ToolboxView @JvmOverloads constructor(
     }
 
     override fun performClick(): Boolean {
-        val last = viewModel.getToolboxVisible().value!!
+        val last = viewModel.getCurrentToolboxVisible()
         viewModel.setToolboxVisible(!last)
         return super.performClick()
     }

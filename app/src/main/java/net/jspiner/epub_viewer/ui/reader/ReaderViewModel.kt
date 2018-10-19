@@ -31,7 +31,7 @@ class ReaderViewModel : BaseViewModel() {
 
     private val loadDataSubject: PublishSubject<LoadData> = PublishSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
-    private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
+    private val pageSubject: PublishSubject<Pair<Int, Boolean>> = PublishSubject.create()
     private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
     private val pageInfoSubject = BehaviorSubject.create<PageInfo>()
 
@@ -67,12 +67,6 @@ class ReaderViewModel : BaseViewModel() {
             navPointLocationMap[navPoint.id] = findMatchItemInSpines(navPointContent)
         }
     }
-
-    fun setLoadData(loadData: LoadData) {
-        loadDataSubject.onNext(loadData)
-    }
-
-    fun getLoadData(): Observable<LoadData> = loadDataSubject
 
     fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewerTypeStrategy.onPagerItemSelected(
@@ -112,29 +106,23 @@ class ReaderViewModel : BaseViewModel() {
         throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : $id")
     }
 
+    fun getToolboxVisible(): Observable<Boolean> = toolboxShowSubject
+    fun getCurrentToolboxVisible() = toolboxShowSubject.value!!
     fun setToolboxVisible(isVisible: Boolean) = toolboxShowSubject.onNext(isVisible)
-
-    fun getToolboxVisible() = toolboxShowSubject
 
     fun setPageInfo(pageInfo: PageInfo) {
         pageInfoSubject.onNext(pageInfo)
         pageSubject.onNext(0 to false)
     }
 
+    fun getPageInfo(): Observable<PageInfo> = pageInfoSubject
     fun getCurrentPageInfo() = pageInfoSubject.value!!
 
-    fun getPageInfo(): Observable<PageInfo> = pageInfoSubject
-
     fun getCurrentPage(): Observable<Pair<Int, Boolean>> = pageSubject
-
-    fun setCurrentPage(page: Int, needUpdate: Boolean) {
-        pageSubject.onNext(page to needUpdate)
-    }
+    fun setCurrentPage(page: Int, needUpdate: Boolean) = pageSubject.onNext(page to needUpdate)
 
     fun getViewerType(): Observable<ViewerType> = viewerTypeSubject
-
     fun getCurrentViewerType() = viewerTypeSubject.value
-
     fun setViewerType(viewerType: ViewerType) {
         viewerTypeSubject.onNext(viewerType)
 
@@ -143,5 +131,8 @@ class ReaderViewModel : BaseViewModel() {
             ViewerType.PAGE -> PageTypeStrategy(this)
         }
     }
+
+    fun getLoadData(): Observable<LoadData> = loadDataSubject
+    fun setLoadData(loadData: LoadData) = loadDataSubject.onNext(loadData)
 
 }
