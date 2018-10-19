@@ -8,6 +8,9 @@ import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
+import net.jspiner.epub_viewer.ui.reader.strategy.PageTypeStrategy
+import net.jspiner.epub_viewer.ui.reader.strategy.ScrollTypeStrategy
+import net.jspiner.epub_viewer.ui.reader.strategy.ViewerTypeStrategy
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
 import net.jspiner.epubstream.dto.NavPoint
@@ -16,6 +19,9 @@ import java.io.File
 import java.io.FileReader
 
 class ReaderViewModel : BaseViewModel() {
+
+    var viewerTypeStrategy: ViewerTypeStrategy = ScrollTypeStrategy()
+        private set
 
     val extractedEpub: Epub = Epub()
 
@@ -167,6 +173,11 @@ class ReaderViewModel : BaseViewModel() {
 
     fun setViewerType(viewerType: ViewerType) {
         viewerTypeSubject.onNext(viewerType)
+
+        viewerTypeStrategy = when(viewerType) {
+            ViewerType.SCROLL -> ScrollTypeStrategy()
+            ViewerType.PAGE -> PageTypeStrategy()
+        }
     }
 
     fun getRawData(): Observable<Pair<File, String>> = rawDataSubject
