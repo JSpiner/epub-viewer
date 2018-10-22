@@ -71,7 +71,13 @@ class ToolboxView @JvmOverloads constructor(
             )
         }
         binding.backButton.setOnClickListener { getActivity().finish() }
-        binding.searchButton.setOnClickListener { SearchActivity.startActivity(getActivity(), it) }
+        binding.searchButton.setOnClickListener {
+            SearchActivity.startActivity(
+                getActivity(),
+                it,
+                viewModel.extractedEpub
+            )
+        }
     }
 
     private fun showTocPopupMenu() {

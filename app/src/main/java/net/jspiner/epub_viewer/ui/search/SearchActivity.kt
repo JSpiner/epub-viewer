@@ -15,6 +15,7 @@ import android.view.ViewTreeObserver
 import android.view.animation.AccelerateInterpolator
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivitySearchBinding
+import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.ui.base.BaseActivity
 
 class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
@@ -22,14 +23,16 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     companion object {
         val EXTRA_CIRCULAR_REVEAL_X = "extraX"
         val EXTRA_CIRCULAR_REVEAL_Y = "extraY"
+        val EXTRA_EPUB = "extraEpub"
 
-        fun startActivity(activity: Activity, view: View) {
+        fun startActivity(activity: Activity, view: View, epub: Epub) {
             val revealX = (view.x + view.width / 2).toInt()
             val revealY = (view.y + view.height / 2).toInt()
 
             val intent = Intent(activity, SearchActivity::class.java)
             intent.putExtra(SearchActivity.EXTRA_CIRCULAR_REVEAL_X, revealX)
             intent.putExtra(SearchActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY)
+            intent.putExtra(SearchActivity.EXTRA_EPUB, epub)
 
             ActivityCompat.startActivity(activity, intent, Bundle.EMPTY)
             activity.overridePendingTransition(0, 0)
@@ -39,6 +42,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     private val TRANSITION_TIME = 500L
     private var revealX: Int = 0
     private var revealY: Int = 0
+    private lateinit var epub: Epub
 
     override fun getLayoutId() = R.layout.activity_search
 
@@ -47,11 +51,14 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     override fun loadState(bundle: Bundle) {
         revealX = intent.getIntExtra(EXTRA_CIRCULAR_REVEAL_X, 0)
         revealY = intent.getIntExtra(EXTRA_CIRCULAR_REVEAL_Y, 0)
+        epub = intent.getSerializableExtra(EXTRA_EPUB) as Epub
+        viewModel.setEpub(epub)
     }
 
     override fun saveState(bundle: Bundle) {
         bundle.putInt(EXTRA_CIRCULAR_REVEAL_X, revealX)
         bundle.putInt(EXTRA_CIRCULAR_REVEAL_Y, revealY)
+        bundle.putSerializable(EXTRA_EPUB, epub)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
