@@ -7,6 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewTreeObserver
@@ -67,6 +69,24 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         super.onCreate(savedInstanceState)
 
         setNavigationBarColor(R.color.colorPrimaryDark)
+
+        init()
+    }
+
+    private fun init() {
+        binding.searchText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                //no-op
+            }
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
+                //no-op
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                viewModel.onTextChanged(s)
+            }
+        })
     }
 
     private fun revealActivity(x: Int, y: Int) {
