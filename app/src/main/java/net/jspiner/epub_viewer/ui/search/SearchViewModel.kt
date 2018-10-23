@@ -6,6 +6,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
+import net.jspiner.epub_viewer.ui.search.finder.PageFinder
 import net.jspiner.epubstream.dto.ItemRef
 import java.io.BufferedReader
 import java.io.File
@@ -16,6 +17,7 @@ class SearchViewModel : BaseViewModel() {
 
     private val textSubject = PublishSubject.create<CharSequence>()
     private lateinit var epub: Epub
+    private lateinit var pageFinder: PageFinder
     private var lastRequestDisposable: Disposable? = null
 
     init {
@@ -26,6 +28,10 @@ class SearchViewModel : BaseViewModel() {
 
     fun setEpub(epub: Epub) {
         this.epub = epub
+    }
+
+    fun setPageFinder(pageFinder: PageFinder) {
+        this.pageFinder = pageFinder
     }
 
     fun onTextChanged(charSequence: CharSequence) {
@@ -39,8 +45,12 @@ class SearchViewModel : BaseViewModel() {
             .map { toManifestItemPair(it) }
             .map { readFile(it) }
             .flatMap { findTextIndex(it, charSequence) }
+            .map { findTextPage(it) }
             .subscribeOn(Schedulers.io())
-            .subscribe { println("index : $it"+ " end job + " + (System.currentTimeMillis() - startTime))}
+            .subscribe (
+                { println("index : $it"+ " end job + " + (System.currentTimeMillis() - startTime))},
+                { println("error : " + it.message)}
+            )
             .also { lastRequestDisposable = it }
     }
 
@@ -98,6 +108,10 @@ class SearchViewModel : BaseViewModel() {
             }
             emitter.onComplete()
         }
+    }
+
+    private fun findTextPage(itemIndex: ItemIndex): Int {
+        return pageFinder.findPage(itemIndex.itemRef, itemIndex.index)
     }
 
     data class ItemFile(val itemRef: ItemRef, val file: File)

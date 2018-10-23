@@ -16,7 +16,9 @@ import android.view.animation.AccelerateInterpolator
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivitySearchBinding
 import net.jspiner.epub_viewer.dto.Epub
+import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epub_viewer.ui.base.BaseActivity
+import net.jspiner.epub_viewer.ui.search.finder.ScrollPageFinder
 
 class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
 
@@ -24,8 +26,9 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         val EXTRA_CIRCULAR_REVEAL_X = "extraX"
         val EXTRA_CIRCULAR_REVEAL_Y = "extraY"
         val EXTRA_EPUB = "extraEpub"
+        val EXTRA_PAGE_INFO = "extraPageInfo"
 
-        fun startActivity(activity: Activity, view: View, epub: Epub) {
+        fun startActivity(activity: Activity, view: View, epub: Epub, pageInfo: PageInfo) {
             val revealX = (view.x + view.width / 2).toInt()
             val revealY = (view.y + view.height / 2).toInt()
 
@@ -33,6 +36,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
             intent.putExtra(SearchActivity.EXTRA_CIRCULAR_REVEAL_X, revealX)
             intent.putExtra(SearchActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY)
             intent.putExtra(SearchActivity.EXTRA_EPUB, epub)
+            intent.putExtra(SearchActivity.EXTRA_PAGE_INFO, pageInfo)
 
             ActivityCompat.startActivity(activity, intent, Bundle.EMPTY)
             activity.overridePendingTransition(0, 0)
@@ -43,6 +47,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     private var revealX: Int = 0
     private var revealY: Int = 0
     private lateinit var epub: Epub
+    private lateinit var pageInfo: PageInfo
 
     override fun getLayoutId() = R.layout.activity_search
 
@@ -52,13 +57,16 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         revealX = intent.getIntExtra(EXTRA_CIRCULAR_REVEAL_X, 0)
         revealY = intent.getIntExtra(EXTRA_CIRCULAR_REVEAL_Y, 0)
         epub = intent.getSerializableExtra(EXTRA_EPUB) as Epub
+        pageInfo = intent.getSerializableExtra(EXTRA_PAGE_INFO) as PageInfo
         viewModel.setEpub(epub)
+        viewModel.setPageFinder(ScrollPageFinder(this, epub, pageInfo))
     }
 
     override fun saveState(bundle: Bundle) {
         bundle.putInt(EXTRA_CIRCULAR_REVEAL_X, revealX)
         bundle.putInt(EXTRA_CIRCULAR_REVEAL_Y, revealY)
         bundle.putSerializable(EXTRA_EPUB, epub)
+        bundle.putSerializable(EXTRA_PAGE_INFO, pageInfo)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
