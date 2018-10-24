@@ -23,5 +23,6 @@ class SearchViewHolder(val binding: ItemSearchBinding) : RecyclerView.ViewHolder
 
     fun setData(searchResult: SearchResult) {
         binding.text.text = searchResult.contentDisplay
+        binding.page.text = "P. ${searchResult.page}"
     }
 }
