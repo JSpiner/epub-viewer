@@ -7,6 +7,7 @@ import android.webkit.WebViewClient
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.SingleSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.PageInfo
@@ -20,24 +21,35 @@ class ScrollPageFinder(val context: Context, val epub: Epub, val pageInfo: PageI
     private val deviceWidth: Int by lazy { context.resources.displayMetrics.widthPixels }
     private val deviceHeight: Int by lazy { context.resources.displayMetrics.heightPixels }
 
-    override fun findPage(itemRef: ItemRef, index: Int): Int {
+    override fun findPage(itemRef: ItemRef, index: Int): Single<Int> {
         val file = toManifestItem(itemRef)
         val splittedContent = readFile(file).substring(0, index)
         val contentHeightSubject = SingleSubject.create<Long>()
 
-        val contentHeight = Single.create<WebView> { emitter -> emitter.onSuccess(WebView(context)) }
+        return Single.create<WebView> { emitter -> emitter.onSuccess(WebView(context)) }
             .doOnSuccess { setUpWebView(it) }
             .doOnSuccess { addJavascriptCallback(it, contentHeightSubject) }
-            .doOnSuccess { it.loadDataWithBaseURL(file.toURI().toURL().toString(), splittedContent, null, "utf-8", null) }
-            .zipWith(contentHeightSubject, BiFunction { _: WebView, height: Long -> height })
             .subscribeOn(AndroidSchedulers.mainThread())
-            .blockingGet()
+            .subscribeOn(Schedulers.io())
+            .doOnSuccess {
+                it.loadDataWithBaseURL(
+                    file.toURI().toURL().toString(),
+                    splittedContent,
+                    null,
+                    "utf-8",
+                    null
+                )
+            }
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .zipWith(contentHeightSubject, BiFunction { _: WebView, height: Long -> height })
+            .map { contentHeight ->
+                val spineIndex = epub.opf.spine.itemrefs.indexOf(itemRef)
+                val pageSum = if (spineIndex == 0) 0 else pageInfo.pageCountSumList[spineIndex - 1]
+                val pageInSpine = (contentHeight / deviceHeight).toInt()
 
-        val spineIndex = epub.opf.spine.itemrefs.indexOf(itemRef)
-        val pageSum = if (spineIndex == 0) 0 else pageInfo.pageCountSumList[spineIndex - 1]
-        val pageInSpine = (contentHeight / deviceHeight).toInt()
-
-        return pageSum + pageInSpine
+                return@map pageSum + pageInSpine
+            }
+            .subscribeOn(Schedulers.io())
     }
 
     private fun readFile(file: File): String {
@@ -71,14 +83,15 @@ class ScrollPageFinder(val context: Context, val epub: Epub, val pageInfo: PageI
     }
 
     private fun addJavascriptCallback(webView: WebView, subject: SingleSubject<Long>) {
-        class AndroidBridge {
-            @JavascriptInterface
-            fun resize(height: Long) {
-                val webViewHeight = height * context.resources.displayMetrics.density
-                subject.onSuccess(webViewHeight.toLong())
-            }
+        webView.addJavascriptInterface(AndroidBridge(subject), "AndroidFunction")
+    }
+
+    inner class AndroidBridge(private val subject: SingleSubject<Long>) {
+        @JavascriptInterface
+        fun resize(height: Long) {
+            val webViewHeight = height * context.resources.displayMetrics.density
+            subject.onSuccess(webViewHeight.toLong())
         }
-        webView.addJavascriptInterface(AndroidBridge(), "AndroidFunction")
     }
 
     private fun toManifestItem(itemRef: ItemRef): File {

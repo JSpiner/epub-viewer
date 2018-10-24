@@ -1,5 +1,6 @@
 package net.jspiner.epub_viewer.ui.search
 
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -23,7 +24,7 @@ class SearchViewModel : BaseViewModel() {
     init {
         textSubject.debounce(400, TimeUnit.MILLISECONDS)
             .compose(bindLifecycle())
-            .subscribe { onTextChangedInternal(it) }
+            .subscribe { onTextChangedInternal(it.toString()) }
     }
 
     fun setEpub(epub: Epub) {
@@ -38,19 +39,17 @@ class SearchViewModel : BaseViewModel() {
         textSubject.onNext(charSequence)
     }
 
-    private fun onTextChangedInternal(charSequence: CharSequence) {
-        val startTime = System.currentTimeMillis()
+    private fun onTextChangedInternal(content: String) {
         lastRequestDisposable?.dispose()
+        var startTime = System.currentTimeMillis()
         Observable.fromIterable(epub.opf.spine.itemrefs.toList())
             .map { toManifestItemPair(it) }
             .map { readFile(it) }
-            .flatMap { findTextIndex(it, charSequence) }
-            .map { findTextPage(it) }
-            .subscribeOn(Schedulers.io())
-            .subscribe (
-                { println("index : $it"+ " end job + " + (System.currentTimeMillis() - startTime))},
-                { println("error : " + it.message)}
-            )
+            .flatMap { findTextIndex(it, content) }
+            .toFlowable(BackpressureStrategy.BUFFER)
+            .flatMapSingle({ pageFinder.findPage(it.itemRef, it.index) }, false, 1)
+            .subscribeOn(Schedulers.computation())
+            .subscribe { println("page : " + it +" diff : " + (System.currentTimeMillis() - startTime)) }
             .also { lastRequestDisposable = it }
     }
 
@@ -82,40 +81,36 @@ class SearchViewModel : BaseViewModel() {
         )
     }
 
-    private fun findTextIndex(itemContent: ItemContent, charSequence: CharSequence): Observable<ItemIndex> {
+    private fun findTextIndex(itemContent: ItemContent, content: String): Observable<ItemIndex> {
         return Observable.create { emitter ->
             val text = itemContent.content
             var isInHtmlTag = false
-            var tempBuffer = ""
+            val tempBuffer = StringBuilder()
             for (i in 0 until text.length) {
                 if (text[i] == '<') isInHtmlTag = true
                 if (isInHtmlTag && text[i] == '>') isInHtmlTag = false
                 if (isInHtmlTag) continue
 
-                tempBuffer += text[i]
+                tempBuffer.append(text[i])
 
-                if (!charSequence.startsWith(tempBuffer)) {
-                    tempBuffer = ""
-                } else if (charSequence.toString() == tempBuffer) {
+                if (!content.startsWith(tempBuffer)) {
+                    tempBuffer.delete(0, tempBuffer.length)
+                } else if (content == tempBuffer.toString()) {
                     emitter.onNext(
                         ItemIndex(
                             itemContent.itemRef,
-                            itemContent.content,
                             i
                         )
                     )
+                    tempBuffer.delete(0, tempBuffer.length)
                 }
             }
             emitter.onComplete()
         }
     }
 
-    private fun findTextPage(itemIndex: ItemIndex): Int {
-        return pageFinder.findPage(itemIndex.itemRef, itemIndex.index)
-    }
-
     data class ItemFile(val itemRef: ItemRef, val file: File)
     data class ItemContent(val itemRef: ItemRef, val content: String)
-    data class ItemIndex(val itemRef: ItemRef, val content: String, val index:Int)
+    data class ItemIndex(val itemRef: ItemRef, val index:Int)
 
 }
