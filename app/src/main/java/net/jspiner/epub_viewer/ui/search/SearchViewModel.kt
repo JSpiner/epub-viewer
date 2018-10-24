@@ -164,6 +164,9 @@ class SearchViewModel : BaseViewModel() {
         }
     }
 
+    fun getSearchResult(): Observable<SearchResult> = searchItemSubject
+    fun getSearchReset(): Observable<Boolean> = searchResetSubject
+
     data class ItemFile(val itemRef: ItemRef, val file: File)
     data class ItemContent(val itemRef: ItemRef, val content: String)
     data class ItemIndex(val itemRef: ItemRef, val index:Int)

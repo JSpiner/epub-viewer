@@ -7,12 +7,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v7.widget.LinearLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateInterpolator
+import io.reactivex.android.schedulers.AndroidSchedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivitySearchBinding
 import net.jspiner.epub_viewer.dto.Epub
@@ -48,6 +50,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     private var revealY: Int = 0
     private lateinit var epub: Epub
     private lateinit var pageInfo: PageInfo
+    private val searchAdapter = SearchAdapter()
 
     override fun getLayoutId() = R.layout.activity_search
 
@@ -92,6 +95,10 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
                 viewModel.onTextChanged(s)
             }
         })
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = searchAdapter
+
+        subscribe()
     }
 
     private fun initAnimation() {
@@ -138,5 +145,17 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
 
     override fun onBackPressed() {
         unRevealActivity()
+    }
+
+    private fun subscribe() {
+        viewModel.getSearchResult()
+            .compose(bindLifecycle())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { searchAdapter.addData(it) }
+
+        viewModel.getSearchReset()
+            .compose(bindLifecycle())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { searchAdapter.resetAll() }
     }
 }
