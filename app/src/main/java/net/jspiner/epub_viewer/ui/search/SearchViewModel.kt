@@ -2,6 +2,7 @@ package net.jspiner.epub_viewer.ui.search
 
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -20,6 +21,8 @@ class SearchViewModel : BaseViewModel() {
     private lateinit var epub: Epub
     private lateinit var pageFinder: PageFinder
     private var lastRequestDisposable: Disposable? = null
+    private val searchItemSubject = PublishSubject.create<String>()
+    private val searchResetSubject = PublishSubject.create<Boolean>()
 
     init {
         textSubject.debounce(400, TimeUnit.MILLISECONDS)
@@ -41,13 +44,14 @@ class SearchViewModel : BaseViewModel() {
 
     private fun onTextChangedInternal(content: String) {
         lastRequestDisposable?.dispose()
+        searchResetSubject.onNext(true)
         var startTime = System.currentTimeMillis()
         Observable.fromIterable(epub.opf.spine.itemrefs.toList())
             .map { toManifestItemPair(it) }
             .map { readFile(it) }
             .flatMap { findTextIndex(it, content) }
             .toFlowable(BackpressureStrategy.BUFFER)
-            .flatMapSingle({ pageFinder.findPage(it.itemRef, it.index) }, false, 1)
+            .flatMapSingle({ findPage(it) }, false, 1)
             .subscribeOn(Schedulers.computation())
             .subscribe { println("page : " + it +" diff : " + (System.currentTimeMillis() - startTime)) }
             .also { lastRequestDisposable = it }
@@ -109,8 +113,14 @@ class SearchViewModel : BaseViewModel() {
         }
     }
 
+    private fun findPage(itemIndex: ItemIndex): Single<PageIndex>? {
+        return pageFinder.findPage(itemIndex.itemRef, itemIndex.index)
+            .map { page -> PageIndex(page, itemIndex.index) }
+    }
+
     data class ItemFile(val itemRef: ItemRef, val file: File)
     data class ItemContent(val itemRef: ItemRef, val content: String)
     data class ItemIndex(val itemRef: ItemRef, val index:Int)
+    data class PageIndex(val page: Int, val index: Int)
 
 }
