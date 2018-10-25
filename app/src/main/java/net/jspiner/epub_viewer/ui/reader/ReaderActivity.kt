@@ -112,7 +112,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             EtcActivity.REQUEST_CODE -> onEtcActivityResult(resultCode, data!!)
-            SearchActivity.REQUEST_CODE -> onSearchActivityResult(resultCode, data!!)
+            SearchActivity.REQUEST_CODE -> onSearchActivityResult(resultCode, data)
             else -> RuntimeException("대응하지 못한 requestCode : $requestCode")
         }
     }
@@ -128,8 +128,8 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         }
     }
 
-    private fun onSearchActivityResult(resultCode: Int, data: Intent) {
-        if (resultCode != Activity.RESULT_OK) return
+    private fun onSearchActivityResult(resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK || data == null) return
 
         val page = data.getIntExtra(SearchActivity.EXTRA_SEARCH_RESULT_PAGE, 0)
         viewModel.setCurrentPage(page, true)
