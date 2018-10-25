@@ -19,7 +19,9 @@ import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivitySearchBinding
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.ui.base.BaseActivity
+import net.jspiner.epub_viewer.ui.search.finder.PagePageFinder
 import net.jspiner.epub_viewer.ui.search.finder.ScrollPageFinder
 
 class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
@@ -30,10 +32,11 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         val EXTRA_CIRCULAR_REVEAL_Y = "extraY"
         val EXTRA_EPUB = "extraEpub"
         val EXTRA_PAGE_INFO = "extraPageInfo"
+        val EXTRA_VIEWER_TYPE = "extraViewerType"
 
         val EXTRA_SEARCH_RESULT_PAGE = "extraSearchResultPage"
 
-        fun startActivity(activity: Activity, view: View, epub: Epub, pageInfo: PageInfo) {
+        fun startActivity(activity: Activity, view: View, epub: Epub, pageInfo: PageInfo, viewerType: ViewerType) {
             val revealX = (view.x + view.width / 2).toInt()
             val revealY = (view.y + view.height / 2).toInt()
 
@@ -42,6 +45,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
             intent.putExtra(SearchActivity.EXTRA_CIRCULAR_REVEAL_Y, revealY)
             intent.putExtra(SearchActivity.EXTRA_EPUB, epub)
             intent.putExtra(SearchActivity.EXTRA_PAGE_INFO, pageInfo)
+            intent.putExtra(SearchActivity.EXTRA_VIEWER_TYPE, viewerType)
 
             ActivityCompat.startActivityForResult(activity, intent, REQUEST_CODE, Bundle.EMPTY)
             activity.overridePendingTransition(0, 0)
@@ -53,6 +57,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     private var revealY: Int = 0
     private lateinit var epub: Epub
     private lateinit var pageInfo: PageInfo
+    private lateinit var viewerType: ViewerType
     private val searchAdapter = SearchAdapter()
 
     override fun getLayoutId() = R.layout.activity_search
@@ -64,8 +69,8 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         revealY = intent.getIntExtra(EXTRA_CIRCULAR_REVEAL_Y, 0)
         epub = intent.getSerializableExtra(EXTRA_EPUB) as Epub
         pageInfo = intent.getSerializableExtra(EXTRA_PAGE_INFO) as PageInfo
+        viewerType = intent.getSerializableExtra(EXTRA_VIEWER_TYPE) as ViewerType
         viewModel.setEpub(epub)
-        viewModel.setPageFinder(ScrollPageFinder(this, epub, pageInfo))
     }
 
     override fun saveState(bundle: Bundle) {
@@ -73,6 +78,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         bundle.putInt(EXTRA_CIRCULAR_REVEAL_Y, revealY)
         bundle.putSerializable(EXTRA_EPUB, epub)
         bundle.putSerializable(EXTRA_PAGE_INFO, pageInfo)
+        bundle.putSerializable(EXTRA_VIEWER_TYPE, viewerType)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +91,12 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
 
     private fun init() {
         initAnimation()
+
+        when(viewerType) {
+            ViewerType.SCROLL -> viewModel.setPageFinder(ScrollPageFinder(this, epub, pageInfo))
+            ViewerType.PAGE -> viewModel.setPageFinder(PagePageFinder(this, epub, pageInfo))
+        }
+
         binding.searchText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 //no-op

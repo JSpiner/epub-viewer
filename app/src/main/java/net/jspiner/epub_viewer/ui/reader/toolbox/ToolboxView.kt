@@ -76,7 +76,8 @@ class ToolboxView @JvmOverloads constructor(
                 getActivity(),
                 it,
                 viewModel.extractedEpub,
-                viewModel.getCurrentPageInfo()
+                viewModel.getCurrentPageInfo(),
+                viewModel.getCurrentViewerType()!!
             )
         }
     }
