@@ -61,6 +61,7 @@ class SearchViewModel : BaseViewModel() {
             .toFlowable(BackpressureStrategy.BUFFER)
             .flatMapSingle({ findPage(it) }, false, 1)
             .map { toSearchResult(it, content) }
+            .compose(bindLifecycle())
             .subscribeOn(Schedulers.computation())
             .subscribe { searchItemSubject.onNext(it) }
             .also { lastRequestDisposable = it }
