@@ -27,6 +27,6 @@ class SearchViewHolder(val binding: ItemSearchBinding) : RecyclerView.ViewHolder
         this.searchResult = searchResult
 
         binding.text.text = searchResult.contentDisplay
-        binding.page.text = "P. ${searchResult.page}"
+        binding.page.text = "P. ${searchResult.page + 1}"
     }
 }
