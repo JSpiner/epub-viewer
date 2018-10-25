@@ -25,10 +25,13 @@ import net.jspiner.epub_viewer.ui.search.finder.ScrollPageFinder
 class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
 
     companion object {
+        val REQUEST_CODE = 1112
         val EXTRA_CIRCULAR_REVEAL_X = "extraX"
         val EXTRA_CIRCULAR_REVEAL_Y = "extraY"
         val EXTRA_EPUB = "extraEpub"
         val EXTRA_PAGE_INFO = "extraPageInfo"
+
+        val EXTRA_SEARCH_RESULT_PAGE = "extraSearchResultPage"
 
         fun startActivity(activity: Activity, view: View, epub: Epub, pageInfo: PageInfo) {
             val revealX = (view.x + view.width / 2).toInt()
@@ -40,7 +43,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
             intent.putExtra(SearchActivity.EXTRA_EPUB, epub)
             intent.putExtra(SearchActivity.EXTRA_PAGE_INFO, pageInfo)
 
-            ActivityCompat.startActivity(activity, intent, Bundle.EMPTY)
+            ActivityCompat.startActivityForResult(activity, intent, REQUEST_CODE, Bundle.EMPTY)
             activity.overridePendingTransition(0, 0)
         }
     }
