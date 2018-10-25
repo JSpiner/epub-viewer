@@ -126,6 +126,7 @@ class ReaderViewModel : BaseViewModel() {
     fun setViewerType(viewerType: ViewerType) {
         viewerTypeSubject.onNext(viewerType)
 
+        viewerTypeStrategy.unSubscribe()
         viewerTypeStrategy = when(viewerType) {
             ViewerType.SCROLL -> ScrollTypeStrategy(this)
             ViewerType.PAGE -> PageTypeStrategy(this)
