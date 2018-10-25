@@ -11,6 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.SingleSubject
 import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.PageInfo
+import net.jspiner.epub_viewer.util.readFile
 import net.jspiner.epubstream.dto.ItemRef
 
 class ScrollPageFinder(context: Context, epub: Epub, pageInfo: PageInfo) : PageFinder(context, epub, pageInfo) {

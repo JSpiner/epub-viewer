@@ -13,20 +13,6 @@ abstract class PageFinder(val context: Context, val epub: Epub, val pageInfo: Pa
 
     abstract fun findPage(itemRef: ItemRef, index: Int): Single<Int>
 
-    protected fun readFile(file: File): String {
-        return BufferedReader(FileReader(file)).use { br ->
-            val sb = StringBuilder()
-            var line = br.readLine()
-
-            while (line != null) {
-                sb.append(line)
-                sb.append(System.lineSeparator())
-                line = br.readLine()
-            }
-            sb.toString()
-        }
-    }
-
     protected fun toManifestItem(itemRef: ItemRef): File {
         val manifestItemList = epub.opf.manifest.items
 

@@ -5,6 +5,7 @@ import net.jspiner.epub_viewer.dto.LoadType
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.epub_viewer.util.readFile
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
@@ -55,19 +56,5 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
                 res
             )
         )
-    }
-
-    private fun readFile(file: File): String {
-        return BufferedReader(FileReader(file)).use { br ->
-            val sb = StringBuilder()
-            var line = br.readLine()
-
-            while (line != null) {
-                sb.append(line)
-                sb.append(System.lineSeparator())
-                line = br.readLine()
-            }
-            sb.toString()
-        }
     }
 }

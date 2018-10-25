@@ -17,10 +17,9 @@ import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.SearchResult
 import net.jspiner.epub_viewer.ui.base.BaseViewModel
 import net.jspiner.epub_viewer.ui.search.finder.PageFinder
+import net.jspiner.epub_viewer.util.readFile
 import net.jspiner.epubstream.dto.ItemRef
-import java.io.BufferedReader
 import java.io.File
-import java.io.FileReader
 import java.util.concurrent.TimeUnit
 
 class SearchViewModel : BaseViewModel() {
@@ -56,7 +55,7 @@ class SearchViewModel : BaseViewModel() {
         searchResetSubject.onNext(true)
         Observable.fromIterable(epub.opf.spine.itemrefs.toList())
             .map { toManifestItemPair(it) }
-            .map { readFile(it) }
+            .map { readItemFile(it) }
             .flatMap { findTextIndex(it, content) }
             .toFlowable(BackpressureStrategy.BUFFER)
             .flatMapSingle({ findPage(it) }, false, 1)
@@ -78,20 +77,10 @@ class SearchViewModel : BaseViewModel() {
         throw RuntimeException("해당 itemRef 를 manifest 에서 찾을 수 없음 id : ${itemRef.idRef}")
     }
 
-    private fun readFile(itemFile: ItemFile): ItemContent {
+    private fun readItemFile(itemFile: ItemFile): ItemContent {
         return ItemContent(
             itemFile.itemRef,
-            BufferedReader(FileReader(itemFile.file)).use { br ->
-                val sb = StringBuilder()
-                var line = br.readLine()
-
-                while (line != null) {
-                    sb.append(line)
-                    sb.append(System.lineSeparator())
-                    line = br.readLine()
-                }
-                sb.toString()
-            }
+            readFile(itemFile.file)
         )
     }
 
@@ -136,7 +125,7 @@ class SearchViewModel : BaseViewModel() {
     }
 
     private fun toColoredSpannable(pageIndex: SearchViewModel.PageIndex, searchText: String): Spannable {
-        val fullContent = readFile(toManifestItemPair(pageIndex.itemRef)).content
+        val fullContent = readItemFile(toManifestItemPair(pageIndex.itemRef)).content
 
         val splitStart = Math.max(0, pageIndex.index - SEARCH_RESULT_RENDER_THRESHOLD)
         val splitEnd = Math.min(pageIndex.index + SEARCH_RESULT_RENDER_THRESHOLD, fullContent.length)
