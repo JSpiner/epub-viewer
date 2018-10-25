@@ -151,11 +151,17 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
         viewModel.getSearchResult()
             .compose(bindLifecycle())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { searchAdapter.addData(it) }
+            .subscribe {
+                searchAdapter.addData(it)
+                binding.noData.visibility = View.GONE
+            }
 
         viewModel.getSearchReset()
             .compose(bindLifecycle())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { searchAdapter.resetAll() }
+            .subscribe {
+                searchAdapter.resetAll()
+                binding.noData.visibility = View.VISIBLE
+            }
     }
 }
