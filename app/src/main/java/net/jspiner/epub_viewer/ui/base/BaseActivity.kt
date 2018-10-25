@@ -103,5 +103,5 @@ abstract class BaseActivity<Binding : ViewDataBinding, ViewModel : BaseViewModel
 
     fun showLoading() = loadingDialog.show()
 
-    fun hideLoading() = loadingDialog.hide()
+    fun hideLoading() = loadingDialog.dismiss()
 }

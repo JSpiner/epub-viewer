@@ -15,9 +15,10 @@ import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.ViewerType
 import net.jspiner.epub_viewer.paginator.PagePaginator
 import net.jspiner.epub_viewer.paginator.Paginator
-import net.jspiner.epub_viewer.ui.base.BaseActivity
 import net.jspiner.epub_viewer.paginator.ScrollPaginator
+import net.jspiner.epub_viewer.ui.base.BaseActivity
 import net.jspiner.epub_viewer.ui.etc.EtcActivity
+import net.jspiner.epub_viewer.ui.search.SearchActivity
 import java.io.File
 
 const val INTENT_KEY_FILE = "intentKeyFile"
@@ -111,6 +112,7 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             EtcActivity.REQUEST_CODE -> onEtcActivityResult(resultCode, data!!)
+            SearchActivity.REQUEST_CODE -> onSearchActivityResult(resultCode, data)
             else -> RuntimeException("대응하지 못한 requestCode : $requestCode")
         }
     }
@@ -124,5 +126,12 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         } else {
             viewModel.setViewerType(ViewerType.PAGE)
         }
+    }
+
+    private fun onSearchActivityResult(resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK || data == null) return
+
+        val page = data.getIntExtra(SearchActivity.EXTRA_SEARCH_RESULT_PAGE, 0)
+        viewModel.setCurrentPage(page, true)
     }
 }

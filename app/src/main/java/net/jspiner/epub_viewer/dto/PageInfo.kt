@@ -1,11 +1,13 @@
 package net.jspiner.epub_viewer.dto
 
+import java.io.Serializable
+
 data class PageInfo(
     val deviceHeight: Long,
     val allPage: Int,
     val spinePageList: List<Page>,
     val pageCountSumList: List<Int>
-) {
+) : Serializable {
 
     companion object {
         fun create(spinePageList: List<Page>): PageInfo {
@@ -32,4 +34,4 @@ data class Page(
     val height: Long,
     val page: Int,
     val splitIndexList: List<Long> = ArrayList()
-)
+) : Serializable
