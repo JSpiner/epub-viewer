@@ -13,6 +13,7 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
 
     override fun changeViewPagerOrientation(verticalViewPager: VerticalViewPager) {
         verticalViewPager.horizontalMode()
+        verticalViewPager.enableScroll()
     }
 
     override fun getAllPageCount(): Int = pageInfo.allPage
