@@ -46,6 +46,8 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init()
+
+        throw RuntimeException("에러확인용")
     }
 
     private fun init() {
