@@ -1,12 +1,9 @@
 package net.jspiner.epub_viewer.ui.reader
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.TedPermission
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
@@ -21,16 +18,19 @@ import net.jspiner.epub_viewer.ui.etc.EtcActivity
 import net.jspiner.epub_viewer.ui.search.SearchActivity
 import java.io.File
 
-const val INTENT_KEY_FILE = "intentKeyFile"
-
-fun startReaderActivity(context: Context, epubFile: File) {
-    val intent = Intent(context, ReaderActivity::class.java)
-    intent.putExtra(INTENT_KEY_FILE, epubFile)
-    context.startActivity(intent)
-}
-
 class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
 
+    companion object {
+
+        const val INTENT_KEY_FILE = "intentKeyFile"
+
+        fun startActivity(context: Context, epubFile: File) {
+            val intent = Intent(context, ReaderActivity::class.java)
+            intent.putExtra(INTENT_KEY_FILE, epubFile)
+            context.startActivity(intent)
+        }
+
+    }
     override fun getLayoutId() = R.layout.activity_reader
     override fun createViewModel() = ReaderViewModel()
 
@@ -53,30 +53,17 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
         initViews()
 
         viewModel.setEpubFile(epubFile)
-        requestPermission()
         viewModel.getViewerType()
             .skip(1)
             .compose(bindLifecycle())
             .subscribe { calculatePage() }
+
+        loadEpub()
     }
 
     private fun initViews() {
         binding.toolboxView.touchSender = { binding.epubView.sendTouchEvent(it) }
         setNavigationBarColor(R.color.colorPrimaryDark)
-    }
-
-    private fun requestPermission() {
-        TedPermission.with(this)
-            .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
-            .setPermissionListener(object : PermissionListener {
-                override fun onPermissionGranted() {
-                    loadEpub()
-                }
-
-                override fun onPermissionDenied(list: MutableList<String>?) {
-                    requestPermission()
-                }
-            }).check()
     }
 
     private fun loadEpub() {

@@ -1,10 +1,14 @@
 package net.jspiner.epub_viewer.ui.library
 
+import android.Manifest
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v7.widget.GridLayoutManager
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ActivityLibraryBinding
@@ -41,9 +45,27 @@ class LibraryActivity : BaseActivity<ActivityLibraryBinding, LibraryViewModel>()
             layoutManager = GridLayoutManager(context, 2)
             adapter = this@LibraryActivity.adapter
         }
+        requestPermission()
+    }
 
+    private fun requestPermission() {
+        TedPermission.with(this)
+            .setPermissions(Manifest.permission.READ_EXTERNAL_STORAGE)
+            .setPermissionListener(object : PermissionListener {
+                override fun onPermissionGranted() {
+                    loadEpub()
+                }
+
+                override fun onPermissionDenied(list: MutableList<String>?) {
+                    requestPermission()
+                }
+            }).check()
+    }
+
+    private fun loadEpub() {
         getEpubFilePathList()
-            .observeOn(Schedulers.io())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
             .subscribe { it -> adapter.setDataList(it) }
     }
