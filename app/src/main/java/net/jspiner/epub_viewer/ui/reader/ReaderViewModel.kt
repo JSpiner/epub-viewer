@@ -31,9 +31,11 @@ class ReaderViewModel : BaseViewModel() {
 
     private val loadDataSubject: PublishSubject<LoadData> = PublishSubject.create()
     private val toolboxShowSubject: BehaviorSubject<Boolean> = BehaviorSubject.createDefault(true)
-    private val pageSubject: PublishSubject<Pair<Int, Boolean>> = PublishSubject.create()
+    private val pageSubject: BehaviorSubject<Pair<Int, Boolean>> = BehaviorSubject.create()
     private val viewerTypeSubject = BehaviorSubject.createDefault(ViewerType.SCROLL)
     private val pageInfoSubject = BehaviorSubject.create<PageInfo>()
+
+    private var lastSavePoint = 0f
 
     fun setEpubFile(file: File) {
         this.file = file
@@ -112,7 +114,8 @@ class ReaderViewModel : BaseViewModel() {
 
     fun setPageInfo(pageInfo: PageInfo) {
         pageInfoSubject.onNext(pageInfo)
-        pageSubject.onNext(0 to false)
+        val lastSavePage = (pageInfo.allPage * lastSavePoint).toInt()
+        pageSubject.onNext(lastSavePage to true)
     }
 
     fun getPageInfo(): Observable<PageInfo> = pageInfoSubject
@@ -124,15 +127,21 @@ class ReaderViewModel : BaseViewModel() {
     fun getViewerType(): Observable<ViewerType> = viewerTypeSubject
     fun getCurrentViewerType() = viewerTypeSubject.value
     fun setViewerType(viewerType: ViewerType) {
-        viewerTypeSubject.onNext(viewerType)
+        saveLastPosition()
 
+        viewerTypeStrategy.unSubscribe()
         viewerTypeStrategy = when(viewerType) {
             ViewerType.SCROLL -> ScrollTypeStrategy(this)
             ViewerType.PAGE -> PageTypeStrategy(this)
         }
+        viewerTypeSubject.onNext(viewerType)
     }
 
     fun getLoadData(): Observable<LoadData> = loadDataSubject
     fun setLoadData(loadData: LoadData) = loadDataSubject.onNext(loadData)
 
+    private fun saveLastPosition() {
+        val lastPage = pageSubject.value!!.first
+        lastSavePoint = lastPage / getCurrentPageInfo().allPage.toFloat()
+    }
 }

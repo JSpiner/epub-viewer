@@ -68,6 +68,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         fragment
             .getScrollState()
             .distinctUntilChanged()
+            .compose(bindToLifecycle())
             .subscribe { scrollStatus ->
                 when (scrollStatus) {
                     ScrollStatus.REACHED_TOP -> pager.enableScroll()
@@ -80,6 +81,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         fragment
             .getScrollPosition()
             .observeOn(AndroidSchedulers.mainThread())
+            .compose(bindToLifecycle())
             .subscribe { scrollPosition ->
                 onWebViewScrolled(
                     pager,
