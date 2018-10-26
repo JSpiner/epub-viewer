@@ -158,7 +158,7 @@ class ToolboxView @JvmOverloads constructor(
                 val pageInfo = viewModel.getCurrentPageInfo()
 
                 binding.pageDisplay.text = "${page + 1} / ${pageInfo.allPage}"
-                binding.pageSeekbar.max = pageInfo.allPage
+                binding.pageSeekbar.max = pageInfo.allPage - 1
                 binding.pageSeekbar.progress = page
 
                 var currentSpineIndex = -1
