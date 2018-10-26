@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.databinding.ViewEpubViewerBinding
 import net.jspiner.epub_viewer.dto.LoadData
@@ -38,6 +39,7 @@ class EpubView @JvmOverloads constructor(
 
     private fun subscribe() {
         viewModel.getLoadData()
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
             .subscribe { setLoadData(it) }

@@ -1,5 +1,8 @@
 package net.jspiner.epub_viewer.ui.reader.strategy
 
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import net.jspiner.epub_viewer.dto.LoadData
 import net.jspiner.epub_viewer.dto.LoadType
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
@@ -25,37 +28,45 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
     override fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewModel.setCurrentPage(position, false)
 
-        sendRawFile(position)
+        readRawData(position)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { loadData ->
+                viewModel.setLoadData(loadData)
+            }
     }
 
-    private fun sendRawFile(index: Int) {
-        var currentSpineIndex = -1
-        for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
-            currentSpineIndex = i
-            if (index < sumUntil) break
-        }
+    private fun readRawData(index: Int): Single<LoadData> {
+        return Single.create<LoadData> { emitter ->
+            var currentSpineIndex = -1
+            for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
+                currentSpineIndex = i
+                if (index < sumUntil) break
+            }
 
-        val originFile = viewModel.toManifestItem(viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex])
-        val rawString = readFile(originFile)
-        val bodyStart = rawString.indexOf("<body>") + "<body>".length
-        val bodyEnd = rawString.indexOf("</body")
+            val originFile = viewModel.toManifestItem(viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex])
+            val rawString = readFile(originFile)
+            val bodyStart = rawString.indexOf("<body>") + "<body>".length
+            val bodyEnd = rawString.indexOf("</body")
 
-        val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
-        val body = rawString.substring(bodyStart, bodyEnd)
+            val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
+            val body = rawString.substring(bodyStart, bodyEnd)
 
-        val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
-        val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
-        val splitStart = if (innerPageIndex == 0) 0 else splitIndexList[innerPageIndex - 1].toInt()
-        val splitEnd = splitIndexList[innerPageIndex].toInt()
-        val splitedText = body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
-        val res = String.format(emptyHtml, splitedText)
-        viewModel.setLoadData(
-            LoadData(
-                LoadType.RAW,
-                originFile,
-                res
+            val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
+            val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
+            val splitStart = if (innerPageIndex == 0) 0 else splitIndexList[innerPageIndex - 1].toInt()
+            val splitEnd = splitIndexList[innerPageIndex].toInt()
+            val splitedText = body.split(" ").subList(splitStart, splitEnd).joinToString(" ")
+            val res = String.format(emptyHtml, splitedText)
+
+            emitter.onSuccess(
+                LoadData(
+                    LoadType.RAW,
+                    originFile,
+                    res
+                )
             )
-        )
+        }
     }
 
     private fun readFile(file: File): String {
