@@ -21,16 +21,19 @@ import net.jspiner.epub_viewer.ui.etc.EtcActivity
 import net.jspiner.epub_viewer.ui.search.SearchActivity
 import java.io.File
 
-const val INTENT_KEY_FILE = "intentKeyFile"
-
-fun startReaderActivity(context: Context, epubFile: File) {
-    val intent = Intent(context, ReaderActivity::class.java)
-    intent.putExtra(INTENT_KEY_FILE, epubFile)
-    context.startActivity(intent)
-}
-
 class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
 
+    companion object {
+
+        const val INTENT_KEY_FILE = "intentKeyFile"
+
+        fun startActivity(context: Context, epubFile: File) {
+            val intent = Intent(context, ReaderActivity::class.java)
+            intent.putExtra(INTENT_KEY_FILE, epubFile)
+            context.startActivity(intent)
+        }
+
+    }
     override fun getLayoutId() = R.layout.activity_reader
     override fun createViewModel() = ReaderViewModel()
 
