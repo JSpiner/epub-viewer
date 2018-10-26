@@ -57,6 +57,8 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             .skip(1)
             .compose(bindLifecycle())
             .subscribe { calculatePage() }
+
+        loadEpub()
     }
 
     private fun initViews() {
