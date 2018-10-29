@@ -79,13 +79,21 @@ epub file viewer android application
     ├── LazyUtil.kt
     ├── LifecycleTransformer.kt
     └── ViewUtil.kt
-
-
 ```
 - `ui/library` : 서재 페이지
 - `ui/reader` : 뷰어 페이지
 - `ui/etc` : 기타 페이지
 
+### Reader Layout 구조
+```
+└── ReaderActivity
+    └── FrameLayout
+        ├── EpubView
+        │   └── ViewPager
+        │       └── WebFragment
+        │           └── WebView
+        └── ToolboxView
+```
 
 ## Paginator
 가상의 WebView를 통해 렌더링 될 내용의 길이를 구하고 그를 통해 페이지수를 계산합니다.
