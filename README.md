@@ -22,51 +22,63 @@ epub file viewer android application
 
 ## Structure
 ```
-└── net
-    └── jspiner
-        └── epub_viewer
-            ├── dto
-            │   ├── Epub.kt
-            │   ├── PageInfo.kt
-            │   └── ViewerType.kt
-            ├── paginator
-            │   ├── PagePaginator.kt
-            │   ├── Paginator.kt
-            │   └── ScrollPaginator.kt
-            ├── ui
-            │   ├── base
-            │   │   ├── BaseActivity.kt
-            │   │   ├── BaseFragment.kt
-            │   │   ├── BaseView.kt
-            │   │   ├── BaseViewModel.kt
-            │   │   └── EpubWebClient.kt
-            │   ├── common
-            │   │   └── LoadingDialog.kt
-            │   ├── etc
-            │   │   ├── EtcActivity.kt
-            │   │   └── EtcViewModel.kt
-            │   ├── library
-            │   │   ├── LibraryActivity.kt
-            │   │   ├── LibraryAdapter.kt
-            │   │   ├── LibraryViewHolder.kt
-            │   │   └── LibraryViewModel.kt
-            │   └── reader
-            │       ├── ReaderActivity.kt
-            │       ├── ReaderViewModel.kt
-            │       ├── toolbox
-            │       │   └── ToolboxView.kt
-            │       └── viewer
-            │           ├── EpubLoadingView.kt
-            │           ├── EpubPagerAdapter.kt
-            │           ├── EpubView.kt
-            │           ├── ScrollStatus.kt
-            │           ├── VerticalViewPager.kt
-            │           └── WebContainerFragment.kt
-            └── util
-                ├── BindingAdapter.kt
-                ├── LazyUtil.kt
-                ├── LifecycleTransformer.kt
-                └── ViewUtil.kt
+├── dto
+│   ├── Epub.kt
+│   ├── LoadData.kt
+│   ├── PageInfo.kt
+│   ├── SearchResult.kt
+│   └── ViewerType.kt
+├── paginator
+│   ├── PagePaginator.kt
+│   ├── Paginator.kt
+│   └── ScrollPaginator.kt
+├── ui
+│   ├── base
+│   │   ├── BaseActivity.kt
+│   │   ├── BaseFragment.kt
+│   │   ├── BaseView.kt
+│   │   ├── BaseViewModel.kt
+│   │   └── EpubWebClient.kt
+│   ├── common
+│   │   └── LoadingDialog.kt
+│   ├── etc
+│   │   ├── EtcActivity.kt
+│   │   └── EtcViewModel.kt
+│   ├── library
+│   │   ├── LibraryActivity.kt
+│   │   ├── LibraryAdapter.kt
+│   │   ├── LibraryViewHolder.kt
+│   │   └── LibraryViewModel.kt
+│   ├── reader
+│   │   ├── ReaderActivity.kt
+│   │   ├── ReaderViewModel.kt
+│   │   ├── strategy
+│   │   │   ├── PageTypeStrategy.kt
+│   │   │   ├── ScrollTypeStrategy.kt
+│   │   │   └── ViewerTypeStrategy.kt
+│   │   ├── toolbox
+│   │   │   └── ToolboxView.kt
+│   │   └── viewer
+│   │       ├── EpubLoadingView.kt
+│   │       ├── EpubPagerAdapter.kt
+│   │       ├── EpubView.kt
+│   │       ├── ScrollStatus.kt
+│   │       ├── VerticalViewPager.kt
+│   │       └── WebContainerFragment.kt
+│   └── search
+│       ├── SearchActivity.kt
+│       ├── SearchAdapter.kt
+│       ├── SearchViewHolder.kt
+│       ├── SearchViewModel.kt
+│       └── finder
+│           ├── PageFinder.kt
+│           ├── PagePageFinder.kt
+│           └── ScrollPageFinder.kt
+└── util
+    ├── BindingAdapter.kt
+    ├── LazyUtil.kt
+    ├── LifecycleTransformer.kt
+    └── ViewUtil.kt
 
 
 ```
