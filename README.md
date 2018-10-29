@@ -4,10 +4,13 @@
 
 epub file viewer android application
 
+여러가지 [known issue](https://github.com/JSpiner/epub-viewer/issues)가 있어, 모든 epub 파일에서 동작하진 않습니다 ;) <BR/>
+[BEYOND GOOD AND EVIL](./beyond_good_and_evil.epub) 책에선 정상 동작이 확인되어 해당 서적으로 테스트해보시면 원활한 결과를 보실 수 있습니다.
+
 ## Preview
 | ![screenshot-1](./imgs/screenshot-1.jpg) | ![screenshot-2](./imgs/screenshot-2.jpg)| ![screenshot-3](./imgs/screenshot-3.jpg) |
 |:---:|:---:|:---:|
-| ![screenshot-4](./imgs/screenshot-4.jpg) | ![screenshot-5](./imgs/screenshot-5.jpg) |  |
+| ![screenshot-4](./imgs/screenshot-4.jpg) | ![screenshot-5](./imgs/screenshot-5.jpg) | ![screenshot-6](./imgs/screenshot-6.jpg) |
 
 ## Spec
 - DRM 없는 EPUB 파일 열람
@@ -17,61 +20,83 @@ epub file viewer android application
 - Slider 혹은 Seek bar 형태의 UI를 통한 네비게이션이 가능해야함
 - 스크롤 보기, 페이지 넘겨 보기 방식이 모두 가능해야함
     - 중간에 보기 방식을 전환할 때 보던 위치가 반드시 유지될 필요는 없음
+- (추가스펙) 본문 내 검색 기능
+- (추가스펙) 보기 방식 전환 시 보던 위치 유지
 
 ## Structure
 ```
-└── net
-    └── jspiner
-        └── epub_viewer
-            ├── dto
-            │   ├── Epub.kt
-            │   ├── PageInfo.kt
-            │   └── ViewerType.kt
-            ├── paginator
-            │   ├── PagePaginator.kt
-            │   ├── Paginator.kt
-            │   └── ScrollPaginator.kt
-            ├── ui
-            │   ├── base
-            │   │   ├── BaseActivity.kt
-            │   │   ├── BaseFragment.kt
-            │   │   ├── BaseView.kt
-            │   │   ├── BaseViewModel.kt
-            │   │   └── EpubWebClient.kt
-            │   ├── common
-            │   │   └── LoadingDialog.kt
-            │   ├── etc
-            │   │   ├── EtcActivity.kt
-            │   │   └── EtcViewModel.kt
-            │   ├── library
-            │   │   ├── LibraryActivity.kt
-            │   │   ├── LibraryAdapter.kt
-            │   │   ├── LibraryViewHolder.kt
-            │   │   └── LibraryViewModel.kt
-            │   └── reader
-            │       ├── ReaderActivity.kt
-            │       ├── ReaderViewModel.kt
-            │       ├── toolbox
-            │       │   └── ToolboxView.kt
-            │       └── viewer
-            │           ├── EpubLoadingView.kt
-            │           ├── EpubPagerAdapter.kt
-            │           ├── EpubView.kt
-            │           ├── ScrollStatus.kt
-            │           ├── VerticalViewPager.kt
-            │           └── WebContainerFragment.kt
-            └── util
-                ├── BindingAdapter.kt
-                ├── LazyUtil.kt
-                ├── LifecycleTransformer.kt
-                └── ViewUtil.kt
-
-
+├── dto
+│   ├── Epub.kt
+│   ├── LoadData.kt
+│   ├── PageInfo.kt
+│   ├── SearchResult.kt
+│   └── ViewerType.kt
+├── paginator
+│   ├── PagePaginator.kt
+│   ├── Paginator.kt
+│   └── ScrollPaginator.kt
+├── ui
+│   ├── base
+│   │   ├── BaseActivity.kt
+│   │   ├── BaseFragment.kt
+│   │   ├── BaseView.kt
+│   │   ├── BaseViewModel.kt
+│   │   └── EpubWebClient.kt
+│   ├── common
+│   │   └── LoadingDialog.kt
+│   ├── etc
+│   │   ├── EtcActivity.kt
+│   │   └── EtcViewModel.kt
+│   ├── library
+│   │   ├── LibraryActivity.kt
+│   │   ├── LibraryAdapter.kt
+│   │   ├── LibraryViewHolder.kt
+│   │   └── LibraryViewModel.kt
+│   ├── reader
+│   │   ├── ReaderActivity.kt
+│   │   ├── ReaderViewModel.kt
+│   │   ├── strategy
+│   │   │   ├── PageTypeStrategy.kt
+│   │   │   ├── ScrollTypeStrategy.kt
+│   │   │   └── ViewerTypeStrategy.kt
+│   │   ├── toolbox
+│   │   │   └── ToolboxView.kt
+│   │   └── viewer
+│   │       ├── EpubLoadingView.kt
+│   │       ├── EpubPagerAdapter.kt
+│   │       ├── EpubView.kt
+│   │       ├── ScrollStatus.kt
+│   │       ├── VerticalViewPager.kt
+│   │       └── WebContainerFragment.kt
+│   └── search
+│       ├── SearchActivity.kt
+│       ├── SearchAdapter.kt
+│       ├── SearchViewHolder.kt
+│       ├── SearchViewModel.kt
+│       └── finder
+│           ├── PageFinder.kt
+│           ├── PagePageFinder.kt
+│           └── ScrollPageFinder.kt
+└── util
+    ├── BindingAdapter.kt
+    ├── LazyUtil.kt
+    ├── LifecycleTransformer.kt
+    └── ViewUtil.kt
 ```
 - `ui/library` : 서재 페이지
 - `ui/reader` : 뷰어 페이지
 - `ui/etc` : 기타 페이지
 
+### Reader Layout 구조
+```
+└── ReaderActivity
+    └── FrameLayout
+        ├── EpubView
+        │   └── ViewPager
+        │       └── WebFragment
+        │           └── WebView
+        └── ToolboxView
+```
 
 ## Paginator
 가상의 WebView를 통해 렌더링 될 내용의 길이를 구하고 그를 통해 페이지수를 계산합니다.
