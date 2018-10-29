@@ -61,7 +61,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
             )
         )
     }
-    
+
     private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager) {
         lastScrollDisposables.clear()
 
@@ -97,7 +97,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
 
         val sumUntilPreview = if (spinePosition == 0) 0 else pageInfo.pageCountSumList[spinePosition - 1]
 
-        val measuredPage =sumUntilPreview + (scrollPosition / deviceHeight)
+        val measuredPage = sumUntilPreview + (scrollPosition / deviceHeight)
         viewModel.setCurrentPage(measuredPage, false)
     }
 

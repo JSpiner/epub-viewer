@@ -80,7 +80,7 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
     fun getScrollPosition() = scrollPositionSubject
 
     fun loadData(loadData: LoadData) {
-        when(loadData.loadType) {
+        when (loadData.loadType) {
             LoadType.RAW -> loadRawData(loadData.file, loadData.rawData!!)
             LoadType.FILE -> loadFile(loadData.file)
         }

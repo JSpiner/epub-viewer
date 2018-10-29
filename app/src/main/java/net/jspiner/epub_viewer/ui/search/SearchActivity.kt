@@ -24,7 +24,7 @@ import net.jspiner.epub_viewer.ui.base.BaseActivity
 import net.jspiner.epub_viewer.ui.search.finder.PagePageFinder
 import net.jspiner.epub_viewer.ui.search.finder.ScrollPageFinder
 
-class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
+class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>() {
 
     companion object {
         val REQUEST_CODE = 1112
@@ -92,7 +92,7 @@ class SearchActivity: BaseActivity<ActivitySearchBinding, SearchViewModel>() {
     private fun init() {
         initAnimation()
 
-        when(viewerType) {
+        when (viewerType) {
             ViewerType.SCROLL -> viewModel.setPageFinder(ScrollPageFinder(this, epub, pageInfo))
             ViewerType.PAGE -> viewModel.setPageFinder(PagePageFinder(this, epub, pageInfo))
         }
