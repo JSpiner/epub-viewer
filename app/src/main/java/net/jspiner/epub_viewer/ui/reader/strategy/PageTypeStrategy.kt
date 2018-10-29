@@ -52,7 +52,8 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
             val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
             val body = rawString.substring(bodyStart, bodyEnd)
 
-            val innerPageIndex = index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
+            val innerPageIndex =
+                index - if (currentSpineIndex == 0) 0 else pageInfo.pageCountSumList[currentSpineIndex - 1]
             val splitIndexList = pageInfo.spinePageList[currentSpineIndex].splitIndexList
             val splitStart = if (innerPageIndex == 0) 0 else splitIndexList[innerPageIndex - 1].toInt()
             val splitEnd = splitIndexList[innerPageIndex].toInt()

@@ -130,7 +130,7 @@ class ReaderViewModel : BaseViewModel() {
         saveLastPosition()
 
         viewerTypeStrategy.unSubscribe()
-        viewerTypeStrategy = when(viewerType) {
+        viewerTypeStrategy = when (viewerType) {
             ViewerType.SCROLL -> ScrollTypeStrategy(this)
             ViewerType.PAGE -> PageTypeStrategy(this)
         }

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import net.jspiner.epub_viewer.R
 import net.jspiner.epub_viewer.dto.SearchResult
 
-class SearchAdapter: RecyclerView.Adapter<SearchViewHolder>() {
+class SearchAdapter : RecyclerView.Adapter<SearchViewHolder>() {
 
     private val dataList: ArrayList<SearchResult> = ArrayList()
 

@@ -11,7 +11,7 @@ abstract class ViewerTypeStrategy(protected val viewModel: ReaderViewModel) {
 
     protected val pageInfo: PageInfo
         get() = viewModel.getCurrentPageInfo()
-    private val lifecycleSubject: CompletableSubject  = CompletableSubject.create()
+    private val lifecycleSubject: CompletableSubject = CompletableSubject.create()
 
     abstract fun changeViewPagerOrientation(verticalViewPager: VerticalViewPager)
 

@@ -29,8 +29,8 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
             intent.putExtra(INTENT_KEY_FILE, epubFile)
             context.startActivity(intent)
         }
-
     }
+
     override fun getLayoutId() = R.layout.activity_reader
     override fun createViewModel() = ReaderViewModel()
 

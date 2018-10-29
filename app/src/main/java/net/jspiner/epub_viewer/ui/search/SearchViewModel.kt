@@ -150,7 +150,7 @@ class SearchViewModel : BaseViewModel() {
         val spannable = SpannableString(fromHtml(splittedContent))
         spannable.setSpan(
             ForegroundColorSpan(Color.BLUE),
-            (innerIndex - renderLengthDiff) - searchText.length  + 1,
+            (innerIndex - renderLengthDiff) - searchText.length + 1,
             (innerIndex - renderLengthDiff) + 1,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
@@ -170,7 +170,6 @@ class SearchViewModel : BaseViewModel() {
 
     data class ItemFile(val itemRef: ItemRef, val file: File)
     data class ItemContent(val itemRef: ItemRef, val content: String)
-    data class ItemIndex(val itemRef: ItemRef, val index:Int)
+    data class ItemIndex(val itemRef: ItemRef, val index: Int)
     data class PageIndex(val page: Int, val itemRef: ItemRef, val index: Int)
-
 }
