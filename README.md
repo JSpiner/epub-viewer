@@ -17,6 +17,8 @@ epub file viewer android application
 - Slider 혹은 Seek bar 형태의 UI를 통한 네비게이션이 가능해야함
 - 스크롤 보기, 페이지 넘겨 보기 방식이 모두 가능해야함
     - 중간에 보기 방식을 전환할 때 보던 위치가 반드시 유지될 필요는 없음
+- (추가스펙) 본문 내 검색 기능
+- (추가스펙) 보기 방식 전환 시 보던 위치 유지
 
 ## Structure
 ```
