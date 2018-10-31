@@ -117,11 +117,9 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
 
-        if (!isVisibleToUser) {
-            if (isBindingInitialized()) {
-                binding.webView.loadUrl(CONTENT_CLEAR_URL)
-                binding.loadingView.visibility = View.VISIBLE
-            }
+        if (isVisibleToUser.not() && isBindingInitialized()) {
+            binding.webView.loadUrl(CONTENT_CLEAR_URL)
+            binding.loadingView.visibility = View.VISIBLE
         }
     }
 
