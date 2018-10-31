@@ -71,10 +71,8 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
             .compose(bindToLifecycle())
             .subscribe { scrollStatus ->
                 when (scrollStatus) {
-                    ScrollStatus.REACHED_TOP -> pager.enableScroll()
-                    ScrollStatus.REACHED_BOTTOM -> pager.enableScroll()
-                    ScrollStatus.NO_SCROLL -> pager.enableScroll()
                     ScrollStatus.SCROLLING -> pager.disableScroll()
+                    else -> pager.enableScroll()
                 }
             }.let { lastScrollDisposables.add(it) }
 
