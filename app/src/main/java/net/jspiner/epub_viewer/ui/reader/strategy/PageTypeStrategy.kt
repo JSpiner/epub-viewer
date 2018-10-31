@@ -41,7 +41,9 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
             var currentSpineIndex = -1
             for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
                 currentSpineIndex = i
-                if (index < sumUntil) break
+                if (index < sumUntil) {
+                    break
+                }
             }
 
             val originFile = viewModel.toManifestItem(viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex])

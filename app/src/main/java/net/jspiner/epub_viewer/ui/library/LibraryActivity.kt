@@ -84,7 +84,9 @@ class LibraryActivity : BaseActivity<ActivityLibraryBinding, LibraryViewModel>()
             if (cursor.moveToFirst()) {
                 do {
                     val file = File(cursor.getString(1))
-                    if (file.extension == "epub") epubFileList.add(file.path)
+                    if (file.extension == "epub") {
+                        epubFileList.add(file.path)
+                    }
                 } while (cursor.moveToNext())
             }
             cursor.close()

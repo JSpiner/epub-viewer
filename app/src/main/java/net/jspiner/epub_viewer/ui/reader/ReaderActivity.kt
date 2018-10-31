@@ -105,7 +105,10 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     }
 
     private fun onEtcActivityResult(resultCode: Int, data: Intent) {
-        if (resultCode != Activity.RESULT_OK) return
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+
         val isScrollMode = data.getBooleanExtra(EtcActivity.IS_SCROLL_MODE, true)
 
         if (isScrollMode) {
@@ -116,7 +119,9 @@ class ReaderActivity : BaseActivity<ActivityReaderBinding, ReaderViewModel>() {
     }
 
     private fun onSearchActivityResult(resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_OK || data == null) return
+        if (resultCode != Activity.RESULT_OK || data == null) {
+            return
+        }
 
         val page = data.getIntExtra(SearchActivity.EXTRA_SEARCH_RESULT_PAGE, 0)
         viewModel.setCurrentPage(page, true)

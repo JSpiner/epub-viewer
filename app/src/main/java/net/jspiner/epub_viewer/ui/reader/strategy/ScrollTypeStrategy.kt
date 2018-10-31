@@ -50,7 +50,9 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment, pager)
 
-        if (lastSpineIndex == position + 1) onScrollToPrevPagerItem(currentFragment, position)
+        if (lastSpineIndex == position + 1) {
+            onScrollToPrevPagerItem(currentFragment, position)
+        }
         lastSpineIndex = position
 
         val itemRef = viewModel.extractedEpub.opf.spine.itemrefs[position]

@@ -58,7 +58,9 @@ class ReaderViewModel : BaseViewModel() {
         fun findMatchItemInSpines(content: String): ItemRef {
             for (spineItem in extractedEpub.opf.spine.itemrefs) {
                 val itemFile = toManifestItem(spineItem)
-                if (content == itemFile.path) return spineItem
+                if (content == itemFile.path) {
+                    return spineItem
+                }
             }
             throw RuntimeException("해당 navPoint 를 spine 에서 찾을 수 없음 content : $content")
         }

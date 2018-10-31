@@ -164,7 +164,9 @@ class ToolboxView @JvmOverloads constructor(
                 var currentSpineIndex = -1
                 for ((index, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
                     currentSpineIndex = index
-                    if (page < sumUntil) break
+                    if (page < sumUntil) {
+                        break
+                    }
                 }
 
                 val currentId = viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex].idRef

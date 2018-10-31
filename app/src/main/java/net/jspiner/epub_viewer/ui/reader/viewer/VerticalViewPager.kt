@@ -19,7 +19,9 @@ class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(cont
     private inner class VerticalPageTransformer : ViewPager.PageTransformer {
 
         override fun transformPage(view: View, position: Float) {
-            if (!isVerticalMode) return
+            if (!isVerticalMode) {
+                return
+            }
             when {
                 position < -1 -> view.alpha = 0f
                 position <= 1 -> {
@@ -33,8 +35,12 @@ class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(cont
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        if (!isSwipeEnabled) return false
-        if (!isVerticalMode) return super.onInterceptTouchEvent(ev)
+        if (!isSwipeEnabled) {
+            return false
+        }
+        if (!isVerticalMode) {
+            return super.onInterceptTouchEvent(ev)
+        }
 
         val intercepted = super.onInterceptTouchEvent(swapXY(ev))
         swapXY(ev)
@@ -42,8 +48,12 @@ class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(cont
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-        if (!isSwipeEnabled) return false
-        if (!isVerticalMode) return super.onTouchEvent(ev)
+        if (!isSwipeEnabled) {
+            return false
+        }
+        if (!isVerticalMode) {
+            return super.onTouchEvent(ev)
+        }
 
         return super.onTouchEvent(swapXY(ev))
     }

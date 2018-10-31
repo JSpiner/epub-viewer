@@ -43,7 +43,9 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
         binding.webView.let { webView ->
             fun getContentHeight() = (webView.contentHeight * resources.displayMetrics.density.toDouble()).toInt()
             fun updateScrollState() {
-                if (context == null || !epubWebClient.isPageFinished || epubWebClient.scrollPositionAfterLoading != 0) return
+                if (context == null || !epubWebClient.isPageFinished || epubWebClient.scrollPositionAfterLoading != 0) {
+                    return
+                }
 
                 val height = getContentHeight()
                 val webViewHeight = webView.measuredHeight
