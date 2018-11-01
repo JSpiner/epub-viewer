@@ -49,7 +49,7 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
             val originFile = viewModel.toManifestItem(viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex])
             val rawString = readFile(originFile)
             val bodyStart = rawString.indexOf("<body>") + "<body>".length
-            val bodyEnd = rawString.indexOf("</body")
+            val bodyEnd = rawString.indexOf("</body>")
 
             val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
             val body = rawString.substring(bodyStart, bodyEnd)

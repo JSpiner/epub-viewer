@@ -15,7 +15,7 @@ class PagePageFinder(context: Context, epub: Epub, pageInfo: PageInfo) : PageFin
 
             val fullContent = readFile(toManifestItem(itemRef))
             val bodyStart = fullContent.indexOf("<body>") + "<body>".length
-            val bodyEnd = fullContent.indexOf("</body")
+            val bodyEnd = fullContent.indexOf("</body>")
             val body = fullContent.substring(bodyStart, bodyEnd)
 
             val splitList = body.split(" ")
