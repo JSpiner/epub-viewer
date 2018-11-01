@@ -16,7 +16,7 @@ before_install:
 - chmod +rx app
 skip_cleanup: true
 script:
-- ./gradlew clean build
+- ./gradlew clean build ktlint
 - export CI=true
 - export CI_NAME=travis-ci
 - ./gradlew jacocoTestReport coveralls
