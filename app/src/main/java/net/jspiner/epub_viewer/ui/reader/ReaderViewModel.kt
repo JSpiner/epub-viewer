@@ -82,7 +82,7 @@ class ReaderViewModel : BaseViewModel() {
         val itemRef = navPointLocationMap[navPoint.id]
             ?: throw RuntimeException("해당 navPoint 를 찾을 수 없음 id : $navPoint")
 
-        for ((index, item) in extractedEpub.opf.spine.itemrefs.withIndex()) {
+        for ((index, item) in extractedEpub.getItemRefs().withIndex()) {
             if (item.idRef == itemRef.idRef) {
                 if (index != 0) {
                     setCurrentPage(getCurrentPageInfo().pageCountSumList[index - 1], true)

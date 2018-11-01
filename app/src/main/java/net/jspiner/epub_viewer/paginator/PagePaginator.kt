@@ -43,7 +43,7 @@ class PagePaginator(private val context: Context, private val extractedEpub: Epu
     }
 
     override fun calculatePage(): Single<PageInfo> {
-        val itemRefList = extractedEpub.opf.spine.itemrefs.toList()
+        val itemRefList = extractedEpub.getItemRefs().toList()
         val startTime = System.currentTimeMillis()
 
         return Observable.fromIterable(itemRefList)

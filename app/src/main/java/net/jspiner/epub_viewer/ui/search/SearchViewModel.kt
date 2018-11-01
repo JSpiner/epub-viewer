@@ -54,7 +54,7 @@ class SearchViewModel : BaseViewModel() {
     private fun onTextChangedInternal(content: String) {
         lastRequestDisposable?.dispose()
         searchResetSubject.onNext(true)
-        Observable.fromIterable(epub.opf.spine.itemrefs.toList())
+        Observable.fromIterable(epub.getItemRefs().toList())
             .map { toManifestItemPair(it) }
             .map { readFile(it) }
             .flatMap { findTextIndex(it, content) }
