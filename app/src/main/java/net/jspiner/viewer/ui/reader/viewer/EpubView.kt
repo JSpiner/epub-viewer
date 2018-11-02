@@ -18,7 +18,9 @@ import net.jspiner.viewer.ui.base.BaseView
 import net.jspiner.viewer.ui.reader.ReaderViewModel
 
 class EpubView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : BaseView<ViewEpubViewerBinding, ReaderViewModel>(context, attrs, defStyleAttr) {
 
     override fun getLayoutId() = R.layout.view_epub_viewer

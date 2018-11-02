@@ -153,7 +153,7 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>() {
                 overridePendingTransition(0, 0)
             }
         })
-        
+
         circularReveal.start()
     }
 

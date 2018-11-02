@@ -19,7 +19,9 @@ import net.jspiner.viewer.ui.reader.ReaderViewModel
 import net.jspiner.viewer.ui.search.SearchActivity
 
 class ToolboxView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : BaseView<ViewToolboxBinding, ReaderViewModel>(context, attrs, defStyleAttr) {
 
     override fun getLayoutId() = R.layout.view_toolbox
