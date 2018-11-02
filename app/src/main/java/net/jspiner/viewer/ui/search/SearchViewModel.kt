@@ -107,7 +107,7 @@ class SearchViewModel : BaseViewModel() {
 
                 tempBuffer.append(text[i])
 
-                if (!content.startsWith(tempBuffer)) {
+                if (content.startsWith(tempBuffer).not()) {
                     tempBuffer.delete(0, tempBuffer.length)
                 } else if (content == tempBuffer.toString()) {
                     emitter.onNext(

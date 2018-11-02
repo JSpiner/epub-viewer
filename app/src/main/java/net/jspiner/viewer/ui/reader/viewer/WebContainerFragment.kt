@@ -44,7 +44,7 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
         binding.webView.let { webView ->
             fun getContentHeight() = (webView.contentHeight * resources.displayMetrics.density.toDouble()).toInt()
             fun updateScrollState() {
-                if (context == null || !epubWebClient.isPageFinished || epubWebClient.scrollPositionAfterLoading != 0) return
+                if (context == null || epubWebClient.isPageFinished.not() || epubWebClient.scrollPositionAfterLoading != 0) return
 
                 val height = getContentHeight()
                 val webViewHeight = webView.measuredHeight
@@ -118,7 +118,7 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
 
-        if (!isVisibleToUser) {
+        if (isVisibleToUser.not()) {
             if (isBindingInitialized()) {
                 binding.webView.loadUrl(CONTENT_CLEAR_URL)
                 binding.loadingView.visibility = VISIBLE

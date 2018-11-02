@@ -111,7 +111,7 @@ class ToolboxView @JvmOverloads constructor(
 
     override fun performClick(): Boolean {
         val last = viewModel.getCurrentToolboxVisible()
-        viewModel.setToolboxVisible(!last)
+        viewModel.setToolboxVisible(last.not())
         return super.performClick()
     }
 
@@ -125,7 +125,7 @@ class ToolboxView @JvmOverloads constructor(
                 touchSender(event)
             }
             MotionEvent.ACTION_MOVE -> {
-                if (!toolboxClickable) {
+                if (toolboxClickable.not()) {
                     touchSender(event)
                 } else if (pointDistance(currentPoint, startTouchPoint) > CLICK_DISTANCE_LIMIT) {
                     toolboxClickable = false
@@ -133,7 +133,7 @@ class ToolboxView @JvmOverloads constructor(
                 }
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                if (!toolboxClickable) {
+                if (toolboxClickable.not()) {
                     touchSender(event)
                 } else {
                     performClick()
