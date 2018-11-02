@@ -33,11 +33,11 @@ class LibraryActivity : BaseActivity<ActivityLibraryBinding, LibraryViewModel>()
     }
 
     override fun loadState(bundle: Bundle) {
-        //no-op
+        // no-op
     }
 
     override fun saveState(bundle: Bundle) {
-        //no-op
+        // no-op
     }
 
     private fun init() {

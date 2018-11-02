@@ -44,11 +44,11 @@ class ToolboxView @JvmOverloads constructor(
         setHeight(binding.navigationBarBackground, getActivity().getNavigationBarHeight())
         binding.pageSeekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                //no-op
+                // no-op
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                //no-op
+                // no-op
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {

@@ -99,11 +99,11 @@ class SearchActivity : BaseActivity<ActivitySearchBinding, SearchViewModel>() {
 
         binding.searchText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
-                //no-op
+                // no-op
             }
 
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-                //no-op
+                // no-op
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {

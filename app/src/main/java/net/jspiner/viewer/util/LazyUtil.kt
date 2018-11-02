@@ -11,5 +11,5 @@ override fun onCreate() {
 }
 */
 fun Any.initLazy() {
-    //no-op
+    // no-op
 }
