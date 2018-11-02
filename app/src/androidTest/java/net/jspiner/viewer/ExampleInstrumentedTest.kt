@@ -6,7 +6,7 @@ import android.support.test.runner.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import org.junit.Assert.*
+import org.junit.Assert
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("net.jspiner.epub_viewer", appContext.packageName)
+        Assert.assertEquals("net.jspiner.epub_viewer", appContext.packageName)
     }
 }
