@@ -22,8 +22,8 @@ class PagePageFinder(context: Context, epub: Epub, pageInfo: PageInfo) : PageFin
             val splitLengthSumList = ArrayList<Int>()
             for (splitIndex in pageInfo.spinePageList[spineIndex].splitIndexList) {
                 splitLengthSumList.add(
-                    bodyStart
-                        + splitList.subList(0, splitIndex.toInt())
+                    bodyStart +
+                        splitList.subList(0, splitIndex.toInt())
                         .joinToString(" ").length
                 )
             }
