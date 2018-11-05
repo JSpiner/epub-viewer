@@ -18,55 +18,32 @@ import net.jspiner.epub_viewer.dto.Epub
 import net.jspiner.epub_viewer.dto.Page
 import net.jspiner.epub_viewer.dto.PageInfo
 import net.jspiner.epubstream.dto.ItemRef
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 
 class PagePaginator(private val context: Context, private val extractedEpub: Epub) : Paginator(context, extractedEpub) {
 
-    private val CALCULATE_PAGE_JS = """
-    var body = document.body.innerHTML;
-    var deviceHeight = window.innerHeight;
-    var words = body.split(' ');
+    private val CALCULATE_PAGE_JS: String by lazy {
+        val filePath = "PagePaginator.js"
+        val stream = context.assets.open(filePath)
 
-    function search(startIndex, min, max, current) {
-        if (current == max) return current - 1;
-        if (current == min) return current;
+        BufferedReader(InputStreamReader(stream)).use { br ->
+            val sb = StringBuilder()
+            var line = br.readLine()
 
-        document.body.innerHTML = words.slice(startIndex, current).join(' ');;
-
-        var heightDiff = document.body.scrollHeight - deviceHeight;
-
-        if (heightDiff <= 0) {
-            return search(
-                startIndex,
-                current,
-                max,
-                Math.min(parseInt(current - (heightDiff / 3)), max - 1)
-            );
-        }
-        else {
-            return search(
-                startIndex,
-                min,
-                current,
-                Math.max(parseInt(current - (heightDiff / 3)), min + 1)
-            );
+            while (line != null) {
+                sb.append(line)
+                sb.append(System.lineSeparator())
+                line = br.readLine()
+            }
+            br.close()
+            sb.toString()
         }
     }
-    var lastIndex = 0;
-    var lastDiff = 150;
-    var result = [];
-    while (lastIndex != words.length) {
-        var pagingIndex = search(pagingIndex + 1, lastIndex, words.length, lastIndex + lastDiff);
-        if (pagingIndex == words.length - 1) pagingIndex = words.length;
-        result.push(pagingIndex);
-        lastDiff = pagingIndex - lastIndex;
-        lastIndex = pagingIndex;
-    }
-    AndroidFunction.result(result.join(","));
-""".trimIndent()
 
     override fun calculatePage(): Single<PageInfo> {
-        val itemRefList = extractedEpub.opf.spine.itemrefs.toList()
+        val itemRefList = extractedEpub.getItemRefs().toList()
         val startTime = System.currentTimeMillis()
 
         return Observable.fromIterable(itemRefList)
