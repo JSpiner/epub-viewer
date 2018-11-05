@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 
-class VerticalViewPager(context: Context, attrs: AttributeSet?) : ViewPager(context, attrs) {
+class BiDirectionViewPager(context: Context, attrs: AttributeSet?) : ViewPager(context, attrs) {
 
     private var isSwipeEnabled = true
     private var isVerticalMode = true

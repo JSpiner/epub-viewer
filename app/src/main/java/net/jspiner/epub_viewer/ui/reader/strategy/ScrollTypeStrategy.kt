@@ -7,7 +7,7 @@ import net.jspiner.epub_viewer.dto.LoadType
 import net.jspiner.epub_viewer.ui.reader.ReaderViewModel
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
 import net.jspiner.epub_viewer.ui.reader.viewer.ScrollStatus
-import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.epub_viewer.ui.reader.viewer.BiDirectionViewPager
 import net.jspiner.epub_viewer.ui.reader.viewer.WebContainerFragment
 
 class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewModel) {
@@ -15,13 +15,13 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
     private val lastScrollDisposables by lazy { CompositeDisposable() }
     private var lastSpineIndex = -1
 
-    override fun changeViewPagerOrientation(verticalViewPager: VerticalViewPager) {
-        verticalViewPager.verticalMode()
+    override fun changeViewPagerOrientation(biDirectionViewPager: BiDirectionViewPager) {
+        biDirectionViewPager.verticalMode()
     }
 
     override fun getAllPageCount(): Int = pageInfo.spinePageList.size
 
-    override fun setCurrentPagerItem(pager: VerticalViewPager, adapter: EpubPagerAdapter, currentPage: Int) {
+    override fun setCurrentPagerItem(pager: BiDirectionViewPager, adapter: EpubPagerAdapter, currentPage: Int) {
         fun getScrollPosition(index: Int): Int {
             val deviceHeight = pager.context.resources.displayMetrics.heightPixels
 
@@ -46,7 +46,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         adapter.getFragmentAt(spineIndex).scrollAfterLoading(scrollPosition)
     }
 
-    override fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+    override fun onPagerItemSelected(pager: BiDirectionViewPager, adapter: EpubPagerAdapter, position: Int) {
         val currentFragment = adapter.getFragmentAt(position)
         subscribeScroll(currentFragment, pager)
 
@@ -64,7 +64,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
         )
     }
 
-    private fun subscribeScroll(fragment: WebContainerFragment, pager: VerticalViewPager) {
+    private fun subscribeScroll(fragment: WebContainerFragment, pager: BiDirectionViewPager) {
         lastScrollDisposables.clear()
 
         fragment
@@ -90,7 +90,7 @@ class ScrollTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMo
             }.let { lastScrollDisposables.add(it) }
     }
 
-    private fun onWebViewScrolled(pager: VerticalViewPager, scrollPosition: Int) {
+    private fun onWebViewScrolled(pager: BiDirectionViewPager, scrollPosition: Int) {
         val spinePosition = pager.currentItem
         val pageInfo = viewModel.getCurrentPageInfo()
         val deviceHeight = pager.context.resources.displayMetrics.heightPixels

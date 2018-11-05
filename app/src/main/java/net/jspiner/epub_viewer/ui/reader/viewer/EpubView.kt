@@ -60,10 +60,10 @@ class EpubView @JvmOverloads constructor(
             .subscribe {
                 val pageCount = viewModel.viewerTypeStrategy.getAllPageCount()
                 adapter.setAllPageCount(pageCount)
-                binding.verticalViewPager.currentItem = 0
+                binding.biDirectionViewPager.currentItem = 0
 
                 viewModel.onPagerItemSelected(
-                    binding.verticalViewPager,
+                    binding.biDirectionViewPager,
                     adapter,
                     0
                 )
@@ -73,32 +73,32 @@ class EpubView @JvmOverloads constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .compose(bindLifecycle())
             .subscribe {
-                viewModel.viewerTypeStrategy.changeViewPagerOrientation(binding.verticalViewPager)
+                viewModel.viewerTypeStrategy.changeViewPagerOrientation(binding.biDirectionViewPager)
             }
     }
 
     private fun setLoadData(loadData: LoadData) {
-        val currentPosition = binding.verticalViewPager.currentItem
+        val currentPosition = binding.biDirectionViewPager.currentItem
         adapter.getFragmentAt(currentPosition).loadData(loadData)
     }
 
     private fun setCurrentPage(currentPage: Int) {
         viewModel.viewerTypeStrategy.setCurrentPagerItem(
-            binding.verticalViewPager,
+            binding.biDirectionViewPager,
             adapter,
             currentPage
         )
     }
 
     private fun initPager() {
-        binding.verticalViewPager.adapter = adapter
-        binding.verticalViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        binding.biDirectionViewPager.adapter = adapter
+        binding.biDirectionViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
                 // no-op
             }
 
             override fun onPageSelected(position: Int) {
-                viewModel.onPagerItemSelected(binding.verticalViewPager, adapter, position)
+                viewModel.onPagerItemSelected(binding.biDirectionViewPager, adapter, position)
             }
 
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {

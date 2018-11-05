@@ -13,7 +13,7 @@ import net.jspiner.epub_viewer.ui.reader.strategy.PageTypeStrategy
 import net.jspiner.epub_viewer.ui.reader.strategy.ScrollTypeStrategy
 import net.jspiner.epub_viewer.ui.reader.strategy.ViewerTypeStrategy
 import net.jspiner.epub_viewer.ui.reader.viewer.EpubPagerAdapter
-import net.jspiner.epub_viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.epub_viewer.ui.reader.viewer.BiDirectionViewPager
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
 import net.jspiner.epubstream.dto.NavPoint
@@ -72,7 +72,7 @@ class ReaderViewModel : BaseViewModel() {
         }
     }
 
-    fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+    fun onPagerItemSelected(pager: BiDirectionViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewerTypeStrategy.onPagerItemSelected(
             pager, adapter, position
         )
