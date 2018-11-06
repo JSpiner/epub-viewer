@@ -13,7 +13,7 @@ import net.jspiner.viewer.ui.reader.strategy.PageTypeStrategy
 import net.jspiner.viewer.ui.reader.strategy.ScrollTypeStrategy
 import net.jspiner.viewer.ui.reader.strategy.ViewerTypeStrategy
 import net.jspiner.viewer.ui.reader.viewer.EpubPagerAdapter
-import net.jspiner.viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.viewer.ui.reader.viewer.BiDirectionViewPager
 import net.jspiner.epubstream.EpubStream
 import net.jspiner.epubstream.dto.ItemRef
 import net.jspiner.epubstream.dto.NavPoint
@@ -58,7 +58,9 @@ class ReaderViewModel : BaseViewModel() {
         fun findMatchItemInSpines(content: String): ItemRef {
             for (spineItem in extractedEpub.opf.spine.itemrefs) {
                 val itemFile = toManifestItem(spineItem)
-                if (content == itemFile.path) return spineItem
+                if (content == itemFile.path) {
+                    return spineItem
+                }
             }
             throw RuntimeException("해당 navPoint 를 spine 에서 찾을 수 없음 content : $content")
         }
@@ -70,7 +72,7 @@ class ReaderViewModel : BaseViewModel() {
         }
     }
 
-    fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+    fun onPagerItemSelected(pager: BiDirectionViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewerTypeStrategy.onPagerItemSelected(
             pager, adapter, position
         )
@@ -80,7 +82,7 @@ class ReaderViewModel : BaseViewModel() {
         val itemRef = navPointLocationMap[navPoint.id]
             ?: throw RuntimeException("해당 navPoint 를 찾을 수 없음 id : $navPoint")
 
-        for ((index, item) in extractedEpub.opf.spine.itemrefs.withIndex()) {
+        for ((index, item) in extractedEpub.getItemRefs().withIndex()) {
             if (item.idRef == itemRef.idRef) {
                 if (index != 0) {
                     setCurrentPage(getCurrentPageInfo().pageCountSumList[index - 1], true)

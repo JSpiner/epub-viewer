@@ -66,7 +66,7 @@ epub file viewer android application
 │   │       ├── EpubPagerAdapter.kt
 │   │       ├── EpubView.kt
 │   │       ├── ScrollStatus.kt
-│   │       ├── VerticalViewPager.kt
+│   │       ├── BiDirectionViewPager.kt
 │   │       └── WebContainerFragment.kt
 │   └── search
 │       ├── SearchActivity.kt

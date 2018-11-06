@@ -10,12 +10,12 @@ class PagePageFinder(context: Context, epub: Epub, pageInfo: PageInfo) : PageFin
 
     override fun findPage(itemRef: ItemRef, index: Int): Single<Int> {
         return Single.create { emitter ->
-            val spineIndex = epub.opf.spine.itemrefs.indexOf(itemRef)
+            val spineIndex = epub.getItemRefs().indexOf(itemRef)
             val pageSum = if (spineIndex == 0) 0 else pageInfo.pageCountSumList[spineIndex - 1]
 
             val fullContent = readFile(toManifestItem(itemRef))
             val bodyStart = fullContent.indexOf("<body>") + "<body>".length
-            val bodyEnd = fullContent.indexOf("</body")
+            val bodyEnd = fullContent.indexOf("</body>")
             val body = fullContent.substring(bodyStart, bodyEnd)
 
             val splitList = body.split(" ")

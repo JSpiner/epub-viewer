@@ -7,25 +7,25 @@ import net.jspiner.viewer.dto.LoadData
 import net.jspiner.viewer.dto.LoadType
 import net.jspiner.viewer.ui.reader.ReaderViewModel
 import net.jspiner.viewer.ui.reader.viewer.EpubPagerAdapter
-import net.jspiner.viewer.ui.reader.viewer.VerticalViewPager
+import net.jspiner.viewer.ui.reader.viewer.BiDirectionViewPager
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileReader
 
 class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewModel) {
 
-    override fun changeViewPagerOrientation(verticalViewPager: VerticalViewPager) {
-        verticalViewPager.horizontalMode()
-        verticalViewPager.enableScroll()
+    override fun changeViewPagerOrientation(biDirectionViewPager: BiDirectionViewPager) {
+        biDirectionViewPager.horizontalMode()
+        biDirectionViewPager.enableScroll()
     }
 
     override fun getAllPageCount(): Int = pageInfo.allPage
 
-    override fun setCurrentPagerItem(pager: VerticalViewPager, adapter: EpubPagerAdapter, currentPage: Int) {
+    override fun setCurrentPagerItem(pager: BiDirectionViewPager, adapter: EpubPagerAdapter, currentPage: Int) {
         pager.currentItem = currentPage
     }
 
-    override fun onPagerItemSelected(pager: VerticalViewPager, adapter: EpubPagerAdapter, position: Int) {
+    override fun onPagerItemSelected(pager: BiDirectionViewPager, adapter: EpubPagerAdapter, position: Int) {
         viewModel.setCurrentPage(position, false)
 
         readRawData(position)
@@ -41,13 +41,15 @@ class PageTypeStrategy(viewModel: ReaderViewModel) : ViewerTypeStrategy(viewMode
             var currentSpineIndex = -1
             for ((i, sumUntil) in pageInfo.pageCountSumList.withIndex()) {
                 currentSpineIndex = i
-                if (index < sumUntil) break
+                if (index < sumUntil) {
+                    break
+                }
             }
 
             val originFile = viewModel.toManifestItem(viewModel.extractedEpub.opf.spine.itemrefs[currentSpineIndex])
             val rawString = readFile(originFile)
             val bodyStart = rawString.indexOf("<body>") + "<body>".length
-            val bodyEnd = rawString.indexOf("</body")
+            val bodyEnd = rawString.indexOf("</body>")
 
             val emptyHtml = rawString.substring(0, bodyStart) + "%s" + rawString.substring(bodyEnd)
             val body = rawString.substring(bodyStart, bodyEnd)

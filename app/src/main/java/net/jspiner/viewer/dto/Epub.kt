@@ -13,4 +13,6 @@ class Epub : Serializable {
     lateinit var container: Container
     lateinit var opf: Package
     lateinit var toc: Ncx
+
+    fun getItemRefs() = opf.spine.itemrefs
 }

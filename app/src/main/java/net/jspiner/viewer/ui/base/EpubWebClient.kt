@@ -8,6 +8,7 @@ import android.webkit.WebViewClient
 class EpubWebClient(private val pageFinishCallback: (url: String) -> Unit) : WebViewClient() {
 
     var isPageFinished = false
+        private set
     var scrollPositionAfterLoading = 0
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

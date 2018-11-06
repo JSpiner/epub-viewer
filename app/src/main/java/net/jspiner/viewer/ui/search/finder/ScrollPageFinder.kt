@@ -40,7 +40,7 @@ class ScrollPageFinder(context: Context, epub: Epub, pageInfo: PageInfo) : PageF
             .subscribeOn(AndroidSchedulers.mainThread())
             .zipWith(contentHeightSubject, BiFunction { _: WebView, height: Long -> height })
             .map { contentHeight ->
-                val spineIndex = epub.opf.spine.itemrefs.indexOf(itemRef)
+                val spineIndex = epub.getItemRefs().indexOf(itemRef)
                 val pageSum = if (spineIndex == 0) 0 else pageInfo.pageCountSumList[spineIndex - 1]
                 val pageInSpine = (contentHeight / deviceHeight).toInt()
 

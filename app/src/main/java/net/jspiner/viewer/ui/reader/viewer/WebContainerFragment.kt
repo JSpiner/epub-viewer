@@ -1,8 +1,7 @@
 package net.jspiner.viewer.ui.reader.viewer
 
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View
 import android.view.ViewTreeObserver
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
@@ -44,7 +43,9 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
         binding.webView.let { webView ->
             fun getContentHeight() = (webView.contentHeight * resources.displayMetrics.density.toDouble()).toInt()
             fun updateScrollState() {
-                if (context == null || epubWebClient.isPageFinished.not() || epubWebClient.scrollPositionAfterLoading != 0) return
+                if (context == null || epubWebClient.isPageFinished.not() || epubWebClient.scrollPositionAfterLoading != 0) {
+                    return
+                }
 
                 val height = getContentHeight()
                 val webViewHeight = webView.measuredHeight
@@ -88,7 +89,7 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
 
     private fun loadFile(file: File) {
         binding.webView.loadUrl(file.toURI().toURL().toString())
-        binding.loadingView.visibility = VISIBLE
+        binding.loadingView.visibility = View.VISIBLE
     }
 
     private fun loadRawData(file: File, rawString: String) {
@@ -99,7 +100,7 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
             "utf-8",
             null
         )
-        binding.loadingView.visibility = VISIBLE
+        binding.loadingView.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
@@ -118,17 +119,15 @@ class WebContainerFragment : BaseFragment<FragmentWebContainerBinding, ReaderVie
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
 
-        if (isVisibleToUser.not()) {
-            if (isBindingInitialized()) {
-                binding.webView.loadUrl(CONTENT_CLEAR_URL)
-                binding.loadingView.visibility = VISIBLE
-            }
+        if (isVisibleToUser.not() && isBindingInitialized()) {
+            binding.webView.loadUrl(CONTENT_CLEAR_URL)
+            binding.loadingView.visibility = View.VISIBLE
         }
     }
 
     private val pageFinishCallback: (url: String) -> Unit = { url ->
         if (url != CONTENT_CLEAR_URL) {
-            binding.loadingView.visibility = GONE
+            binding.loadingView.visibility = View.GONE
         }
         if (epubWebClient.scrollPositionAfterLoading == 0 && binding.webView.scrollY == 0) scrollPositionSubject.onNext(
             0

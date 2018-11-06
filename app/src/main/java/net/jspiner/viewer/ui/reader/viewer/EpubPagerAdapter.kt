@@ -16,7 +16,9 @@ class EpubPagerAdapter(fm: FragmentManager?) : FragmentStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         val fragment = WebContainerFragment.newInstance()
-        if (itemMap[position] != null) throw RuntimeException("position에 item이 이미 존재합니다. position : $position")
+        if (itemMap[position] != null) {
+            throw RuntimeException("position에 item이 이미 존재합니다. position : $position")
+        }
 
         itemMap[position] = fragment
         return fragment
@@ -24,7 +26,9 @@ class EpubPagerAdapter(fm: FragmentManager?) : FragmentStatePagerAdapter(fm) {
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         super.destroyItem(container, position, `object`)
-        if (itemMap[position] == null) throw RuntimeException("position에 item이 존재하지 않습니다. position : $position")
+        if (itemMap[position] == null) {
+            throw RuntimeException("position에 item이 존재하지 않습니다. position : $position")
+        }
 
         itemMap.remove(position)
     }
