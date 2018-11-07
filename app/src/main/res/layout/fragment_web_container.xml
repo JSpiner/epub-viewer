@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <net.jspiner.epub_viewer.ui.reader.viewer.EpubLoadingView
+        <net.jspiner.viewer.ui.reader.viewer.EpubLoadingView
             android:id="@+id/loading_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

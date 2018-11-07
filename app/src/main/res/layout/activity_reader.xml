@@ -5,12 +5,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <net.jspiner.epub_viewer.ui.reader.viewer.EpubView
+        <net.jspiner.viewer.ui.reader.viewer.EpubView
             android:id="@+id/epub_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <net.jspiner.epub_viewer.ui.reader.toolbox.ToolboxView
+        <net.jspiner.viewer.ui.reader.toolbox.ToolboxView
             android:id="@+id/toolbox_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <net.jspiner.epub_viewer.ui.reader.viewer.BiDirectionViewPager
+        <net.jspiner.viewer.ui.reader.viewer.BiDirectionViewPager
             android:id="@+id/bi_direction_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
