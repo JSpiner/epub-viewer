@@ -1,16 +1,23 @@
 language: android
 jdk:
   - oraclejdk8
-android:
-  components:
-    - tools
-    - platform-tools
-    - tools
-    - build-tools-28.0.2
-    - build-tools-27.0.3
-    - android-28
-    - extra-android-support
-    - extra-android-m2repository
+  
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/    
+    - $HOME/android-sdk-dl
+    - $HOME/android-sdk
+
+install:
+  - if test ! -e $HOME/android-sdk-dl/sdk-tools.zip ; then curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip > $HOME/android-sdk-dl/sdk-tools.zip ; fi
+  - unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
+
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;28.0.3' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-28' > /dev/null
+
 before_install:
 - chmod +x gradlew
 - chmod +rx app
