@@ -12,6 +12,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 
 android {
     compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "net.jspiner.epub_viewer"
         minSdkVersion 23
