@@ -35,7 +35,4 @@ before_script:
   - adb shell input keyevent 82 &
 skip_cleanup: true
 script:
-- ./gradlew clean build
-- export CI=true
-- export CI_NAME=travis-ci
-- ./gradlew jacocoTestReport coveralls
+- ./gradlew connectDebug
