@@ -25,7 +25,7 @@ install:
 env:
   - ANDROID_HOME=$HOME/android-sdk
 before_install:
-- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
+- echo no | $HOME/android-sdk/tools/bin/sdkmanager create avd --force -n test -t android-22 --abi armeabi-v7a
 - chmod +x gradlew
 - chmod +rx app
 skip_cleanup: true
