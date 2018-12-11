@@ -22,6 +22,7 @@ install:
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-28' > /dev/null
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'system-images;android-22;default;armeabi-v7a' > /dev/null
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'system-images;android-22;default;armeabi-v7a'
+  - ./sdkmanager --licenses
 
 env:
   - ANDROID_HOME=$HOME/android-sdk
