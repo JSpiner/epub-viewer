@@ -27,7 +27,7 @@ env:
 before_install:
 # - echo no | $HOME/android-sdk/tools/bin/avdmanager create avd --name TESTDEVICE --package 'system-images;android-22;default;armeabi-v7a'
 #  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-- echo no | android create avd --force -n test -k "system-images;android-22;default;armeabi-v7a"
+- echo no | $HOME/android-sdk/tools/bin/avdmanager create avd --force -n test -k "system-images;android-22;default;armeabi-v7a"
 - chmod +x gradlew
 - chmod +rx app
 skip_cleanup: true
