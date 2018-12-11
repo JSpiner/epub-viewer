@@ -20,10 +20,12 @@ install:
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools' > /dev/null
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;28.0.3' > /dev/null
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-28' > /dev/null
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'system-images;android-22;default;armeabi-v7a' > /dev/null
 
 env:
   - ANDROID_HOME=$HOME/android-sdk
 before_install:
+- echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
 - chmod +x gradlew
 - chmod +rx app
 skip_cleanup: true
