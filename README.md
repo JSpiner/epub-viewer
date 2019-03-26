@@ -116,7 +116,7 @@ WebView를 통해 컨텐츠를 렌더링하고 scroll height를 구합니다.
 html body를 잘라 하나씩 추가해보며 '디바이스 높이' 단위로 페이지를 분할합니다.
 
 #### Performance
-`BEYOND GOOD AND EVIL.epub` 파일로(약 300쪽) worker 갯수별 퍼포먼스 체크를 하였습니다.
+`BEYOND GOOD AND EVIL.epub` 파일로(약 300쪽) 탐색 방법별 퍼포먼스 체크를 하였습니다.
 
 - 처음부터 1단어씩 추가하는 방식 : 42s
 - 이진탐색으로 변경후 : 9s
