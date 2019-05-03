@@ -5,8 +5,8 @@ export REPORT_PATH="./app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jac
 
 reportContent=$(cat $REPORT_PATH)
 
-missedCountList=($(echo $reportContent | grep -oP '(?<=missed=\")([^\"]*)'))
-coveredCountList=($(echo $reportContent | grep -oP '(?<=covered=\")([^\"]*)'))
+missedCountList=$(echo $reportContent | grep -oP '(?<=missed=\")([^\"]*)')
+coveredCountList=$(echo $reportContent | grep -oP '(?<=covered=\")([^\"]*)')
 missedCountSum=0
 coveredCountSum=0
 
@@ -25,3 +25,7 @@ echo $missedCountSum
 coverage=$(echo print\($coveredCountSum / ($missedCountSum + $coveredCountSum) * 100\) | python)
 echo $coverage
 echo "done"
+
+curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
+    -d "{\"body\": \"테스트 커버리지 : ${coverage}\"}" \
+    "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
