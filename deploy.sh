@@ -27,5 +27,10 @@ echo $coverage
 echo "done"
 
 curl -H "Authorization: token ${GITHUB_TOKEN}" -X POST \
-    -d "{\"body\": \"테스트 커버리지 : ${coverage}\"}" \
+    -d "{\"body\": \"\
+    ## Pull Request Test Coverage Report for [PR ${TRAVIS_PULL_REQUEST}](https://github.com/{TRAVIS_REPO_SLUG}/{TRAVIS_PULL_REQUEST})\n \
+    |  Totals | ![status](https://img.shields.io/badge/Coverage-${coverage}%20-brightgreen.svg) | \
+    | :-- | --: | \
+    | Covered Lines: | ${coveredCountSum} | \
+    | Missed Lines: | ${missedCountSum} |" \
     "https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${TRAVIS_PULL_REQUEST}/comments"
