@@ -12,14 +12,13 @@ coveredCountSum=0
 
 for i in ${#missedCountList[@]}
 do
-    missedCountSum=`expr $missedCountSum + ${missedCountList[i]}`
+    missedCountSum=$((missedCountSum + missedCountList[i]))
 done
 
 for i in ${#coveredCountList[@]}
 do
-    coveredCountSum=`expr $coveredCountSum + ${coveredCountList[i]}`
+    coveredCountSum=$((coveredCountSum + ${coveredCountList[i]}))
 done
-echo "count sum : "
 echo $coveredCountSum
 echo $missedCountSum
 
