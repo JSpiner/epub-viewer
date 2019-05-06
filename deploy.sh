@@ -10,12 +10,12 @@ coveredCountList=$(echo $reportContent | grep -oP '(?<=covered=\")([^\"]*)')
 missedCountSum=0
 coveredCountSum=0
 
-for i in ${missedCountList[@]}
+for i in ${#missedCountList[@]}
 do
     missedCountSum=$(($missedCountSum + ${missedCountList[$i]}))
 done
 
-for i in ${coveredCountList[@]}
+for i in ${#coveredCountList[@]}
 do
     coveredCountSum=$((coveredCountSum + ${coveredCountList[$i]}))
 done
