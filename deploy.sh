@@ -12,7 +12,7 @@ coveredCountSum=0
 
 for i in ${#missedCountList[@]}
 do
-    missedCountSum=$(($missedCountSum + ${missedCountList[i]}))
+    missedCountSum=$((missedCountSum + missedCountList[i]))
 done
 
 for i in ${#coveredCountList[@]}
