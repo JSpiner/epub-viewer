@@ -4,7 +4,6 @@
 
 epub file viewer android application
 
-여러가지 [known issue](https://github.com/JSpiner/epub-viewer/issues)가 있어, 모든 epub 파일에서 동작하진 않습니다 ;) <BR/>
 [BEYOND GOOD AND EVIL](./beyond_good_and_evil.epub) 책에선 정상 동작이 확인되어 해당 서적으로 테스트해보시면 원활한 결과를 보실 수 있습니다.
 
 ## Preview
